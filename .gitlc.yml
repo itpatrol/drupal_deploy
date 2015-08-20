@@ -3,7 +3,3 @@ code_style:
 deploy:
   test:
     robin: TRUE
-    dir: '{home}/drupal-db-deploy'
-    init: '{home}/drupal-db-deploy/scripts/init_deploy.sh'
-    before: '{home}/drupal-db-deploy/scripts/before_deploy.sh'
-    after: '{home}/drupal-db-deploy/scripts/after_deploy.sh'
