@@ -2,8 +2,7 @@ code_style:
   default: [codespell,drupal,drupalpractice]
 deploy:
   test:
-    robin: 
-      domain: auto
+    robin: TRUE
     dir: '{home}/drupal-db-deploy'
     init: '{home}/drupal-db-deploy/scripts/init_deploy.sh'
     before: '{home}/drupal-db-deploy/scripts/before_deploy.sh'
