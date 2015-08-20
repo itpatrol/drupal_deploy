@@ -1,9 +1,10 @@
 code_style:
   default: [codespell,drupal,drupalpractice]
 deploy:
-  master:
-    robin: "true"
-    dir: '{home}/git.lc'
-    init: '{home}/git.lc/scripts/init_deploy.sh'
-    before: '{home}/git.lc/scripts/before_deploy.sh'
-    after: '{home}/git.lc/scripts/after_deploy.sh'
+  test:
+    robin: 
+      domain: auto
+    dir: '{home}/drupal-db-deploy'
+    init: '{home}/drupal-db-deploy/scripts/init_deploy.sh'
+    before: '{home}/drupal-db-deploy/scripts/before_deploy.sh'
+    after: '{home}/drupal-db-deploy/scripts/after_deploy.sh'
