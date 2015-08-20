@@ -1,6 +1,7 @@
 code_style:
   default: [codespell,drupal,drupalpractice]
 deploy:
+  master:
     robin: "true"
     dir: '{home}/git.lc'
     init: '{home}/git.lc/scripts/init_deploy.sh'
