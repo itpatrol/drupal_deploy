@@ -3,4 +3,12 @@ code_style:
 deploy:
   test:
     robin: TRUE
-    type: "drupal-7"
+    type:
+      name: "drupal-7"
+      settings:
+        account-name: "root"
+        account-mail: "gor.martsen@gmail.com"
+        site-name: "Drupal DB Deploy"
+        site-mail: "noreply@{domainname}"
+        
+      
