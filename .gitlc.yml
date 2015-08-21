@@ -3,3 +3,4 @@ code_style:
 deploy:
   test:
     robin: TRUE
+    type: "drupal-7"
