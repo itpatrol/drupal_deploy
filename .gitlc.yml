@@ -10,5 +10,3 @@ deploy:
         account-mail: "gor.martsen@gmail.com"
         site-name: "Drupal DB Deploy"
         site-mail: "noreply@{domainname}"
-        
-      
