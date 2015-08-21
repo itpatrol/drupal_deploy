@@ -13,3 +13,15 @@ deploy:
     contexts:
       - gitlc/full-report
       - gitlc/commit-report
+  test:
+    robin: TRUE
+    type:
+      name: "drupal-7"
+      settings:
+        account-name: "root"
+        account-mail: "gor.martsen@gmail.com"
+        site-name: "Drupal DB Deploy"
+        site-mail: "noreply@{domainname}"
+    contexts:
+      - gitlc/full-report
+      - gitlc/commit-report
