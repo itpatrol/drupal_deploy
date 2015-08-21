@@ -1,7 +1,7 @@
 code_style:
   default: [codespell,drupal,drupalpractice]
 deploy:
-  test:
+  master:
     robin: TRUE
     type:
       name: "drupal-7"
@@ -10,3 +10,6 @@ deploy:
         account-mail: "gor.martsen@gmail.com"
         site-name: "Drupal DB Deploy"
         site-mail: "noreply@{domainname}"
+    contexts:
+      - gitlc/full-report
+      - gitlc/commit-report
