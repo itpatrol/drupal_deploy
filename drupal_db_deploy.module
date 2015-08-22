@@ -44,11 +44,11 @@ function drupal_db_deploy_node_revision_delete($node) {
 function drupal_db_deploy_save_transaction($type, $op, $store) {
   $root_dir = variable_get('drupal_db_deploy_path_to_transations', 'private://drupal_db_deploy/');
 
-  $type_dir = $root_dir . DS . $type;
+  $type_dir = $root_dir . DIRECTORY_SEPARATOR . $type;
 
   file_prepare_directory($type_dir, FILE_CREATE_DIRECTORY);
 
-  $transaction_file = $type_dir . DS . microtime(TRUE) * 10000;
+  $transaction_file = $type_dir . DIRECTORY_SEPARATOR . microtime(TRUE) * 10000;
 
   $data = array(
     'op' => $op,
