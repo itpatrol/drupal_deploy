@@ -28,3 +28,16 @@ deploy:
     contexts:
       - gitlc/codestyle/branch
       - gitlc/codestyle/commit
+  pull_request:
+    robin: TRUE
+    type:
+      name: "drupal-7"
+      settings:
+        account-name: "root"
+        account-mail: "gor.martsen@gmail.com"
+        site-name: "Drupal DB Deploy"
+        site-mail: "noreply@{domainname}"
+    contexts:
+      - gitlc/codestyle/branch
+      - gitlc/codestyle/commit
+
