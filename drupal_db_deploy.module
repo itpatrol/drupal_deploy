@@ -6,4 +6,50 @@
  * Make deployment via git much easier.
  */
  
- 
+/**
+ * Implements hook_node_update().
+ */
+function drupal_db_deploy_node_update($node) {
+  $op = 'node_update';
+  drupal_db_deploy_save_transaction('node', $op, $node);
+}
+
+/**
+ * Implements hook_node_insert().
+ */
+function drupal_db_deploy_node_insert($node) {
+  $op = 'node_insert';
+  drupal_db_deploy_save_transaction('node', $op, $node);
+}
+
+/**
+ * Implements hook_node_delete().
+ */
+function drupal_db_deploy_node_delete($node) {
+  $op = 'node_delete';
+  drupal_db_deploy_save_transaction('node', $op, $node);
+}
+
+/**
+ * Implements hook_node_revision_delete().
+ */
+function drupal_db_deploy_node_revision_delete($node) {
+  $op = 'node_revision_delete';
+  drupal_db_deploy_save_transaction('node', $op, $node);
+}
+
+function drupal_db_deploy_save_transaction($type, $op, $store){
+  $root_dir = variable_get('drupal_db_deploy_path_to_transations', 'private://drupal_db_deploy/');
+  
+  $type_dir = $root_dir . DS . $type;
+  
+  file_prepare_directory($type_dir, FILE_CREATE_DIRECTORY);
+  
+  $transaction_file = $type_dir . DS . microtime(true)*10000;
+  
+  $data = array(
+    'op' => $op,
+    'data' => $store,
+  );
+  file_unmanaged_save_data(serialize($data), $transaction_file);
+}
