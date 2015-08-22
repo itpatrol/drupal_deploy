@@ -38,5 +38,5 @@ deploy:
         site-name: "Drupal DB Deploy"
         site-mail: "noreply@{domainname}"
     contexts:
-      - gitlc/codestyle/branch
+      - gitlc/codestyle/pr
       - gitlc/codestyle/commit
