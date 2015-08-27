@@ -60,3 +60,31 @@ function drupal_deploy_drush_help($section) {
       return dt('Sync database state from files.');
   }
 }
+
+/**
+ * Drush callback to perform export.
+ */
+function drupal_deploy_export() {
+  $args = func_get_args();
+}
+
+/**
+ * Drush callback to perform import.
+ */
+function drupal_deploy_import() {
+  $args = func_get_args();
+}
+
+/**
+ * Drush callback to perform sync.
+ */
+function drupal_deploy_sync() {
+  $args = func_get_args();
+}
+
+/**
+ * Drush callback to perform revert.
+ */
+function drupal_deploy_revert() {
+  $args = func_get_args();
+}
