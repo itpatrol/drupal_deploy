@@ -21,11 +21,13 @@ function drupal_deploy_import_menu($filename = '', $menu_name = ''){
   }
   if(!is_file($filename)){
     drupal_set_message(t('File !filename does not exists', array('!filename' => $filename)), 'error');
+    echo "1";
     return FALSE;
   }
   $data = file_get_contents($filename);
   if(!$data = json_decode($data)){
     drupal_set_message(t('Json decode error!'), 'error');
+    echo "2";    
   }
   drupal_deploy_import_menu_links($data, $menu_name);
 }
