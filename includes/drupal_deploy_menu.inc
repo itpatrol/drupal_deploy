@@ -22,7 +22,7 @@ function drupal_deploy_export_menu_fetch_data($menu_name = ''){
   }
   while ($db_item = db_fetch_object($result)) {
     $item = array(
-      'menu_name' => $menu_name,
+      'menu_name' => $db_item->menu_name,
       'weight' => $db_item->weight,
       'link_title' => $db_item->link_title,
       'hidden' => $db_item->hidden,
