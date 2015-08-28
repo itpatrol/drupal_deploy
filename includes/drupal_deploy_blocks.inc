@@ -34,7 +34,7 @@ function drupal_deploy_export_blocks_fetch_data($theme_name = ''){
       'title' => $db_item->title,
     );
     
-    if($db_item->module == 'block' && $db_item->delta == 1)
+    if($db_item->module == 'block')
     {
       $boxes = db_fetch_object(db_query("SELECT * FROM {boxes} WHERE bid=%d", $db_item->delta));  
       if($boxes)
