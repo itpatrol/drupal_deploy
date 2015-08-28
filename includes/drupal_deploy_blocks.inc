@@ -12,6 +12,85 @@ function drupal_deploy_export_blocks($theme_name = '', $filename = ''){
   drupal_deploy_export_save($items, $filename);
 }
 
+function drupal_deploy_import_blocks($filename = '', $theme_name = ''){
+  if(empty($filename)){
+    $filename = $menu_name . '.' . 'blocks.export';
+    if(empty($menu_name)){
+      $filename = 'blocks.export';
+    }
+  }
+  if(!is_file($filename)){
+    drupal_set_message(t('File !filename does not exists', array('!filename' => $filename)), 'error');
+    return FALSE;
+  }
+  $data = file_get_contents($filename);
+  if(!$data = json_decode($data, TRUE)){
+    drupal_set_message(t('Json decode error!'), 'error');
+  }
+  drupal_deploy_import_blocks_items($data, $theme_name);
+}
+
+function  drupal_deploy_import_blocks_items($data, $theme_name = ''){
+  foreach($data as $item){
+    if(!empty($menu_name))
+    {
+      if($item['theme'] != $theme_name)
+      {
+        continue;
+      }
+    }
+
+    $existing_item = db_fetch_array(db_query("SELECT * FROM {blocks} WHERE module = '%s' and theme='%s' AND delta=%d", $item['module'], $item['theme'], $item['delta']));
+    if($existing_item)
+    {
+      // Update existing block.
+      if($item['module'] == 'block'){
+        // Update Boxes
+        $box = array(
+          'bid' => $item['delta'],
+          'body' => $item['body'],
+          'info' => $item['info'],
+          'format' => $item['format'],
+        );
+        drupal_write_record('boxes', $box, 'bid');
+      }
+      $item['bid'] = $existing_item['bid'];
+      drupal_write_record('blocks', $item, 'bid');
+      
+      if(isset($item['rid']))
+      {
+        db_query("DELETE FROM {blocks_roles} WHERE module = '%s' AND delta = '%s'", $item['module'], $$item['delta']);
+        foreach($item['rid'] as $rid)
+        {
+          db_query("INSERT INTO {blocks_roles} (rid, module, delta) VALUES (%d, '%s', '%s')", $rid, $item['module'], $item['delta']);
+        }
+      }
+    }
+    else
+    {
+      if($item['module'] == 'block'){
+        // Update Boxes
+        $box = array(
+          'body' => $item['body'],
+          'info' => $item['info'],
+          'format' => $item['format'],
+        );
+        drupal_write_record('boxes', $box);
+        $item['delta'] = $box['bid'];
+      }
+      drupal_write_record('blocks', $item);
+      if(isset($item['rid']))
+      {
+        db_query("DELETE FROM {blocks_roles} WHERE module = '%s' AND delta = '%s'", $item['module'], $$item['delta']);
+        foreach($item['rid'] as $rid)
+        {
+          db_query("INSERT INTO {blocks_roles} (rid, module, delta) VALUES (%d, '%s', '%s')", $rid, $item['module'], $item['delta']);
+        }
+      }
+    }
+  }
+}
+
 function drupal_deploy_export_blocks_fetch_data($theme_name = ''){
   $items = array();
   if(empty($theme_name)){
@@ -44,11 +123,14 @@ function drupal_deploy_export_blocks_fetch_data($theme_name = ''){
         $item['format'] = $boxes->format;                
       }
     }
-    $block_roles = db_fetch_object(db_query("SELECT * FROM {blocks_roles} WHERE module='%s' AND delta=%d", $db_item->module, $db_item->delta));
-    if($block_roles)
-    {
-      $item['rid'] = $block_roles->rid;
+    
+    $result = db_query("SELECT * FROM {blocks_roles} WHERE module='%s' AND delta=%d", $db_item->module, $db_item->delta);
+    $roles = array();
+    while($db_role = db_fetch_object($result)){
+      $roles[] = $db_role->rid;
     }
+    
+    $item['rid'] = $roles;
     
     $items[] = $item;
   }
