@@ -133,9 +133,9 @@ function drupal_deploy_export_blocks_fetch_data($theme_name = ''){
       }
     }
     
-    $result = db_query("SELECT * FROM {blocks_roles} WHERE module='%s' AND delta=%d", $db_item->module, $db_item->delta);
+    $result_roles = db_query("SELECT * FROM {blocks_roles} WHERE module='%s' AND delta=%d", $db_item->module, $db_item->delta);
     $roles = array();
-    while($db_role = db_fetch_object($result)){
+    while($db_role = db_fetch_object($result_roles)){
       $roles[] = $db_role->rid;
     }
     
