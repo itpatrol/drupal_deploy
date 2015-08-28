@@ -10,7 +10,7 @@ function drupal_deploy_drush_command() {
     'callback' => 'drupal_deploy_export',
     'description' => dt('Export data from database.'),
     'examples' => array(
-      'drush deploy-export menu navigation navigation.export' => dt('Export navigation menu from database.'),
+      'drush deploy-export menu navigation navigation.file' => dt('Export navigation menu from database.'),
     ),
     'aliases' => array('dde'),
   );
@@ -69,15 +69,15 @@ function drupal_deploy_export() {
   switch($args[0]){
     case 'menu':
       $menu_name = '';
-      $dir = '';
+      $file = '';
       if(isset($args[1])){
         $menu_name = $args[1];
       }
       if(isset($args[2])){
-        $dir = $args[2];
+        $file = $args[2];
       }
       include_once(drupal_get_path('module', 'drupal_deploy') .'/includes/drupal_deploy_menu.inc');
-      drupal_deploy_export_menu($menu_name, $dir);
+      drupal_deploy_export_menu($menu_name, $file);
   }
 }
 
@@ -86,6 +86,19 @@ function drupal_deploy_export() {
  */
 function drupal_deploy_import() {
   $args = func_get_args();
+  switch($args[0]){
+    case 'menu':
+      $menu_name = '';
+      $file = '';
+      if(isset($args[1])){
+        $file = $args[1];
+      }
+      if(isset($args[2])){
+        $menu_name = $args[2];
+      }
+      include_once(drupal_get_path('module', 'drupal_deploy') .'/includes/drupal_deploy_menu.inc');
+      drupal_deploy_import_menu($file, $menu_name);
+  }
 }
 
 /**
