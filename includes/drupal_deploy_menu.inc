@@ -38,15 +38,17 @@ function drupal_deploy_export_menu_fetch_data($menu_name = ''){
       $item['parent_link'] = $parent_item->link_path;
     }
     
-    $items[$db_item->mlid] = $item;
+    $items[] = $item;
   }
   return $items;
 }
 
-function drupal_deploy_export_save($items, $file = ''){
+function drupal_deploy_export_save($items, $filename = ''){
   $data = json_encode($items);
   $data = drupal_deploy_export_pretty_json($data);
-  file_put_contents($file, $data);
+  if(file_put_contents($filename, $data)){
+    drupal_set_message('Exported to file ' . $filename);
+  }
 }
 
 function drupal_deploy_export_pretty_json($json) {
