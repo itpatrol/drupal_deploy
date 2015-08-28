@@ -32,28 +32,37 @@ function drupal_deploy_import_menu($filename = '', $menu_name = ''){
 
 function drupal_deploy_import_menu_links($data, $menu_name = ''){
   foreach($data as $item){
-    if(!empty($menu_name)){
-      if($item['menu_name'] != $menu_name){
+    if(!empty($menu_name))
+    {
+      if($item['menu_name'] != $menu_name)
+      {
         continue;
       }
-      if(isset($item['parent_link_path'])){
-        $parent = db_fetch_object(db_query("SELECT * FROM {menu_links} WHERE link_path = '%s'", $item['parent_link_path']));
-        if($parent->mlid){
-          $item['plid'] = $parent->mlid;
-        }
+    }
+
+    if(isset($item['parent_link_path']))
+    {
+      $parent = db_fetch_object(db_query("SELECT * FROM {menu_links} WHERE link_path = '%s'", $item['parent_link_path']));
+      if($parent->mlid)
+      {
+        $item['plid'] = $parent->mlid;
       }
-      
-      $existing_item = db_fetch_object(db_query("SELECT * FROM {menu_links} WHERE link_path = '%s'", $item['link_path']));
-      
-      if($existing_item->mlid){
-        $item['mlid'] = $existing_item->mlid;
-      }
-      
-      if(menu_link_save($item)){
-        drupal_set_message(t('Menu !link_title  imported', array('!link_title' => $item['link_title'])));
-      } else{
-        drupal_set_message(t('Menu !link_title NOT imported', array('!link_title' => $item['link_title'])), 'error');
-      }
+    }
+    
+    $existing_item = db_fetch_object(db_query("SELECT * FROM {menu_links} WHERE link_path = '%s'", $item['link_path']));
+    
+    if($existing_item->mlid)
+    {
+      $item['mlid'] = $existing_item->mlid;
+    }
+    
+    if(menu_link_save($item))
+    {
+      drupal_set_message(t('Menu !link_title  imported', array('!link_title' => $item['link_title'])));
+    }
+    else
+    {
+      drupal_set_message(t('Menu !link_title NOT imported', array('!link_title' => $item['link_title'])), 'error');
     }
   }
 }
