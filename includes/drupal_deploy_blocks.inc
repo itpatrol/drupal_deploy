@@ -55,15 +55,19 @@ function  drupal_deploy_import_blocks_items($data, $theme_name = ''){
         drupal_write_record('boxes', $box, 'bid');
       }
       $item['bid'] = $existing_item['bid'];
-      drupal_write_record('blocks', $item, 'bid');
-      
-      if(isset($item['rid']))
-      {
-        db_query("DELETE FROM {blocks_roles} WHERE module = '%s' AND delta = '%s'", $item['module'], $$item['delta']);
-        foreach($item['rid'] as $rid)
+      if(drupal_write_record('blocks', $item, 'bid')){
+        if(isset($item['rid']))
         {
-          db_query("INSERT INTO {blocks_roles} (rid, module, delta) VALUES (%d, '%s', '%s')", $rid, $item['module'], $item['delta']);
+          db_query("DELETE FROM {blocks_roles} WHERE module = '%s' AND delta = '%s'", $item['module'], $$item['delta']);
+          foreach($item['rid'] as $rid)
+          {
+            db_query("INSERT INTO {blocks_roles} (rid, module, delta) VALUES (%d, '%s', '%s')", $rid, $item['module'], $item['delta']);
+          }
         }
+      
+        $block_list = module_invoke($item['module'], 'block', 'list');
+        $block_title = $block_list[$item['delta']]['info'];
+        drupal_set_message(t('Block !title updated.', array('!title' => $block_title)));
       }
     }
     else
@@ -78,14 +82,19 @@ function  drupal_deploy_import_blocks_items($data, $theme_name = ''){
         drupal_write_record('boxes', $box);
         $item['delta'] = $box['bid'];
       }
-      drupal_write_record('blocks', $item);
-      if(isset($item['rid']))
+      if(drupal_write_record('blocks', $item))
       {
-        db_query("DELETE FROM {blocks_roles} WHERE module = '%s' AND delta = '%s'", $item['module'], $$item['delta']);
-        foreach($item['rid'] as $rid)
+        if(isset($item['rid']))
         {
-          db_query("INSERT INTO {blocks_roles} (rid, module, delta) VALUES (%d, '%s', '%s')", $rid, $item['module'], $item['delta']);
+          db_query("DELETE FROM {blocks_roles} WHERE module = '%s' AND delta = '%s'", $item['module'], $$item['delta']);
+          foreach($item['rid'] as $rid)
+          {
+            db_query("INSERT INTO {blocks_roles} (rid, module, delta) VALUES (%d, '%s', '%s')", $rid, $item['module'], $item['delta']);
+          }
         }
+        $block_list = module_invoke($item['module'], 'block', 'list');
+        $block_title = $block_list[$item['delta']]['info'];
+        drupal_set_message(t('Block !title updated.', array('!title' => $block_title)));
       }
     }
   }
