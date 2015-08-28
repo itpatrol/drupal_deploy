@@ -33,8 +33,8 @@ function drupal_deploy_export_menu_fetch_data($menu_name = ''){
       'customized' => 1,
       'updated' => $db_item->updated,
     );
-    if($item->plid != 0){
-      $parent_item = db_fetch_object(db_query("SELECT * FROM {menu_links} WHERE mlid=%d", $item->plid));
+    if($db_item->plid != 0){
+      $parent_item = db_fetch_object(db_query("SELECT * FROM {menu_links} WHERE mlid=%d", $db_item->plid));
       $item['parent_link'] = $parent_item->link_path;
     }
     
