@@ -25,6 +25,7 @@ function drupal_deploy_export_menu_fetch_data($menu_name = ''){
       'menu_name' => $db_item->menu_name,
       'weight' => $db_item->weight,
       'link_title' => $db_item->link_title,
+      'link_path' => $db_item->link_path,
       'hidden' => $db_item->hidden,
       'has_children' => $db_item->has_children,
       'expanded' => $db_item->expanded,
@@ -35,7 +36,7 @@ function drupal_deploy_export_menu_fetch_data($menu_name = ''){
     );
     if($db_item->plid != 0){
       $parent_item = db_fetch_object(db_query("SELECT * FROM {menu_links} WHERE mlid=%d", $db_item->plid));
-      $item['parent_link'] = $parent_item->link_path;
+      $item['parent_link_path'] = $parent_item->link_path;
     }
     
     $items[] = $item;
@@ -47,7 +48,7 @@ function drupal_deploy_export_save($items, $filename = ''){
   $data = json_encode($items);
   $data = drupal_deploy_export_pretty_json($data);
   if(file_put_contents($filename, $data)){
-    drupal_set_message('Exported to file ' . $filename);
+    drupal_set_message(t('Exported to file !filename', array('!filename' => $filename)));
   }
 }
 
