@@ -111,6 +111,19 @@ function drupal_deploy_import() {
       }
       include_once(drupal_get_path('module', 'drupal_deploy') .'/includes/drupal_deploy_menu.inc');
       drupal_deploy_import_menu($file, $menu_name);
+      break;
+    case 'blocks':
+      $theme_name = '';
+      $file = '';
+      if(isset($args[1])){
+        $file = $args[1];
+      }
+      if(isset($args[2])){
+        $theme_name = $args[2];
+      }
+      include_once(drupal_get_path('module', 'drupal_deploy') .'/includes/drupal_deploy_blocks.inc');
+      drupal_deploy_import_blocks($file, $theme_name);
+      break;      
   }
 }
 
