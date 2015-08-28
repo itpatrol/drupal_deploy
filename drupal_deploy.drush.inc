@@ -78,6 +78,19 @@ function drupal_deploy_export() {
       }
       include_once(drupal_get_path('module', 'drupal_deploy') .'/includes/drupal_deploy_menu.inc');
       drupal_deploy_export_menu($menu_name, $file);
+      break;
+    case 'blocks':
+      $theme_name = '';
+      $file = '';
+      if(isset($args[1])){
+        $theme_name = $args[1];
+      }
+      if(isset($args[2])){
+        $file = $args[2];
+      }
+      include_once(drupal_get_path('module', 'drupal_deploy') .'/includes/drupal_deploy_blocks.inc');
+      drupal_deploy_export_blocks($theme_name, $file);
+      break;
   }
 }
 
