@@ -12,6 +12,47 @@ function drupal_deploy_export_menu($menu_name = '', $filename = ''){
   drupal_deploy_export_save($items, $filename);
 }
 
+function drupal_deploy_import_menu($filename = '', $menu_name = ''){
+  if(empty($filename)){
+    $filename = $menu_name . '.' . 'menu_links.export';
+    if(empty($menu_name)){
+      $filename = 'menu_links.export';
+    }
+  }
+  if(!is_file($filename)){
+    drupal_set_message(t('File !filename does not exists', array('!filename' => $filename)), 'error');
+    return FALSE;
+  }
+  $data = file_get_contents($filename);
+  if(!$data = json_decode($data)){
+    drupal_set_message(t('Json decode error!'), 'error');
+  }
+  drupal_deploy_import_menu_links($data, $menu_name);
+}
+
+function drupal_deploy_import_menu_links($data, $menu_name = ''){
+  foreach($data as $item){
+    if(!empty($menu_name)){
+      if($item['menu_name'] != $menu_name){
+        continue;
+      }
+      if(isset($item['parent_link_path'])){
+        $parent = db_fetch_object(db_query("SELECT * FROM {menu_links} WHERE link_path = '%s'", $item['parent_link_path']));
+        if($parent->mlid){
+          $item['plid'] = $parent->mlid;
+        }
+      }
+      
+      $existing_item = db_fetch_object(db_query("SELECT * FROM {menu_links} WHERE link_path = '%s'", $item['link_path']));
+      
+      if($existing_item->mlid){
+        $item['mlid'] = $existing_item->mlid;
+      }
+      
+      menu_link_save($item); 
+    }
+  }
+}
 
 function drupal_deploy_export_menu_fetch_data($menu_name = ''){
   $items = array();
