@@ -25,7 +25,7 @@ function drupal_deploy_import_menu($filename = '', $menu_name = ''){
     return FALSE;
   }
   $data = file_get_contents($filename);
-  if(!$data = json_decode($data)){
+  if(!$data = json_decode($data, TRUE)){
     drupal_set_message(t('Json decode error!'), 'error');
     echo "2";    
   }
