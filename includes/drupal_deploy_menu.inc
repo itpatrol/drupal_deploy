@@ -50,9 +50,9 @@ function drupal_deploy_import_menu_links($data, $menu_name = ''){
       }
       
       if(menu_link_save($item)){
-        drupal_set_message(t('Menu !link_title imported', $item));
+        drupal_set_message(t('Menu link_title imported', $item));
       } else{
-        drupal_set_message(t('Menu !link_title NOT imported', $item), 'error');
+        drupal_set_message(t('Menu link_title NOT imported', $item), 'error');
       }
     }
   }
