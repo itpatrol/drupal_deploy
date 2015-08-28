@@ -34,6 +34,8 @@ function drupal_deploy_import_menu_links($data, $menu_name = ''){
   foreach($data as $item){
     if(!empty($menu_name)){
       if($item['menu_name'] != $menu_name){
+        echo $menu_name."\n";
+        print_r($item);
         continue;
       }
       if(isset($item['parent_link_path'])){
