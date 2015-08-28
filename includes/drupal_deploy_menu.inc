@@ -21,13 +21,11 @@ function drupal_deploy_import_menu($filename = '', $menu_name = ''){
   }
   if(!is_file($filename)){
     drupal_set_message(t('File !filename does not exists', array('!filename' => $filename)), 'error');
-    echo "1";
     return FALSE;
   }
   $data = file_get_contents($filename);
   if(!$data = json_decode($data, TRUE)){
     drupal_set_message(t('Json decode error!'), 'error');
-    echo "2";    
   }
   drupal_deploy_import_menu_links($data, $menu_name);
 }
@@ -36,8 +34,6 @@ function drupal_deploy_import_menu_links($data, $menu_name = ''){
   foreach($data as $item){
     if(!empty($menu_name)){
       if($item['menu_name'] != $menu_name){
-        echo $menu_name."\n";
-        print_r($item);
         continue;
       }
       if(isset($item['parent_link_path'])){
@@ -53,7 +49,11 @@ function drupal_deploy_import_menu_links($data, $menu_name = ''){
         $item['mlid'] = $existing_item->mlid;
       }
       
-      menu_link_save($item); 
+      if(menu_link_save($item)){
+        drupal_set_message(t('Menu !link_title imported', $item));
+      } else{
+        drupal_set_message(t('Menu !link_title NOT imported', $item), 'error');
+      }
     }
   }
 }
