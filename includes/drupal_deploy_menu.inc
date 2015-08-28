@@ -49,7 +49,7 @@ function drupal_deploy_import_menu_links($data, $menu_name = ''){
       }
     }
     
-    $existing_item = db_fetch_object(db_query("SELECT * FROM {menu_links} WHERE link_path = '%s'", $item['link_path']));
+    $existing_item = db_fetch_object(db_query("SELECT * FROM {menu_links} WHERE link_path = '%s' and menu_name='%s'", $item['link_path'], $item['menu_name']));
     
     if($existing_item->mlid)
     {
