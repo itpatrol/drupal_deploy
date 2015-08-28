@@ -40,7 +40,7 @@ function  drupal_deploy_import_blocks_items($data, $theme_name = ''){
       }
     }
 
-    $existing_item = db_fetch_array(db_query("SELECT * FROM {blocks} WHERE module = '%s' and theme='%s' AND delta=%d", $item['module'], $item['theme'], $item['delta']));
+    $existing_item = db_fetch_array(db_query("SELECT * FROM {blocks} WHERE module = '%s' and theme='%s' AND delta='%s'", $item['module'], $item['theme'], $item['delta']));
     if($existing_item)
     {
       // Update existing block.
@@ -58,7 +58,7 @@ function  drupal_deploy_import_blocks_items($data, $theme_name = ''){
       if(drupal_write_record('blocks', $item, 'bid')){
         if(isset($item['rid']))
         {
-          db_query("DELETE FROM {blocks_roles} WHERE module = '%s' AND delta = '%s'", $item['module'], $$item['delta']);
+          db_query("DELETE FROM {blocks_roles} WHERE module = '%s' AND delta = '%s'", $item['module'], $item['delta']);
           foreach($item['rid'] as $rid)
           {
             db_query("INSERT INTO {blocks_roles} (rid, module, delta) VALUES (%d, '%s', '%s')", $rid, $item['module'], $item['delta']);
@@ -86,7 +86,7 @@ function  drupal_deploy_import_blocks_items($data, $theme_name = ''){
       {
         if(isset($item['rid']))
         {
-          db_query("DELETE FROM {blocks_roles} WHERE module = '%s' AND delta = '%s'", $item['module'], $$item['delta']);
+          db_query("DELETE FROM {blocks_roles} WHERE module = '%s' AND delta = '%s'", $item['module'], $item['delta']);
           foreach($item['rid'] as $rid)
           {
             db_query("INSERT INTO {blocks_roles} (rid, module, delta) VALUES (%d, '%s', '%s')", $rid, $item['module'], $item['delta']);
@@ -133,7 +133,7 @@ function drupal_deploy_export_blocks_fetch_data($theme_name = ''){
       }
     }
     
-    $result_roles = db_query("SELECT * FROM {blocks_roles} WHERE module='%s' AND delta=%d", $db_item->module, $db_item->delta);
+    $result_roles = db_query("SELECT * FROM {blocks_roles} WHERE module='%s' AND delta='%s'", $db_item->module, $db_item->delta);
     $roles = array();
     while($db_role = db_fetch_object($result_roles)){
       $roles[] = $db_role->rid;
