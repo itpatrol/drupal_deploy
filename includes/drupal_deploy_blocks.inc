@@ -138,8 +138,10 @@ function drupal_deploy_export_blocks_fetch_data($theme_name = ''){
     while($db_role = db_fetch_object($result_roles)){
       $roles[] = $db_role->rid;
     }
-    
-    $item['rid'] = $roles;
+    if(!empty($roles))
+    {
+      $item['rid'] = $roles;
+    }
     
     $items[] = $item;
   }
