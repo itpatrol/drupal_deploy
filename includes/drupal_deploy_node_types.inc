@@ -124,10 +124,14 @@ function _process_form_variable($array)
         break;
       case 'radios':
       case 'select':
-      case 'checkboxes':
         return $array['#options'][$array['#default_value']];
         break;
-        
+      case 'checkboxes':
+        $return = array();
+        foreach($array['#default_value'] as $val){
+           $return[] =  $array['#options'][$val];
+        }
+        return $return;
     }
   }
 }
