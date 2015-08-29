@@ -28,10 +28,11 @@ function drupal_deploy_export_filters_fetch_data()
         $rids[] = $role;
       }
     }
-
-    $roles_result = db_query("SELECT * FROM {role} WHERE rid IN (%s)", implode(",", $rids));
-    while ($role = db_fetch_array($roles_result)) {
-      $item['roles'][] = $role['name'];
+    if(!empty($rids)){
+      $roles_result = db_query("SELECT * FROM {role} WHERE rid IN (%s)", implode(",", $rids));
+      while ($role = db_fetch_array($roles_result)) {
+        $item['roles'][] = $role['name'];
+      }
     }
     
     $filters_result = db_query("SELECT * FROM {filters} WHERE format=%d ORDER BY format", $db_item->format);
