@@ -117,6 +117,10 @@ function drupal_deploy_import($type = '', $option = '') {
       include_once(drupal_get_path('module', 'drupal_deploy') .'/includes/drupal_deploy_blocks.inc');
       drupal_deploy_import_blocks($filename, $theme_name);
       break;      
+    case 'filters':
+      include_once(drupal_get_path('module', 'drupal_deploy') .'/includes/drupal_deploy_filters.inc');
+      drupal_deploy_import_filters($filename);
+      break;
   }
 }
 
