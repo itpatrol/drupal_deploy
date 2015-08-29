@@ -10,7 +10,9 @@ function drupal_deploy_drush_command() {
     'callback' => 'drupal_deploy_export',
     'description' => dt('Export data from database.'),
     'examples' => array(
-      'drush deploy-export menu navigation navigation.file' => dt('Export navigation menu from database.'),
+      'drush dde menu --name=navigation --file=navigation.file' => dt('Export navigation menu.'),
+      'drush dde blocks --theme=garland' => dt('Export blocks.'),
+      'drush dde filters' => dt('Export filters.'),
     ),
     'aliases' => array('dde'),
     'arguments' => array(
@@ -26,8 +28,9 @@ function drupal_deploy_drush_command() {
     'callback' => 'drupal_deploy_import',
     'description' => dt('Import data to database.'),
     'examples' => array(
-      'drush deploy-import menu navigation' => dt('Import navigation menu to database.'),
-      'drush ddi menu ' => dt('Import all menus to database.'),
+      'drush ddi menu --name=navigation --file=navigation.file' => dt('Export navigation menu.'),
+      'drush ddi blocks' => dt('Export blocks.'),
+      'drush ddi filters' => dt('Export filters.'),
     ),
     'aliases' => array('ddi'),
     'arguments' => array(
@@ -79,17 +82,17 @@ function drupal_deploy_drush_help($section) {
 /**
  * Drush callback to perform export.
  */
-function drupal_deploy_export($type = '', $option = '') {
+function drupal_deploy_export($type = '') {
   $filename = drush_get_option('file');
   
   switch($type){
     case 'menu':
-      $menu_name = $options;
+      $menu_name = drush_get_option('name');
       include_once(drupal_get_path('module', 'drupal_deploy') .'/includes/drupal_deploy_menu.inc');
       drupal_deploy_export_menu($menu_name, $filename);
       break;
     case 'blocks':
-      $theme_name = $options;
+      $theme_name = drush_get_option('theme');
       include_once(drupal_get_path('module', 'drupal_deploy') .'/includes/drupal_deploy_blocks.inc');
       drupal_deploy_export_blocks($theme_name, $filename);
       break;
@@ -117,10 +120,6 @@ function drupal_deploy_import($type = '', $option = '') {
       include_once(drupal_get_path('module', 'drupal_deploy') .'/includes/drupal_deploy_blocks.inc');
       drupal_deploy_import_blocks($filename, $theme_name);
       break;      
-    case 'filters':
-      include_once(drupal_get_path('module', 'drupal_deploy') .'/includes/drupal_deploy_filters.inc');
-      drupal_deploy_import_filters($filename);
-      break;
   }
 }
 
