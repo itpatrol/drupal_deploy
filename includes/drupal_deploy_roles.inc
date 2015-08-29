@@ -26,7 +26,7 @@ function drupal_deploy_import_roles($filename){
 
 function drupal_deploy_import_roles_items($data)
 {
-  foreach($data as $item){  
+  foreach($data as $item){
     $existing_item = db_fetch_object(db_query("SELECT * FROM {role} WHERE name = '%s'", $item['name']));
     if($existing_item)
     {

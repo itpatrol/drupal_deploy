@@ -24,6 +24,24 @@ function drupal_deploy_import_node_types($filename){
   drupal_deploy_import_node_types_items($data);
 }
 
+function drupal_deploy_import_roles_items($data)
+{
+  foreach($data as $item){
+    $variables = $item['variables'];
+    unset($item['variables']);
+    if(node_type_save($item))
+    {
+      foreach ($variables as $key => $value) {
+        $variable = $key . '_' . $item->type;
+        if (is_array($value)) {
+          $value = array_keys(array_filter($value));
+        }
+        variable_set($variable, $value);
+      }
+    }
+  }
+}
+
 function drupal_deploy_export_node_types_fetch_data()
 {
   $items = array();
@@ -44,8 +62,9 @@ function drupal_deploy_export_node_types_fetch_data()
       'custom' => $db_item->custom,
       'modified' => $db_item->modified,
       'locked' => $db_item->locked,
-      'variables' => drupal_deploy_export_get_variables($db_item),
     );
+    
+    $item = array_merge($item, drupal_deploy_export_get_variables($db_item));
     $items[] = $item;
   }
   return $items;
