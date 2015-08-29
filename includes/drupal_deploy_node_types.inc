@@ -86,6 +86,7 @@ function drupal_deploy_export_get_variables($type){
   unset($form['submit']);
   unset($form['delete']);
   unset($form['form_id']);
+  print_r($form);
   
   return _process_form_variable($form);
 }
