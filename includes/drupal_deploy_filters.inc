@@ -52,10 +52,13 @@ function drupal_deploy_import_filters_items($data)
     if(drupal_write_record('filter_formats', $format))
     {
       drupal_set_message(t('Filter !title restored.', array('!title' => $format['name'])));
-      foreach($item['filters'] as $filter)
+      if(!empty($item['filters']))
       {
-        $filter['format'] = $format['format'];
-        drupal_write_record('filters', $filter);
+        foreach($item['filters'] as $filter)
+        {
+          $filter['format'] = $format['format'];
+          drupal_write_record('filters', $filter);
+        }
       }
     }
   }
