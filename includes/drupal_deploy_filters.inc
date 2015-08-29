@@ -36,15 +36,17 @@ function drupal_deploy_import_filters_items($data)
   foreach($data as $item){
     
     $item_roles_ids = array();
-    foreach($item['roles'] as $role_name){
-      if(isset($roles[$role_name])){
-        $item_roles_ids[] = $roles[$role_name];
+    if(!empty($item['roles'])){
+      foreach($item['roles'] as $role_name){
+        if(isset($roles[$role_name])){
+          $item_roles_ids[] = $roles[$role_name];
+        }
       }
     }
     
     $format = array(
       'name' => $item['name'],
-      'roles' => implode(",", $item_roles_ids)
+      'roles' => ',' . implode(",", $item_roles_ids) . ','
     );
     
     if(drupal_write_record('filter_formats', $format))
