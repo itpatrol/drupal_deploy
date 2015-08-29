@@ -118,9 +118,9 @@ function drupal_deploy_export_blocks_fetch_data($theme_name = ''){
     $result = db_query("SELECT * FROM {blocks} WHERE status=%d AND theme='%s' ORDER BY module,delta", 1, $theme_name);
   }
 
-  $result = db_query('SELECT * FROM {role}');
+  $roles_result = db_query('SELECT * FROM {role}');
   $roles_names = array();
-  while($role = db_fetch_object($result)){
+  while($role = db_fetch_object($roles_result)){
     $roles_names[$role->rid] = $role->name;
   }  
 
