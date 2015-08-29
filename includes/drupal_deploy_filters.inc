@@ -12,7 +12,7 @@ function drupal_deploy_export_filters($filename = ''){
   drupal_deploy_export_save($items, $filename);
 }
 
-function drupal_deploy_export_blocks_fetch_data()
+function drupal_deploy_export_filters_fetch_data()
 {
   $items = array();
   $result = db_query("SELECT * FROM {filter_formats} ORDER BY format");
