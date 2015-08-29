@@ -17,10 +17,11 @@ function drupal_deploy_drush_command() {
     'aliases' => array('dde'),
     'arguments' => array(
       'type' => 'The name of export type. Supports menu, blocks, filters.',
-      'option' => 'Option for export type.',
     ),
     'options' => array(
       'file' => 'File to export data. File will be overwritten.',
+      'name' => 'Menu name to export',
+      'theme' => 'Theme name to export',
     ),
   );
 
@@ -35,10 +36,11 @@ function drupal_deploy_drush_command() {
     'aliases' => array('ddi'),
     'arguments' => array(
       'type' => 'The name of import type. Supports menu, blocks, filters.',
-      'option' => 'Option for export type.',
     ),
     'options' => array(
       'file' => 'File to import data from.',
+      'name' => 'Menu name to export',
+      'theme' => 'Theme name to export',      
     ),
   );
 
