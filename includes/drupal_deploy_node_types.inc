@@ -43,7 +43,7 @@ function drupal_deploy_import_node_types_items($data)
   );
   foreach($data as $item){
     
-    $values_options = drupal_deploy_export_get_variables($item);
+    $values_options = drupal_deploy_export_get_variables_import($item);
     _replace_values($item, $values_options, $not_save_variable);
     
     $node_type = (object) $item;
