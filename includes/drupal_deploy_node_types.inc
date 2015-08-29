@@ -88,7 +88,16 @@ function drupal_deploy_export_get_variables($type){
   unset($form['form_id']);
   print_r($form);
   
-  return _process_form_variable($form);
+  foreach($form as $key => $val){
+    if($key[0] == '#')
+    {
+      continue;
+    }else{
+      $return[$key] = _process_form_variable($val);
+    }
+  }
+  
+  return $return;
 }
 
 function _process_form_variable($array)
