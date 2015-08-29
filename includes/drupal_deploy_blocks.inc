@@ -31,6 +31,13 @@ function drupal_deploy_import_blocks($filename = '', $theme_name = ''){
 }
 
 function  drupal_deploy_import_blocks_items($data, $theme_name = ''){
+
+  $result = db_query('SELECT * FROM {role}');
+  $roles = array();
+  while($role = db_fetch_object($result)){
+    $roles[$role->name] = $role->rid;
+  }
+
   foreach($data as $item){
     if(!empty($menu_name))
     {
@@ -56,12 +63,15 @@ function  drupal_deploy_import_blocks_items($data, $theme_name = ''){
       }
       $item['bid'] = $existing_item['bid'];
       if(drupal_write_record('blocks', $item, 'bid')){
-        if(isset($item['rid']))
+        if(isset($item['roles']))
         {
           db_query("DELETE FROM {blocks_roles} WHERE module = '%s' AND delta = '%s'", $item['module'], $item['delta']);
-          foreach($item['rid'] as $rid)
+          foreach($item['roles'] as $role_name)
           {
-            db_query("INSERT INTO {blocks_roles} (rid, module, delta) VALUES (%d, '%s', '%s')", $rid, $item['module'], $item['delta']);
+            if(isset($roles[$role_name]))
+            {
+              db_query("INSERT INTO {blocks_roles} (rid, module, delta) VALUES (%d, '%s', '%s')", $roles[$role_name], $item['module'], $item['delta']);
+            }
           }
         }
       
@@ -107,6 +117,13 @@ function drupal_deploy_export_blocks_fetch_data($theme_name = ''){
   }else{
     $result = db_query("SELECT * FROM {blocks} WHERE status=%d AND theme='%s' ORDER BY module,delta", 1, $theme_name);
   }
+
+  $result = db_query('SELECT * FROM {role}');
+  $roles_names = array();
+  while($role = db_fetch_object($result)){
+    $roles_names[$role->rid] = $role->name;
+  }  
+
   while ($db_item = db_fetch_object($result)) {
     $item = array(
       'module' => $db_item->module,
@@ -132,15 +149,16 @@ function drupal_deploy_export_blocks_fetch_data($theme_name = ''){
         $item['format'] = $boxes->format;                
       }
     }
-    
+
     $result_roles = db_query("SELECT * FROM {blocks_roles} WHERE module='%s' AND delta='%s'", $db_item->module, $db_item->delta);
     $roles = array();
+
     while($db_role = db_fetch_object($result_roles)){
-      $roles[] = $db_role->rid;
+      $roles[] = $roles_names[$db_role->rid];
     }
     if(!empty($roles))
     {
-      $item['rid'] = $roles;
+      $item['roles'] = $roles;
     }
     
     $items[] = $item;
