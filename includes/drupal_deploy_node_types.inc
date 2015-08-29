@@ -83,7 +83,7 @@ function _replace_values(&$item, $values_options){
     if($values_array == FALSE){
       echo "We are here";
       print_r($values_options);
-      print_r($item[$key]);
+      print_r($item);
       foreach($values_options as $key => $val){
         if($item[$key] == $val){
           $item[$key] = $key;
