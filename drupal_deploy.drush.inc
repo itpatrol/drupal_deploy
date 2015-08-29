@@ -110,7 +110,7 @@ function drupal_deploy_export($type = '') {
       break;
     case 'node_types':
       include_once(drupal_get_path('module', 'drupal_deploy') .'/includes/drupal_deploy_node_types.inc');
-      drupal_deploy_export_roles($filename);
+      drupal_deploy_export_node_types($filename);
       break;      
   }
 }
