@@ -46,6 +46,8 @@ function drupal_deploy_import_node_types_items($data)
       drupal_set_message(t('Node type !title NOT imported.', array('!title' => $item['name'])));
     }
   }
+  node_types_rebuild();
+  menu_rebuild();
 }
 
 function drupal_deploy_export_node_types_fetch_data()
