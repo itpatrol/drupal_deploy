@@ -26,14 +26,34 @@ function drupal_deploy_import_node_types($filename){
 
 function drupal_deploy_import_node_types_items($data)
 {
+  $not_save_variable = array(
+    'type',
+    'name',
+    'module',
+    'has_title',
+    'title_label',
+    'has_body',
+    'body_label',
+    'description',
+    'help',
+    'min_word_count',
+    'custom',
+    'modified',
+    'locked',
+  );
   foreach($data as $item){
-    $variables = $item['variables'];
-    unset($item['variables']);
+    
+    $values_options = drupal_deploy_export_get_variables($item);
+    _replace_values($item, $values_options, $not_save_variable);
+    
     $node_type = (object) $item;
     $status = node_type_save($node_type);
     if($status == SAVED_UPDATED || $status == SAVED_NEW)
     {
       foreach ($variables as $key => $value) {
+        if(in_array($key, $not_save_variable)){
+          continue;
+        }
         $variable = $key . '_' . $item->type;
         if (is_array($value)) {
           $value = array_keys(array_filter($value));
@@ -48,6 +68,41 @@ function drupal_deploy_import_node_types_items($data)
   }
   node_types_rebuild();
   menu_rebuild();
+}
+
+function _replace_values(&$item, $values_options, $not_save_variable){
+  foreach($item as $key => $val){
+    if(in_array($key, $not_save_variable)){
+      continue;
+    }
+    if(is_array($val)){
+      $isIndexed = array_values($val) === $val;
+      if($isIndexed){
+        if(TRUE == $values_options[$key]){
+          continue;
+        }
+        if(is_array($values_options[$key])){
+          foreach($values_options[$key] as $kval => $vval){
+            if($vval == $val){
+              $item[$key] = $kval;
+              break;
+            }
+          }
+        }
+      }else{
+        _replace_values($item[$key], $values_options[$key], $not_save_variable);
+      } 
+    }else{
+      if(is_array($values_options[$key])){
+        foreach($values_options[$key] as $kval => $vval){
+          if($vval == $val){
+            $item[$key] = $kval;
+            break;
+          }
+        }
+      }
+    }
+  }
 }
 
 function drupal_deploy_export_node_types_fetch_data()
@@ -147,6 +202,74 @@ function _process_form_variable($array)
            $return[] =  $array['#options'][$val];
         }
         return $return;
+    }
+  }
+}
+
+function drupal_deploy_export_get_variables_import($type){
+  
+  global $language;
+  
+  $language->language = 'en';
+  $form_id = 'node_type_form';
+  $form_state = array();
+  $form = node_type_form($form_state, $type);
+  drupal_prepare_form($form_id, $form, $form_state);
+
+  $return = array();
+  
+  unset($form['identity']);
+  unset($form['submission']);
+  unset($form['old_type']);
+  unset($form['orig_type']);
+  unset($form['module']);
+  unset($form['custom']);
+  unset($form['modified']);
+  unset($form['locked']);
+  unset($form['submit']);
+  unset($form['reset']);  
+  unset($form['delete']);
+  unset($form['form_id']);
+
+  foreach($form as $key => $val){
+    if($key[0] == '#')
+    {
+      continue;
+    }else{
+      $return[$key] = _process_form_variable_import($val);
+    }
+  }
+  
+  return $return;
+}
+
+function _process_form_variable_import($array)
+{
+  if(isset($array['#type'])){
+    switch($array['#type']){
+      case 'fieldset':
+      case 'item':
+        $return = array();
+        foreach($array as $key => $val){
+          if($key[0] == '#')
+          {
+            continue;
+          }else{
+            $return[$key] = _process_form_variable($val);
+          }
+        }
+        return $return;
+        break;
+      case 'checkbox':
+      case 'textarea':
+      case 'textfield':
+        return TRUE;
+        break;
+      case 'radios':
+      case 'select':
+      case 'checkboxes':
+        return $array['#options'];
+        break;
     }
   }
 }
