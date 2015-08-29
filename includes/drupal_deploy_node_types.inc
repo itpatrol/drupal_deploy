@@ -52,6 +52,10 @@ function drupal_deploy_export_node_types_fetch_data()
 }
 
 function drupal_deploy_export_get_variables($type){
+  
+  global $language;
+  
+  $language->language = 'en';
   $form_id = 'node_type_form';
   $form_state = array();
   $form = node_type_form($form_state, $type);
