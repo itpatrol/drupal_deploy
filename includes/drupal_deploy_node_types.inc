@@ -44,8 +44,8 @@ function drupal_deploy_import_node_types_items($data)
   foreach($data as $item){
     
     $values_options = drupal_deploy_export_get_variables_import($item);
-    print_r($values_options);
-    _replace_values($item, $values_options, $not_save_variable);
+// /    print_r($values_options);
+    _replace_values($item, $values_options);
     
     $node_type = (object) $item;
     $status = node_type_save($node_type);
@@ -71,37 +71,20 @@ function drupal_deploy_import_node_types_items($data)
   menu_rebuild();
 }
 
-function _replace_values(&$item, $values_options, $not_save_variable){
-  foreach($item as $key => $val){
-    if(in_array($key, $not_save_variable)){
-      continue;
+function _replace_values(&$item, $values_options){
+  if(is_array($values_options)){
+    $values_array = FALSE;
+    foreach($values_options as $key => $val){
+      if(is_array($val)){
+        $values_array = TRUE;
+        _replace_values($item[$key],$values_options[$key]);
+      }
     }
-    if(is_array($val)){
-      $isIndexed = array_values($val) === $val;
-      if($isIndexed){
-        if(TRUE == $values_options[$key]){
-          continue;
-        }
-        if(is_array($values_options[$key])){
-          foreach($values_options[$key] as $kval => $vval){
-            if($vval == $val){
-              echo "Replace " . $key . " val: " . $kval;
-              $item[$key] = $kval;
-              break;
-            }
-          }
-        }
-      }else{
-        _replace_values($item[$key], $values_options[$key], $not_save_variable);
-      } 
-    }else{
-      if(is_array($values_options[$key])){
-        foreach($values_options[$key] as $kval => $vval){
-          if($vval == $val){
-            echo "Replace " . $key . " val: " . $kval;            
-            $item[$key] = $kval;
-            break;
-          }
+    if($values_array == FALSE){
+      foreach($values_options as $key => $val){
+        if($item[$key] == $val){
+          $item[$key] = $key;
+          echo "Replace " . $key . " val: " . $kval;
         }
       }
     }
