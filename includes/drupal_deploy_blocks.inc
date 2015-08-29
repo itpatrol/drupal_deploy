@@ -154,7 +154,9 @@ function drupal_deploy_export_blocks_fetch_data($theme_name = ''){
     $roles = array();
 
     while($db_role = db_fetch_object($result_roles)){
-      $roles[] = $roles_names[$db_role->rid];
+      if(isset($roles_names[$db_role->rid])){
+        $roles[] = $roles_names[$db_role->rid];
+      }
     }
     if(!empty($roles))
     {
