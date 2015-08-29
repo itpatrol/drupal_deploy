@@ -24,7 +24,7 @@ function drupal_deploy_import_node_types($filename){
   drupal_deploy_import_node_types_items($data);
 }
 
-function drupal_deploy_import_roles_items($data)
+function drupal_deploy_import_node_types_items($data)
 {
   foreach($data as $item){
     $variables = $item['variables'];
