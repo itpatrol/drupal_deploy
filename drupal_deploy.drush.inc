@@ -13,6 +13,13 @@ function drupal_deploy_drush_command() {
       'drush deploy-export menu navigation navigation.file' => dt('Export navigation menu from database.'),
     ),
     'aliases' => array('dde'),
+    'arguments' => array(
+      'type' => 'The name of export type. Supports menu, blocks.',
+      'option' => 'Option for export type.',
+    ),
+    'options' => array(
+      'file' => 'File to export data. File will be overwritten.',
+    ),
   );
 
   $items['deploy-import'] = array(
@@ -20,8 +27,16 @@ function drupal_deploy_drush_command() {
     'description' => dt('Import data to database.'),
     'examples' => array(
       'drush deploy-import menu navigation' => dt('Import navigation menu to database.'),
+      'drush ddi menu ' => dt('Import all menus to database.'),
     ),
     'aliases' => array('ddi'),
+    'arguments' => array(
+      'type' => 'The name of import type. Supports menu, blocks.',
+      'option' => 'Option for export type.',
+    ),
+    'options' => array(
+      'file' => 'File to import data from.',
+    ),
   );
 
   $items['deploy-sync'] = array(
@@ -64,32 +79,19 @@ function drupal_deploy_drush_help($section) {
 /**
  * Drush callback to perform export.
  */
-function drupal_deploy_export() {
-  $args = func_get_args();
-  switch($args[0]){
+function drupal_deploy_export($type = '', $option = '') {
+  $filename = drush_get_option('file');
+  
+  switch($type){
     case 'menu':
-      $menu_name = '';
-      $file = '';
-      if(isset($args[1])){
-        $menu_name = $args[1];
-      }
-      if(isset($args[2])){
-        $file = $args[2];
-      }
+      $menu_name = $options;
       include_once(drupal_get_path('module', 'drupal_deploy') .'/includes/drupal_deploy_menu.inc');
-      drupal_deploy_export_menu($menu_name, $file);
+      drupal_deploy_export_menu($menu_name, $filename);
       break;
     case 'blocks':
-      $theme_name = '';
-      $file = '';
-      if(isset($args[1])){
-        $theme_name = $args[1];
-      }
-      if(isset($args[2])){
-        $file = $args[2];
-      }
+      $theme_name = $options;
       include_once(drupal_get_path('module', 'drupal_deploy') .'/includes/drupal_deploy_blocks.inc');
-      drupal_deploy_export_blocks($theme_name, $file);
+      drupal_deploy_export_blocks($theme_name, $filename);
       break;
   }
 }
@@ -97,32 +99,19 @@ function drupal_deploy_export() {
 /**
  * Drush callback to perform import.
  */
-function drupal_deploy_import() {
-  $args = func_get_args();
-  switch($args[0]){
+function drupal_deploy_import($type = '', $option = '') {
+  $filename = drush_get_option('file');
+    
+  switch($type){
     case 'menu':
-      $menu_name = '';
-      $file = '';
-      if(isset($args[1])){
-        $file = $args[1];
-      }
-      if(isset($args[2])){
-        $menu_name = $args[2];
-      }
+      $menu_name = $option;
       include_once(drupal_get_path('module', 'drupal_deploy') .'/includes/drupal_deploy_menu.inc');
-      drupal_deploy_import_menu($file, $menu_name);
+      drupal_deploy_import_menu($filename, $menu_name);
       break;
     case 'blocks':
-      $theme_name = '';
-      $file = '';
-      if(isset($args[1])){
-        $file = $args[1];
-      }
-      if(isset($args[2])){
-        $theme_name = $args[2];
-      }
+      $theme_name = $option;
       include_once(drupal_get_path('module', 'drupal_deploy') .'/includes/drupal_deploy_blocks.inc');
-      drupal_deploy_import_blocks($file, $theme_name);
+      drupal_deploy_import_blocks($filename, $theme_name);
       break;      
   }
 }
