@@ -14,7 +14,7 @@ function drupal_deploy_drush_command() {
     ),
     'aliases' => array('dde'),
     'arguments' => array(
-      'type' => 'The name of export type. Supports menu, blocks.',
+      'type' => 'The name of export type. Supports menu, blocks, filters.',
       'option' => 'Option for export type.',
     ),
     'options' => array(
@@ -31,7 +31,7 @@ function drupal_deploy_drush_command() {
     ),
     'aliases' => array('ddi'),
     'arguments' => array(
-      'type' => 'The name of import type. Supports menu, blocks.',
+      'type' => 'The name of import type. Supports menu, blocks, filters.',
       'option' => 'Option for export type.',
     ),
     'options' => array(
@@ -92,6 +92,10 @@ function drupal_deploy_export($type = '', $option = '') {
       $theme_name = $options;
       include_once(drupal_get_path('module', 'drupal_deploy') .'/includes/drupal_deploy_blocks.inc');
       drupal_deploy_export_blocks($theme_name, $filename);
+      break;
+    case 'filters':
+      include_once(drupal_get_path('module', 'drupal_deploy') .'/includes/drupal_deploy_filters.inc');
+      drupal_deploy_export_filters($filename);
       break;
   }
 }
