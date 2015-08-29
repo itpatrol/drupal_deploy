@@ -20,8 +20,16 @@ function drupal_deploy_export_filters_fetch_data()
     $item = array(
       'name' => $db_item->name,
     );
+    
+    $roles = explode(",", $db_item->roles);
+    $rids = array();
+    foreach($roles as $role){
+      if(!empty($role)){
+        $rids[] = $role;
+      }
+    }
 
-    $roles_result = db_query("SELECT * FROM {role} WHERE rid IN (%s)", $db_item->roles);
+    $roles_result = db_query("SELECT * FROM {role} WHERE rid IN (%s)", implode(",", $rids));
     while ($role = db_fetch_array($roles_result)) {
       $item['roles'][] = $role['name'];
     }
