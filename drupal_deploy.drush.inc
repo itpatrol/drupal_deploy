@@ -111,12 +111,12 @@ function drupal_deploy_import($type = '', $option = '') {
     
   switch($type){
     case 'menu':
-      $menu_name = $option;
+      $menu_name = drush_get_option('name');
       include_once(drupal_get_path('module', 'drupal_deploy') .'/includes/drupal_deploy_menu.inc');
       drupal_deploy_import_menu($filename, $menu_name);
       break;
     case 'blocks':
-      $theme_name = $option;
+      $theme_name = drush_get_option('theme');
       include_once(drupal_get_path('module', 'drupal_deploy') .'/includes/drupal_deploy_blocks.inc');
       drupal_deploy_import_blocks($filename, $theme_name);
       break;      
