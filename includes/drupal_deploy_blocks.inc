@@ -37,6 +37,12 @@ function  drupal_deploy_import_blocks_items($data, $theme_name = ''){
   while($role = db_fetch_object($result)){
     $roles[$role->name] = $role->rid;
   }
+  
+  $formats_result = db_query('SELECT * FROM {filter_formats}');
+  $format_names = array();
+  while($format = db_fetch_object($formats_result)){
+    $format_names[$filter_formats->name] = $format->format;
+  }
 
   foreach($data as $item){
     if(!empty($menu_name))
@@ -53,11 +59,15 @@ function  drupal_deploy_import_blocks_items($data, $theme_name = ''){
       // Update existing block.
       if($item['module'] == 'block'){
         // Update Boxes
+        $format = 1;
+        if($format_names[$item['format']]){
+          $format = $format_names[$item['format']];
+        }
         $box = array(
           'bid' => $item['delta'],
           'body' => $item['body'],
           'info' => $item['info'],
-          'format' => $item['format'],
+          'format' => $format,
         );
         drupal_write_record('boxes', $box, 'bid');
       }
@@ -84,22 +94,29 @@ function  drupal_deploy_import_blocks_items($data, $theme_name = ''){
     {
       if($item['module'] == 'block'){
         // Update Boxes
+        $format = 1;
+        if($format_names[$item['format']]){
+          $format = $format_names[$item['format']];
+        }
         $box = array(
           'body' => $item['body'],
           'info' => $item['info'],
-          'format' => $item['format'],
+          'format' => $format,
         );
         drupal_write_record('boxes', $box);
         $item['delta'] = $box['bid'];
       }
       if(drupal_write_record('blocks', $item))
       {
-        if(isset($item['rid']))
+        if(isset($item['roles']))
         {
           db_query("DELETE FROM {blocks_roles} WHERE module = '%s' AND delta = '%s'", $item['module'], $item['delta']);
-          foreach($item['rid'] as $rid)
+          foreach($item['roles'] as $role_name)
           {
-            db_query("INSERT INTO {blocks_roles} (rid, module, delta) VALUES (%d, '%s', '%s')", $rid, $item['module'], $item['delta']);
+            if(isset($roles[$role_name]))
+            {
+              db_query("INSERT INTO {blocks_roles} (rid, module, delta) VALUES (%d, '%s', '%s')", $roles[$role_name], $item['module'], $item['delta']);
+            }
           }
         }
         $block_list = module_invoke($item['module'], 'block', 'list');
@@ -124,6 +141,13 @@ function drupal_deploy_export_blocks_fetch_data($theme_name = ''){
     $roles_names[$role->rid] = $role->name;
   }  
 
+  $formats_result = db_query('SELECT * FROM {filter_formats}');
+  $format_names = array();
+  while($format = db_fetch_object($formats_result)){
+    $format_names[$filter_formats->format] = $format->name;
+  }
+
+
   while ($db_item = db_fetch_object($result)) {
     $item = array(
       'module' => $db_item->module,
@@ -146,7 +170,10 @@ function drupal_deploy_export_blocks_fetch_data($theme_name = ''){
       {
         $item['body'] = $boxes->body;
         $item['info'] = $boxes->info;
-        $item['format'] = $boxes->format;                
+        if($format_names[$boxes->format])
+        {
+          $item['format'] = $format_names[$boxes->format];
+        }                
       }
     }
 
