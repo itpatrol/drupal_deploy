@@ -38,6 +38,7 @@ function drupal_deploy_import_roles_items($data)
         }
         variable_set($variable, $value);
       }
+      drupal_set_message(t('Node type !title imported.', array('!title' => $item['name'])));
     }
   }
 }
