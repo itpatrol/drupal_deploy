@@ -50,7 +50,7 @@ function drupal_deploy_import_node_types_items($data)
     $status = node_type_save($node_type);
     if($status == SAVED_UPDATED || $status == SAVED_NEW)
     {
-      foreach ($variables as $key => $value) {
+      foreach ($item as $key => $value) {
         if(in_array($key, $not_save_variable)){
           continue;
         }
@@ -255,7 +255,7 @@ function _process_form_variable_import($array)
           {
             continue;
           }else{
-            $return[$key] = _process_form_variable($val);
+            $return[$key] = _process_form_variable_import($val);
           }
         }
         return $return;
