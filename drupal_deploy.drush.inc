@@ -13,6 +13,7 @@ function drupal_deploy_drush_command() {
       'drush dde menu --name=navigation --file=navigation.file' => dt('Export navigation menu.'),
       'drush dde blocks --theme=garland' => dt('Export blocks.'),
       'drush dde filters' => dt('Export filters.'),
+      'drush dde roles' => dt('Export roles.'),
     ),
     'aliases' => array('dde'),
     'arguments' => array(
@@ -29,9 +30,10 @@ function drupal_deploy_drush_command() {
     'callback' => 'drupal_deploy_import',
     'description' => dt('Import data to database.'),
     'examples' => array(
-      'drush ddi menu --name=navigation --file=navigation.file' => dt('Export navigation menu.'),
-      'drush ddi blocks' => dt('Export blocks.'),
-      'drush ddi filters' => dt('Export filters.'),
+      'drush ddi menu --name=navigation --file=navigation.file' => dt('Import navigation menu.'),
+      'drush ddi blocks' => dt('Import blocks.'),
+      'drush ddi filters' => dt('Import filters.'),
+      'drush ddi roles' => dt('Import roles.'),
     ),
     'aliases' => array('ddi'),
     'arguments' => array(
@@ -102,6 +104,10 @@ function drupal_deploy_export($type = '') {
       include_once(drupal_get_path('module', 'drupal_deploy') .'/includes/drupal_deploy_filters.inc');
       drupal_deploy_export_filters($filename);
       break;
+    case 'roles':
+      include_once(drupal_get_path('module', 'drupal_deploy') .'/includes/drupal_deploy_roles.inc');
+      drupal_deploy_export_roles($filename);
+      break;
   }
 }
 
@@ -125,7 +131,12 @@ function drupal_deploy_import($type = '', $option = '') {
     case 'filters':
       include_once(drupal_get_path('module', 'drupal_deploy') .'/includes/drupal_deploy_filters.inc');
       drupal_deploy_import_filters($filename);
-      break;           
+      break;      
+    case 'roles':
+      include_once(drupal_get_path('module', 'drupal_deploy') .'/includes/drupal_deploy_roles.inc');
+      drupal_deploy_import_roles($filename);
+      break;
+           
   }
 }
 
