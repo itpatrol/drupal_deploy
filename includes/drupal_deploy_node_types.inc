@@ -29,7 +29,9 @@ function drupal_deploy_import_node_types_items($data)
   foreach($data as $item){
     $variables = $item['variables'];
     unset($item['variables']);
-    if(node_type_save($item))
+    $node_type = (object) $item;
+    $status = node_type_save($item);
+    if($status == SAVED_UPDATED || $status == SAVED_NEW)
     {
       foreach ($variables as $key => $value) {
         $variable = $key . '_' . $item->type;
