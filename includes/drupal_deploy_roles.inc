@@ -63,7 +63,7 @@ function drupal_deploy_import_roles_items($data)
 function drupal_deploy_export_roles_fetch_data()
 {
   $items = array();
-  $result = db_query("SELECT * FROM {role} r INNER JOIN {permission} p ON r.rid = p.rid ORDER BY rid");
+  $result = db_query("SELECT * FROM {role} r INNER JOIN {permission} p ON r.rid = p.rid ORDER BY r.name");
   while ($db_item = db_fetch_object($result)) {
     $permission = explode(", ", $db_item->perm);
     sort($permission, SORT_STRING);
