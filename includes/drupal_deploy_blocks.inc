@@ -41,7 +41,7 @@ function  drupal_deploy_import_blocks_items($data, $theme_name = ''){
   $formats_result = db_query('SELECT * FROM {filter_formats}');
   $format_names = array();
   while($format = db_fetch_object($formats_result)){
-    $format_names[$filter_formats->name] = $format->format;
+    $format_names[$format->name] = $format->format;
   }
 
   foreach($data as $item){
@@ -144,7 +144,7 @@ function drupal_deploy_export_blocks_fetch_data($theme_name = ''){
   $formats_result = db_query('SELECT * FROM {filter_formats}');
   $format_names = array();
   while($format = db_fetch_object($formats_result)){
-    $format_names[$filter_formats->format] = $format->name;
+    $format_names[$format->format] = $format->name;
   }
 
 
