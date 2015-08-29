@@ -45,7 +45,7 @@ function drupal_deploy_import_node_types_items($data)
     
     $values_options = drupal_deploy_export_get_variables_import($item);
 // /    print_r($values_options);
-    _replace_values($item, $values_options);
+    $item = _replace_values($item, $values_options);
     
     $node_type = (object) $item;
     $status = node_type_save($node_type);
@@ -71,14 +71,14 @@ function drupal_deploy_import_node_types_items($data)
   menu_rebuild();
 }
 
-function _replace_values(&$item, $values_options){
+function _replace_values($item, $values_options){
   if(is_array($values_options)){
     $values_array = FALSE;
     foreach($values_options as $key => $val){
       if(is_array($val)){
         $values_array = TRUE;
         echo $key . "===" . print_r($item,true);
-        _replace_values($item[$key],$values_options[$key]);
+        $item[$key] = _replace_values($item[$key],$values_options[$key]);
       }
     }
     if($values_array == FALSE){
@@ -93,6 +93,7 @@ function _replace_values(&$item, $values_options){
       }
     }
   }
+  return $item;
 }
 
 function drupal_deploy_export_node_types_fetch_data()
