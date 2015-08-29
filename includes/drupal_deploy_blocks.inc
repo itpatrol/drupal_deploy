@@ -95,7 +95,7 @@ function  drupal_deploy_import_blocks_items($data, $theme_name = ''){
       if($item['module'] == 'block'){
         // Update Boxes
         $format = 1;
-        if($format_names[$item['format']]){
+        if(isset($format_names[$item['format']])){
           $format = $format_names[$item['format']];
         }
         $box = array(
@@ -170,7 +170,7 @@ function drupal_deploy_export_blocks_fetch_data($theme_name = ''){
       {
         $item['body'] = $boxes->body;
         $item['info'] = $boxes->info;
-        if($format_names[$boxes->format])
+        if(isset($format_names[$boxes->format]))
         {
           $item['format'] = $format_names[$boxes->format];
         }                
