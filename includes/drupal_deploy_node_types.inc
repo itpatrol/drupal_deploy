@@ -57,15 +57,67 @@ function drupal_deploy_export_node_types_fetch_data()
       'locked' => $db_item->locked,
       'node_options' => variable_get('node_options_' . $db_item->type, array('status', 'promote')),
       'comment_settings' => $comment,
+      'variables' => drupal_deploy_export_get_variables($db_item),
     );
     
-    $form_id = 'node_type_form';
-    $form_state = array();
-    $form = node_type_form($form_state, $db_item);
-    drupal_prepare_form($form_id, $form, $form_state);
-    print_r($form);
+    
 
     $items[] = $item;
   }
   return $items;
+}
+
+function drupal_deploy_export_get_variables($type){
+  $form_id = 'node_type_form';
+  $form_state = array();
+  $form = node_type_form($form_state, $type);
+  drupal_prepare_form($form_id, $form, $form_state);
+
+  $return = array();
+  
+  unset($form['identity']);
+  unset($form['submission']);
+  unset($form['old_type']);
+  unset($form['orig_type']);
+  unset($form['module']);
+  unset($form['custom']);
+  unset($form['modified']);
+  unset($form['locked']);
+  unset($form['submit']);
+  unset($form['delete']);
+  unset($form['form_id']);
+  
+  return _process_form_variable($form);
+}
+
+function _process_form_variable($array)
+{
+  if(isset($array['#type'])){
+    switch($array['#type']){
+      case 'fieldset':
+      case 'item':
+        $return = array();
+        foreach($array as $key => $val){
+          if($key[0] == '#')
+          {
+            continue;
+          }else{
+            $return[$key] = _process_form_variable($val);
+          }
+        }
+        return $return;
+        break;
+      case 'checkbox':
+      case 'textarea':
+      case 'textfield':
+        return $array['#default_value'];
+        break;
+      case 'radios':
+      case 'select':
+      case 'checkboxes':
+        return $array['#options'][$array['#default_value']];
+        break;
+        
+    }
+  }
 }
