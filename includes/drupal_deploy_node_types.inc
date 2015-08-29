@@ -84,6 +84,7 @@ function _replace_values(&$item, $values_options, $not_save_variable){
         if(is_array($values_options[$key])){
           foreach($values_options[$key] as $kval => $vval){
             if($vval == $val){
+              echo "Replace " . $key . " val: " . $kval;
               $item[$key] = $kval;
               break;
             }
@@ -96,6 +97,7 @@ function _replace_values(&$item, $values_options, $not_save_variable){
       if(is_array($values_options[$key])){
         foreach($values_options[$key] as $kval => $vval){
           if($vval == $val){
+            echo "Replace " . $key . " val: " . $kval;            
             $item[$key] = $kval;
             break;
           }
