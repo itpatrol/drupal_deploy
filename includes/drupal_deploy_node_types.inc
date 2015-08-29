@@ -40,6 +40,9 @@ function drupal_deploy_import_roles_items($data)
       }
       drupal_set_message(t('Node type !title imported.', array('!title' => $item['name'])));
     }
+    else{
+      drupal_set_message(t('Node type !title NOT imported.', array('!title' => $item['name'])));
+    }
   }
 }
 
