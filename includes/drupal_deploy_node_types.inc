@@ -70,7 +70,7 @@ function drupal_deploy_import_node_types_items($data)
         if(in_array($key, $not_save_variable)){
           continue;
         }
-        $variable = $key . '_' . $item->type;
+        $variable = $key . '_' . $item['type'];
         if (is_array($value)) {
           $value = array_keys(array_filter($value));
         }
