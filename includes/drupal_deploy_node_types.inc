@@ -117,6 +117,7 @@ function _replace_values($item, $values_options){
           }
         }
       }
+      print_r($values_options);
       print_r($item);
       print_r($result);      
       return $result;
