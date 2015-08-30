@@ -295,7 +295,7 @@ function _process_form_variable_import($array)
           {
             continue;
           }else{
-            $return[$key] = _process_form_variable($val);
+            $return[$key] = _process_form_variable_import($val);
           }
         }
         return $return;
