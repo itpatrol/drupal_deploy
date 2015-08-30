@@ -73,11 +73,11 @@ description: NULL
     }
     $terms = array();
     $terms_result = db_query(db_rewrite_sql('SELECT t.tid, t.*, parent FROM {term_data} t INNER JOIN {term_hierarchy} h ON t.tid = h.tid WHERE t.vid = %d ORDER BY tid', 't', 'tid'), $db_item->vid);
-    while ($term = db_fetch_object($terms_result)) {
+    while ($term = db_fetch_array($terms_result)) {
       if($term->parent == 0){
-        $terms[$term->tid] = $term;
+        $terms[$term['tid']] = $term;
       }else{
-        $term[$term->parent]->terms[] = $term;
+        $term[$term['parent']]['terms'][] = $term;
       }
     }
     print_r($terms);
