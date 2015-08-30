@@ -15,6 +15,7 @@ function drupal_deploy_drush_command() {
       'drush dde filters' => dt('Export filters.'),
       'drush dde roles' => dt('Export roles.'),
       'drush dde node_types --type=blog' => dt('Export node type blog.'),
+      'drush dde taxonomy --name=Forums' => dt('Export taxonomy vocabulary Forums.'),
     ),
     'aliases' => array('dde'),
     'arguments' => array(
@@ -22,8 +23,8 @@ function drupal_deploy_drush_command() {
     ),
     'options' => array(
       'file' => 'File to export data. File will be overwritten.',
-      'name' => 'Menu name to export',
-      'theme' => 'Theme name to export',
+      'name' => 'Menu or Vocabulary name',
+      'theme' => 'Theme name',
       'type' => 'Node type',
     ),
   );
@@ -36,7 +37,8 @@ function drupal_deploy_drush_command() {
       'drush ddi blocks' => dt('Import blocks.'),
       'drush ddi filters' => dt('Import filters.'),
       'drush ddi roles' => dt('Import roles.'),
-      'drush dde node_types --type=blog' => dt('Import node type blog.'),
+      'drush ddi node_types --type=blog' => dt('Import node type blog.'),
+      'drush ddi taxonomy --name=Forums' => dt('Import taxonomy vocabulary Forums.'),      
       
     ),
     'aliases' => array('ddi'),
@@ -45,8 +47,8 @@ function drupal_deploy_drush_command() {
     ),
     'options' => array(
       'file' => 'File to import data from.',
-      'name' => 'Menu name to export',
-      'theme' => 'Theme name to export',
+      'name' => 'Menu or Vocabulary name',
+      'theme' => 'Theme name',
       'type' => 'Node type',          
     ),
   );
