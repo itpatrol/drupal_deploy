@@ -72,8 +72,8 @@ description: NULL
       $item['node_types'][] = $vocabulary_node_type->type;
     }
     $terms = array();
-    $result = db_query(db_rewrite_sql('SELECT t.tid, t.*, parent FROM {term_data} t INNER JOIN {term_hierarchy} h ON t.tid = h.tid WHERE t.vid = %d ORDER BY weight, name', 't', 'tid'), $vid);
-    while ($term = db_fetch_object($result)) {
+    $terms_result = db_query(db_rewrite_sql('SELECT t.tid, t.*, parent FROM {term_data} t INNER JOIN {term_hierarchy} h ON t.tid = h.tid WHERE t.vid = %d ORDER BY weight, name', 't', 'tid'), $vid);
+    while ($term = db_fetch_object($terms_result)) {
       $terms[$term->tid] = $term;
     }
     print_r($terms);
