@@ -41,7 +41,14 @@ function drupal_deploy_import_node_types_items($data)
     'modified',
     'locked',
   );
+  $type = drush_get_option('type', FALSE);
   foreach($data as $item){
+    
+    if(!empty($type)){
+      if($type != $item->type){
+        continue;
+      }
+    }
     
     $values_options = drupal_deploy_export_get_variables_import($item);
 // /    print_r($values_options);
@@ -115,7 +122,12 @@ function _replace_values($item, $values_options){
 function drupal_deploy_export_node_types_fetch_data()
 {
   $items = array();
-  $result = db_query("SELECT * FROM {node_type} ORDER BY type");
+  $type = drush_get_option('type', FALSE);
+  if($type){
+    $result = db_query("SELECT * FROM {node_type} WHERE type='%s' ORDER BY type", $type);
+  }else{
+    $result = db_query("SELECT * FROM {node_type} ORDER BY type");
+  }
   while ($db_item = db_fetch_object($result)) {
     
     $item = array(
