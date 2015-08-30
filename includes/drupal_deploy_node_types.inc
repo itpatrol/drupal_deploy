@@ -89,7 +89,7 @@ function _prepare_item_values_to_save($item, $values_options){
   $result = array_diff($item, $values_options);
   foreach($values_options as $key => $val){
     if(is_array($val)){
-      if(isset($val['#tree'])){
+      if(array_key_exists('#tree',$val)){
         if($val['#tree']){
           $result[$key] = _prepare_item_values_to_save($item[$key],$values_options[$key]);
         }
@@ -108,7 +108,7 @@ function _prepare_item_values_to_save($item, $values_options){
       $result[$key] = $item[$key];
     }
   }
-  if(isset($result['#tree'])){
+  if(array_key_exists('#tree',$result)){
     unset($result['#tree']);
   }else{
     echo "No tree: ";
