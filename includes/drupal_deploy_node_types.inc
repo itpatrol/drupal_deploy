@@ -287,6 +287,7 @@ function _process_form_variable_import($array)
         return $return;
         break;
       case 'checkbox':
+        print_r($array);
       case 'textarea':
       case 'textfield':
         return TRUE;
