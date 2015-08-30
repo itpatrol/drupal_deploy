@@ -63,6 +63,11 @@ function drupal_deploy_export_taxonomy_fetch_data($vocabulary_name = ''){
     $terms_result = db_query(db_rewrite_sql('SELECT t.tid, t.*, parent FROM {term_data} t INNER JOIN {term_hierarchy} h ON t.tid = h.tid WHERE t.vid = %d ORDER BY tid', 't', 'tid'), $db_item->vid);
     while ($term = db_fetch_array($terms_result)) {
       $terms[$term['tid']] = $term;
+      
+      $term_synonym_result = db_query('SELECT * FROM {term_synonym} WHERE tid=%d',$term->tid);
+      while($term_synonym = db_fetch_object($term_synonym_result)){
+        $term['synonyms'][] = $term_synonym->name;
+      }
     }
     $tree = array();
     print_r($terms);
