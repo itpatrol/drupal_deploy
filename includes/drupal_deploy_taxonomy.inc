@@ -89,8 +89,8 @@ description: NULL
           'description' => $term['description'],
           'weight' => $term['weight'],
         );
-      }*/
-    }
+      }
+    }*/
     $item['terms'] = $terms;
     $items[] = $item;    
   }
