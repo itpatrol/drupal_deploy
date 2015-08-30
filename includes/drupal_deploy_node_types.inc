@@ -101,7 +101,7 @@ function _replace_values($item, $values_options){
 //      echo "We are here";
 //       print_r($values_options);
 //      echo "==Item2" . print_r($item,true)."--\n";
-      if(is_array($item) && is_array($values_options))
+      if(is_array($item) && is_array($values_options)){
         if(!array_diff_key($item, $values_options)){
           echo "No diffs!\n";
           print_r($values_options);
