@@ -88,7 +88,7 @@ function drupal_deploy_import_node_types_items($data)
 }
 
 function _prepare_item_values_to_save($item, $values_options){
-  $result = array();
+  $result = array_diff($item, $values_options);
   foreach($values_options as $key => $val){
     if(is_array($val)){
       if(isset($val['#tree'])){
@@ -109,6 +109,9 @@ function _prepare_item_values_to_save($item, $values_options){
     } else{
       $result[$key] = $item[$key];
     }
+  }
+  if(isset($result['#tree'])){
+    unset($result['#tree']);
   }
   return $result;
 }
