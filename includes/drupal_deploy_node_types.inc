@@ -276,7 +276,7 @@ function drupal_deploy_export_get_variables_import($type){
     {
       continue;
     }else{
-      $return[$key] = _process_form_variable($val);  
+      $return[$key] = _process_form_variable_import($val);  
     }
   }
   
