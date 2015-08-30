@@ -65,6 +65,7 @@ function drupal_deploy_export_taxonomy_fetch_data($vocabulary_name = ''){
       $terms[$term['tid']] = $term;
     }
     $tree = array();
+    print_r($terms);
     foreach($terms as $term){
       if($term['parent'] == 0){
         $term['terms'] = _get_term_children($term, $terms);
