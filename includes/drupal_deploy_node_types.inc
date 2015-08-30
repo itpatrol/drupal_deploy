@@ -56,9 +56,7 @@ function drupal_deploy_import_node_types_items($data)
     
     $values_options = drupal_deploy_export_get_variables_import($item);
     $item = _replace_values($item, $values_options);
-
     $item = _prepare_item_values_to_save($item, $values_options);
-    print_r($item);
         
     $node_type = (object) $item;
     $status = node_type_save($node_type);
@@ -72,7 +70,6 @@ function drupal_deploy_import_node_types_items($data)
         if (is_array($value)) {
           $value = array_keys(array_filter($value));
         }
-        echo "SET ". $variable . " = " . $value. "\n";
         variable_set($variable, $value);
       }
       drupal_set_message(t('Node type !title imported.', array('!title' => $item['name'])));
@@ -110,9 +107,6 @@ function _prepare_item_values_to_save($item, $values_options){
   }
   if(array_key_exists('#tree',$result)){
     unset($result['#tree']);
-  }else{
-    echo "No tree: ";
-    print_r($result);
   }
   return $result;
 }
