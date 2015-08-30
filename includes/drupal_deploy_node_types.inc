@@ -58,6 +58,9 @@ function drupal_deploy_import_node_types_items($data)
     print_r($values_options);
     $item = _replace_values($item, $values_options);
     print_r($item);
+
+    $item = _prepare_item_values_to_save($item, $values_options);
+    print_r($item);
         
     $node_type = (object) $item;
     $status = node_type_save($node_type);
@@ -82,6 +85,32 @@ function drupal_deploy_import_node_types_items($data)
   }
   node_types_rebuild();
   menu_rebuild();
+}
+
+function _prepare_item_values_to_save($item, $values_options){
+  $result = array();
+  foreach($values_options as $key => $val){
+    if(is_array($val)){
+      if(isset($val['#tree'])){
+        if($val['#tree']){
+          $result[$key] = _prepare_item_values_to_save($item[$key],$values_options[$key]);
+        }
+        else
+        {
+          $tmp_arr = _prepare_item_values_to_save($item[$key],$values_options[$key]);
+          foreach($tmp_arr as $tkey => $tval){
+            $result[$tkey] = $tval;
+          }
+        }
+      }
+      else{
+        $result[$key] = $val;
+      }
+    } else{
+      $result[$key] = $val;
+    }
+  }
+  return $result;
 }
 
 function _replace_values($item, $values_options){
