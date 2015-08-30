@@ -50,7 +50,6 @@ function drupal_deploy_import_node_types_items($data)
     
     if(!empty($type)){
       if($type != $item['type']){
-        echo $type. " != ".$item['type'];
         continue;
       }
     }
@@ -60,6 +59,7 @@ function drupal_deploy_import_node_types_items($data)
     echo "----------\n";
     $item = _replace_values($item, $values_options);
     echo "----------\n";
+    print_r($item);
         
     $node_type = (object) $item;
     $status = node_type_save($node_type);
