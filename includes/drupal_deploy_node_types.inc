@@ -89,6 +89,7 @@ function drupal_deploy_import_node_types_items($data)
 
 function _replace_values($item, $values_options){
   print_r($item);
+  print_r($values_options);
   echo "--------------------";
   if(is_array($values_options)){
     $values_array = FALSE;
