@@ -113,6 +113,10 @@ function _replace_values($item, $values_options){
       $result = NULL;
       foreach($values_options as $key => $val){
         if(is_array($item)){
+          if(is_numeric($val)){
+            $result = FALSE;
+            break;
+          }
           foreach($item as $item_val){
             if($item_val == $val){
               $result[] = $key;
@@ -125,6 +129,9 @@ function _replace_values($item, $values_options){
             return $key;
           }
         }
+      }
+      if(!$result){
+        return $item;
       }     
       return $result;
     }
