@@ -5,6 +5,10 @@ function drupal_deploy_export_node_types($filename = ''){
   
   if(empty($filename)){
     $filename = 'node_types.export';
+    $type = drush_get_option('type', FALSE);
+    if($type){
+      $filename = $type . '.node_types.export';  
+    }
   }
   drupal_deploy_export_save($items, $filename);
 }
