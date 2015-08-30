@@ -79,10 +79,10 @@ function drupal_deploy_save_term($term, $vid, $parent = 0){
     $term['synonyms'] = implode("\n", $term['synonyms']);
   }
   print_r($term);
-  $stored_term = db_fetch_object(db_query("SELECT * FROM {term_data} WHERE name='%s' AND vid=%d", $term['name'], $vid));
+/*  $stored_term = db_fetch_object(db_query("SELECT * FROM {term_data} WHERE name='%s' AND vid=%d", $term['name'], $vid));
   if($stored_term){
     $term['tid'] = $stored_term->tid;
-  }
+  }*/
 
   
   $status = taxonomy_save_term($term);
