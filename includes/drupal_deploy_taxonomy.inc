@@ -106,8 +106,7 @@ description: NULL
         $tree[] = $store_term;
       }
     }
-    print_r($tree);
-    $item['terms'] = $terms;
+    $item['terms'] = $tree;
     $items[] = $item;    
   }
   
