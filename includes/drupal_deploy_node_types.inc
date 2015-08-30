@@ -94,16 +94,18 @@ function _replace_values($item, $values_options){
           foreach($item as $item_val){
             if($item_val == $val){
               $result[] = $key;
-              echo "!~!!!!! replace ".$result. " with ".$key." val is: ".$val."\n";
+              echo "!~!!!!! replace ".$item_val. " with ".$key." val is: ".$val."\n";
             }
           }
         }else{
           if($item == $val){
-            echo "!~!!!!! replace ".$item. "with ".$key." val is: ".$val."\n";
+            echo "!~!!!!! replace ".$item. " with ".$key." val is: ".$val."\n";
             return $key;
           }
         }
       }
+      print_r($item);
+      print_r($result);      
       return $result;
     }
   }
