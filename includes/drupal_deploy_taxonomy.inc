@@ -61,10 +61,6 @@ function drupal_deploy_import_taxonomy_items($data, $vocabulary_name = ''){
       drupal_set_message(t('Vocabulary !name imported',array('!name' => $item['name'])));
       foreach($terms as $term)
       {
-        $stored_term = db_fetch_object(db_query("SELECT * FROM {term_data} WHERE name='%s' AND vid=%d", $term['name'], $item['vid']));
-        if($stored_term){
-          $term['tid'] = $stored_term->tid;
-        }
         $term['vid'] = $item['vid'];
         $status = drupal_deploy_save_term($term, $item['vid']);
         if($status == SAVED_UPDATED || $status == SAVED_NEW){
@@ -82,6 +78,12 @@ function drupal_deploy_save_term($term, $vid, $parent = 0){
   if(is_array($term['synonyms'])){
     $term['synonyms'] = implode("\n", $term['synonyms']);
   }
+  
+  $stored_term = db_fetch_object(db_query("SELECT * FROM {term_data} WHERE name='%s' AND vid=%d", $term['name'], $vid));
+  if($stored_term){
+    $term['tid'] = $stored_term->tid;
+  }
+
   
   $status = taxonomy_save_term($term);
   if($status == SAVED_UPDATED || $status == SAVED_NEW)
