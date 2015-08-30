@@ -113,7 +113,7 @@ function _replace_values($item, $values_options){
       $result = NULL;
       foreach($values_options as $key => $val){
         if(is_array($item)){
-          if(is_numeric($val)){
+          if($val == TRUE){
             $result = FALSE;
             break;
           }
