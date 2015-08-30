@@ -103,13 +103,13 @@ description: NULL
   return $items;
 }  
 
-function _get_term_children($parent_term,$terms){
-  $terms = array();
+function _get_term_children($parent_term, $terms){
+  $return = array();
   foreach($terms as $term){
     if($term['parent'] == $parent_term['tid']){
       $term['terms'] = _get_term_children($term,$terms);
-      $terms[] = $term;
+      $return[] = $term;
     }
   }
-  return $terms;
+  return $return;
 }
