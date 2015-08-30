@@ -104,10 +104,10 @@ function _prepare_item_values_to_save($item, $values_options){
         }
       }
       else{
-        $result[$key] = $val;
+        $result[$key] = $item[$key];
       }
     } else{
-      $result[$key] = $val;
+      $result[$key] = $item[$key];
     }
   }
   return $result;
