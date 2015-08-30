@@ -96,7 +96,7 @@ function _replace_values($item, $values_options){
       if(is_array($val)){
         $values_array = TRUE;
         $itemkey = $key;
-//         echo $key . "==Item[".$itemkey."]=" . print_r($item[$itemkey],true).'==='.print_r($item,true) ."-----------------\n";
+         echo $key . "==Item[".$itemkey."]=" . print_r($item[$itemkey],true).'==='.print_r($item,true) ."-----------------\n";
         $item[$key] = _replace_values($item[$key],$values_options[$key]);
       }
     }
