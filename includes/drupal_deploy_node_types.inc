@@ -195,14 +195,25 @@ function drupal_deploy_export_get_variables($type){
   unset($form['delete']);
   unset($form['form_id']);
 
+  $tmp_array = array();
   foreach($form as $key => $val){
     if($key[0] == '#')
     {
       continue;
     }else{
-      $return[$key] = _process_form_variable($val);
+      if($val['#tree']){
+        $return[$key] = _process_form_variable($val);  
+      }else{
+        $tmp_array = _process_form_variable($val);
+        if(!empty($tmp_array)){
+          foreach($tmp_array as $akey => $aval){
+            $return[$akey] = $aval;
+          }
+        }
+      }
     }
   }
+  
   
   return $return;
 }
@@ -219,7 +230,16 @@ function _process_form_variable($array)
           {
             continue;
           }else{
-            $return[$key] = _process_form_variable($val);
+            if($val['#tree']){
+              $return[$key] = _process_form_variable($val);
+            }else{
+              $tmp_array = _process_form_variable($val);
+              if(!empty($tmp_array)){
+                foreach($tmp_array as $akey => $aval){
+                  $return[$akey] = $aval;
+                }
+              }
+            }
           }
         }
         return $return;
@@ -267,15 +287,22 @@ function drupal_deploy_export_get_variables_import($type){
   unset($form['reset']);  
   unset($form['delete']);
   unset($form['form_id']);
-  
-  print_r($form);
 
   foreach($form as $key => $val){
     if($key[0] == '#')
     {
       continue;
     }else{
-      $return[$key] = _process_form_variable_import($val);
+      if($val['#tree']){
+        $return[$key] = _process_form_variable($val);  
+      }else{
+        $tmp_array = _process_form_variable($val);
+        if(!empty($tmp_array)){
+          foreach($tmp_array as $akey => $aval){
+            $return[$akey] = $aval;
+          }
+        }
+      }
     }
   }
   
@@ -294,7 +321,16 @@ function _process_form_variable_import($array)
           {
             continue;
           }else{
-            $return[$key] = _process_form_variable_import($val);
+            if($val['#tree']){
+              $return[$key] = _process_form_variable($val);
+            }else{
+              $tmp_array = _process_form_variable($val);
+              if(!empty($tmp_array)){
+                foreach($tmp_array as $akey => $aval){
+                  $return[$akey] = $aval;
+                }
+              }
+            }
           }
         }
         return $return;
