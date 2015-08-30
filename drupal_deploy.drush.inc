@@ -23,6 +23,7 @@ function drupal_deploy_drush_command() {
       'file' => 'File to export data. File will be overwritten.',
       'name' => 'Menu name to export',
       'theme' => 'Theme name to export',
+      'type' => 'Node type',
     ),
   );
 
@@ -42,7 +43,8 @@ function drupal_deploy_drush_command() {
     'options' => array(
       'file' => 'File to import data from.',
       'name' => 'Menu name to export',
-      'theme' => 'Theme name to export',      
+      'theme' => 'Theme name to export',
+      'type' => 'Node type',          
     ),
   );
 
