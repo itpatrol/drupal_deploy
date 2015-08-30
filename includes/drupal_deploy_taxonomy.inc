@@ -66,14 +66,12 @@ function drupal_deploy_export_taxonomy_fetch_data($vocabulary_name = ''){
     {
       $term_synonym_result = db_query('SELECT * FROM {term_synonym} WHERE tid=%d',$term['tid']);
       while($term_synonym = db_fetch_object($term_synonym_result)){
-        print_r($term_synonym);
         $term['synonyms'][] = $term_synonym->name;
       }
       $terms[$term['tid']] = $term;
       
     }
     $tree = array();
-    print_r($terms);
     foreach($terms as $term){
       if($term['parent'] == 0){
         $term['terms'] = _get_term_children($term, $terms);
