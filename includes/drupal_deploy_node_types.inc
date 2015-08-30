@@ -97,7 +97,8 @@ function _replace_values($item, $values_options){
       }
     }
     if($values_array == FALSE){
-//      echo "We are here";
+      echo "We are here";
+      print_r($values_options);
 //       print_r($values_options);
 //      echo "==Item2" . print_r($item,true)."--\n";
      /* if(is_array($item) && is_array($values_options)){
