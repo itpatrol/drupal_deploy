@@ -71,8 +71,12 @@ description: NULL
     while($vocabulary_node_type = db_fetch_object($vocabulary_node_types_result)){
       $item['node_types'][] = $vocabulary_node_type->type;
     }
-    $tree = taxonomy_get_tree($db_item->vid);
-    print_r($tree);
+    $terms = array();
+    $result = db_query(db_rewrite_sql('SELECT t.tid, t.*, parent FROM {term_data} t INNER JOIN {term_hierarchy} h ON t.tid = h.tid WHERE t.vid = %d ORDER BY weight, name', 't', 'tid'), $vid);
+    while ($term = db_fetch_object($result)) {
+      $terms[$term->tid] = $term;
+    }
+    print_r($terms);
     $items[] = $item;    
   }
   return $items;
