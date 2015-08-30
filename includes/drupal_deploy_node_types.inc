@@ -92,13 +92,14 @@ function _replace_values($item, $values_options){
     foreach($values_options as $key => $val){
       if(is_array($val)){
         $values_array = TRUE;
-         echo $key . "==Item[".$key."]=" . print_r($item[$key],true).'==='.print_r($item,true) ."-----------------\n";
+//          echo $key . "==Item[".$key."]=" . print_r($item[$key],true).'==='.print_r($item,true) ."-----------------\n";
         $item[$key] = _replace_values($item[$key],$values_options[$key]);
       }
     }
     if($values_array == FALSE){
       echo "We are here";
       print_r($values_options);
+      print_r($item);      
 //       print_r($values_options);
 //      echo "==Item2" . print_r($item,true)."--\n";
      /* if(is_array($item) && is_array($values_options)){
@@ -264,7 +265,6 @@ function drupal_deploy_export_get_variables_import($type){
   unset($form['delete']);
   unset($form['form_id']);
 
-  print_r($form);
   foreach($form as $key => $val){
     if($key[0] == '#')
     {
