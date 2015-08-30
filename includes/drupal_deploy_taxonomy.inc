@@ -79,6 +79,9 @@ function drupal_deploy_export_taxonomy_fetch_data($vocabulary_name = ''){
           'description' => $term['description'],
           'weight' => $term['weight'],
         );
+        if(!empty($term['synonyms'])){
+          $store_term['synonyms'] = $term['synonyms'];
+        }
         if(!empty($term['terms'])){
           $store_term['terms'] = $term['terms'];
         }
@@ -102,6 +105,9 @@ function _get_term_children($parent_term, $terms){
         'description' => $term['description'],
         'weight' => $term['weight'],
       );
+      if(!empty($term['synonyms'])){
+          $store_term['synonyms'] = $term['synonyms'];
+        }
       if(!empty($term['terms'])){
         $store_term['terms'] = $term['terms'];
       }
