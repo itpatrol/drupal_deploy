@@ -242,6 +242,7 @@ function _process_form_variable($array)
         break;
       case 'radios':
       case 'select':
+        print_r($array);
         return $array['#options'][$array['#default_value']];
         break;
       case 'checkboxes':
