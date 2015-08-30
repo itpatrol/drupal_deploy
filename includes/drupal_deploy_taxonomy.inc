@@ -91,11 +91,14 @@ description: NULL
         );
       }
     }*/
+    $tree = array();
     foreach($terms as $term){
       if($term['parent'] == 0){
         $term['terms'] = _get_term_children($term, $terms);
+        $tree[] = $term;
       }
     }
+    print_r($tree);
     $item['terms'] = $terms;
     $items[] = $item;    
   }
@@ -107,7 +110,7 @@ function _get_term_children($parent_term, $terms){
   $return = array();
   foreach($terms as $term){
     if($term['parent'] == $parent_term['tid']){
-      $term['terms'] = _get_term_children($term,$terms);
+      $term['terms'] = _get_term_children($term, $terms);
       $return[] = $term;
     }
   }
