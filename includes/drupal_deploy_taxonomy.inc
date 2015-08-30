@@ -95,7 +95,15 @@ description: NULL
     foreach($terms as $term){
       if($term['parent'] == 0){
         $term['terms'] = _get_term_children($term, $terms);
-        $tree[] = $term;
+        $store_term = array(
+          'name' => $term['name'],
+          'description' => $term['description'],
+          'weight' => $term['weight'],
+        );
+        if(!empty($term['terms'])){
+          $store_term['terms'] = $term['terms'];
+        }
+        $tree[] = $store_term;
       }
     }
     print_r($tree);
@@ -111,7 +119,15 @@ function _get_term_children($parent_term, $terms){
   foreach($terms as $term){
     if($term['parent'] == $parent_term['tid']){
       $term['terms'] = _get_term_children($term, $terms);
-      $return[] = $term;
+      $store_term = array(
+        'name' => $term['name'],
+        'description' => $term['description'],
+        'weight' => $term['weight'],
+      );
+      if(!empty($term['terms'])){
+        $store_term['terms'] = $term['terms'];
+      }
+      $return[] = $store_term;
     }
   }
   return $return;
