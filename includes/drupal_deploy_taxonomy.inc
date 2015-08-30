@@ -34,6 +34,64 @@ function drupal_deploy_import_taxonomy($filename = ''){
   drupal_deploy_import_taxonomy_items($data, $vocabulary_name);
 }
 
+function drupal_deploy_import_taxonomy_items($data, $vocabulary_name = ''){
+  foreach($data as $item){
+    if(!empty($vocabulary_name))
+    {
+      if($item['name'] != $vocabulary_name)
+      {
+        continue;
+      }
+    }
+    
+    $terms = $item['terms'];
+    unset($item['terms']);
+    $item['nodes'] = $item['node_types'];
+    unset($item['node_types']);
+      
+    $stored_vocabulary = db_fetch_object(db_query("SELECT * FROM {vocabulary} WHERE module='%s' AND name='%s'", $item['module'], $item['name']));
+    
+    if($stored_vocabulary){
+      $item['vid'] = $stored_vocabulary['vid'];
+    }
+    
+    $status = taxonomy_save_vocabulary($item);
+    if($status == SAVED_UPDATED || $status == SAVED_NEW)
+    {
+      drupal_set_message(t('Vocabulary !name imported',array('!name' => $item['name'])));
+      foreach($terms as $term)
+      {
+        $term['vid'] = $item['vid'];
+        $status = drupal_deploy_save_term($term, $item['vid']);
+        if($status == SAVED_UPDATED || $status == SAVED_NEW){
+          drupal_set_message(t('Term !name imported',array('!name' => $term['name'])));
+        }
+      }  
+    }
+    
+  }
+}
+
+function drupal_deploy_save_term($term, $vid, $parent = 0){
+  $term['vid'] = $vid;
+  $term['parent'] = $parent;
+  $term['synonyms'] = implode("\n", $term['synonyms']);
+  
+  $status = taxonomy_save_term($term);
+  if($status == SAVED_UPDATED || $status == SAVED_NEW)
+  {
+    if(is_array($term['terms']))
+    foreach($term['terms'] as $sub_term)
+    {
+      $status = drupal_deploy_save_term($sub_term, $vid, $term['tid']);
+      if($status == SAVED_UPDATED || $status == SAVED_NEW){
+        drupal_set_message(t('Term !name imported',array('!name' => $sub_term['name'])));
+      }
+    }  
+  }
+  return $status;
+}
+
 function drupal_deploy_export_taxonomy_fetch_data($vocabulary_name = ''){
   $items = array();
   if(empty($vocabulary_name)){
