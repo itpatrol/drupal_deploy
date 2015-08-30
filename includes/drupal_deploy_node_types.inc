@@ -74,6 +74,7 @@ function drupal_deploy_import_node_types_items($data)
         if (is_array($value)) {
           $value = array_keys(array_filter($value));
         }
+        echo "SET ". $variable . " = " . $value;
         variable_set($variable, $value);
       }
       drupal_set_message(t('Node type !title imported.', array('!title' => $item['name'])));
