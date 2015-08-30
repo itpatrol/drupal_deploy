@@ -59,11 +59,13 @@ function drupal_deploy_export_taxonomy_fetch_data($vocabulary_name = ''){
     while($vocabulary_node_type = db_fetch_object($vocabulary_node_types_result)){
       $item['node_types'][] = $vocabulary_node_type->type;
     }
+
     $terms = array();
     $terms_result = db_query(db_rewrite_sql('SELECT t.tid, t.*, parent FROM {term_data} t INNER JOIN {term_hierarchy} h ON t.tid = h.tid WHERE t.vid = %d ORDER BY tid', 't', 'tid'), $db_item->vid);
     while ($term = db_fetch_array($terms_result)) {
       $term_synonym_result = db_query('SELECT * FROM {term_synonym} WHERE tid=%d',$term->tid);
       while($term_synonym = db_fetch_object($term_synonym_result)){
+        print_r($term_synonym);
         $term['synonyms'][] = $term_synonym->name;
       }
       $terms[$term['tid']] = $term;
