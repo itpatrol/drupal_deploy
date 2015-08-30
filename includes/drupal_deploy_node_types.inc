@@ -49,7 +49,7 @@ function drupal_deploy_import_node_types_items($data)
   foreach($data as $item){
     
     if(!empty($type)){
-      if($type != $item->type){
+      if(0 != strcmp($type,$item->type)){
         continue;
       }
     }
