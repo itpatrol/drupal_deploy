@@ -77,7 +77,7 @@ description: NULL
       if($term->parent == 0){
         $terms[$term->tid] = $term;
       }else{
-        $term[$term->parent]['terms'][] = $term;
+        $term[$term->parent]->terms[] = $term;
       }
     }
     print_r($terms);
