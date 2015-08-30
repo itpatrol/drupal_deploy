@@ -230,6 +230,7 @@ function _process_form_variable($array)
           {
             continue;
           }else{
+              print_r($array);
               $return[$key] = _process_form_variable($val);
           }
         }
