@@ -52,7 +52,7 @@ function drupal_deploy_import_taxonomy_items($data, $vocabulary_name = ''){
     $stored_vocabulary = db_fetch_object(db_query("SELECT * FROM {vocabulary} WHERE module='%s' AND name='%s'", $item['module'], $item['name']));
     
     if($stored_vocabulary){
-      $item['vid'] = $stored_vocabulary['vid'];
+      $item['vid'] = $stored_vocabulary->vid;
     }
     
     $status = taxonomy_save_vocabulary($item);
