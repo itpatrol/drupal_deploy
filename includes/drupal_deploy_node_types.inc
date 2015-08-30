@@ -267,6 +267,8 @@ function drupal_deploy_export_get_variables_import($type){
   unset($form['reset']);  
   unset($form['delete']);
   unset($form['form_id']);
+  
+  print_r($form);
 
   foreach($form as $key => $val){
     if($key[0] == '#')
