@@ -55,9 +55,6 @@ function drupal_deploy_import_node_types_items($data)
     }
     
     $values_options = drupal_deploy_export_get_variables_import($item);
-    print_r($values_options);
-    print_r($item);
-    exit();
     echo "----------\n";
     $item = _replace_values($item, $values_options);
     echo "----------\n";
@@ -89,16 +86,13 @@ function drupal_deploy_import_node_types_items($data)
 }
 
 function _replace_values($item, $values_options){
-  print_r($item);
-  print_r($values_options);
   echo "--------------------";
   if(is_array($values_options)){
     $values_array = FALSE;
     foreach($values_options as $key => $val){
       if(is_array($val)){
         $values_array = TRUE;
-        $itemkey = $key;
-         echo $key . "==Item[".$itemkey."]=" . print_r($item[$itemkey],true).'==='.print_r($item,true) ."-----------------\n";
+         echo $key . "==Item[".$key."]=" . print_r($item[$key],true).'==='.print_r($item,true) ."-----------------\n";
         $item[$key] = _replace_values($item[$key],$values_options[$key]);
       }
     }
@@ -106,14 +100,14 @@ function _replace_values($item, $values_options){
 //      echo "We are here";
 //       print_r($values_options);
 //      echo "==Item2" . print_r($item,true)."--\n";
-      if(is_array($item) && is_array($values_options)){
+     /* if(is_array($item) && is_array($values_options)){
         if(!array_diff_key($item, $values_options)){
           echo "No diffs!\n";
           print_r($values_options);
           print_r($item);        
           return $item;
         }
-      }
+      }*/
       $result = NULL;
       foreach($values_options as $key => $val){
         if(is_array($item)){
@@ -129,10 +123,7 @@ function _replace_values($item, $values_options){
             return $key;
           }
         }
-      }
-      print_r($values_options);
-      print_r($item);
-      print_r($result);      
+      }     
       return $result;
     }
   }
