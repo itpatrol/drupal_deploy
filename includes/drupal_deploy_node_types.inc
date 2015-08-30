@@ -259,11 +259,6 @@ function drupal_deploy_export_get_variables_import($type){
     {
       continue;
     }else{
-      if($val['#tree']){
-        $return['#tree'] = $val['#tree'];
-      }else{
-        $return['#tree'] = FALSE;
-      }
       $return[$key] = _process_form_variable_import($val);  
     }
   }
