@@ -14,10 +14,11 @@ function drupal_deploy_drush_command() {
       'drush dde blocks --theme=garland' => dt('Export blocks.'),
       'drush dde filters' => dt('Export filters.'),
       'drush dde roles' => dt('Export roles.'),
+      'drush dde node_types --type=blog' => dt('Export node type blog.'),
     ),
     'aliases' => array('dde'),
     'arguments' => array(
-      'type' => 'The name of export type. Supports menu, blocks, filters.',
+      'type' => 'The name of export type. Supports menu, blocks, filters, roles, node_types.',
     ),
     'options' => array(
       'file' => 'File to export data. File will be overwritten.',
@@ -35,6 +36,8 @@ function drupal_deploy_drush_command() {
       'drush ddi blocks' => dt('Import blocks.'),
       'drush ddi filters' => dt('Import filters.'),
       'drush ddi roles' => dt('Import roles.'),
+      'drush dde node_types --type=blog' => dt('Import node type blog.'),
+      
     ),
     'aliases' => array('ddi'),
     'arguments' => array(
