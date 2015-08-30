@@ -79,7 +79,8 @@ function _replace_values($item, $values_options){
     foreach($values_options as $key => $val){
       if(is_array($val)){
         $values_array = TRUE;
-        echo $key . "==Item[".$key."]=" . print_r($item[$key],true).'===' ."\n";
+        $itemkey = $key;
+        echo $key . "==Item[".$itemkey."]=" . print_r($item[$itemkey],true).'==='.print_r($item,true) ."-----------------\n";
         $item[$key] = _replace_values($item[$key],$values_options[$key]);
       }
     }
