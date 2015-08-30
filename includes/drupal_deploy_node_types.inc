@@ -230,16 +230,7 @@ function _process_form_variable($array)
           {
             continue;
           }else{
-            if($val['#tree']){
               $return[$key] = _process_form_variable($val);
-            }else{
-              $tmp_array = _process_form_variable($val);
-              if(!empty($tmp_array)){
-                foreach($tmp_array as $akey => $aval){
-                  $return[$akey] = $aval;
-                }
-              }
-            }
           }
         }
         return $return;
