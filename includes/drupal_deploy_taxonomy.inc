@@ -75,7 +75,9 @@ function drupal_deploy_import_taxonomy_items($data, $vocabulary_name = ''){
 function drupal_deploy_save_term($term, $vid, $parent = 0){
   $term['vid'] = $vid;
   $term['parent'] = $parent;
-  $term['synonyms'] = implode("\n", $term['synonyms']);
+  if(is_array($term['synonyms'])){
+    $term['synonyms'] = implode("\n", $term['synonyms']);
+  }
   
   $status = taxonomy_save_term($term);
   if($status == SAVED_UPDATED || $status == SAVED_NEW)
