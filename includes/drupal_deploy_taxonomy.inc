@@ -41,19 +41,7 @@ function drupal_deploy_export_taxonomy_fetch_data($vocabulary_name = ''){
   }else{
     $result = db_query("SELECT * FROM {vocabulary} WHERE name='%s'",$vocabulary_name);
   }
-  /*
-            vid: 11
-       name: Newsletter
-description: NULL
-       help:
-  relations: 0
-  hierarchy: 1
-   multiple: 0
-   required: 1
-     weight: 0
-     module: simplenews
-       tags: 0
-  */
+
   while ($db_item = db_fetch_object($result)) {
     $item = array(
       'name' => $db_item->name,
@@ -76,21 +64,6 @@ description: NULL
     while ($term = db_fetch_array($terms_result)) {
       $terms[$term['tid']] = $term;
     }
-    print_r($terms);
-     /* if($term['parent'] == 0){
-        $terms[$term['tid']] = array(
-          'name' => $term['name'],
-          'description' => $term['description'],
-          'weight' => $term['weight'],
-        );
-      }else{
-        $terms[$term['parent']]['terms'][] = array(
-          'name' => $term['name'],
-          'description' => $term['description'],
-          'weight' => $term['weight'],
-        );
-      }
-    }*/
     $tree = array();
     foreach($terms as $term){
       if($term['parent'] == 0){
