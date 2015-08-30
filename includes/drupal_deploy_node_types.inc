@@ -101,6 +101,9 @@ function _replace_values($item, $values_options){
 //      echo "We are here";
 //       print_r($values_options);
 //      echo "==Item2" . print_r($item,true)."--\n";
+      if($item == $values_options){
+        return $item;
+      }
       $result = NULL;
       foreach($values_options as $key => $val){
         if(is_array($item)){
@@ -287,7 +290,6 @@ function _process_form_variable_import($array)
         return $return;
         break;
       case 'checkbox':
-        print_r($array);
       case 'textarea':
       case 'textfield':
         return TRUE;
