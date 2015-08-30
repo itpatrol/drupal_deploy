@@ -80,20 +80,31 @@ function _replace_values($item, $values_options){
       if(is_array($val)){
         $values_array = TRUE;
         $itemkey = $key;
-        echo $key . "==Item[".$itemkey."]=" . print_r($item[$itemkey],true).'==='.print_r($item,true) ."-----------------\n";
+//         echo $key . "==Item[".$itemkey."]=" . print_r($item[$itemkey],true).'==='.print_r($item,true) ."-----------------\n";
         $item[$key] = _replace_values($item[$key],$values_options[$key]);
       }
     }
     if($values_array == FALSE){
-      echo "We are here";
-      print_r($values_options);
-      echo "==Item2" . print_r($item,true)."--\n";
+//      echo "We are here";
+//       print_r($values_options);
+//      echo "==Item2" . print_r($item,true)."--\n";
+      $result = NULL;
       foreach($values_options as $key => $val){
-        if($item[$key] == $val){
-          $item[$key] = $key;
-          echo "Replace " . $key . " val: " . $kval;
+        if(is_array($item)){
+          foreach($item as $item_val){
+            if($item_val == $val){
+              $result[] = $key;
+              echo "!~!!!!! replace ".$result. " with ".$key." val is: ".$val."\n";
+            }
+          }
+        }else{
+          if($item == $val){
+            echo "!~!!!!! replace ".$item. "with ".$key." val is: ".$val."\n";
+            return $key;
+          }
         }
       }
+      return $result;
     }
   }
   return $item;
