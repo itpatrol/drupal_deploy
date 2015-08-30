@@ -77,14 +77,14 @@ function _replace_values($item, $values_options){
     foreach($values_options as $key => $val){
       if(is_array($val)){
         $values_array = TRUE;
-        echo $key . "===" . print_r($item,true);
+        echo $key . "==Item=" . print_r($item,true).'===' ."\n";
         $item[$key] = _replace_values($item[$key],$values_options[$key]);
       }
     }
     if($values_array == FALSE){
       echo "We are here";
       print_r($values_options);
-      print_r($item);
+      echo "==Item2" . print_r($item,true)."--\n";
       foreach($values_options as $key => $val){
         if($item[$key] == $val){
           $item[$key] = $key;
