@@ -275,16 +275,7 @@ function drupal_deploy_export_get_variables_import($type){
     {
       continue;
     }else{
-      if($val['#tree']){
-        $return[$key] = _process_form_variable($val);  
-      }else{
-        $tmp_array = _process_form_variable($val);
-        if(!empty($tmp_array)){
-          foreach($tmp_array as $akey => $aval){
-            $return[$akey] = $aval;
-          }
-        }
-      }
+      $return[$key] = _process_form_variable($val);  
     }
   }
   
@@ -303,16 +294,7 @@ function _process_form_variable_import($array)
           {
             continue;
           }else{
-            if($val['#tree']){
-              $return[$key] = _process_form_variable($val);
-            }else{
-              $tmp_array = _process_form_variable($val);
-              if(!empty($tmp_array)){
-                foreach($tmp_array as $akey => $aval){
-                  $return[$akey] = $aval;
-                }
-              }
-            }
+            $return[$key] = _process_form_variable($val);
           }
         }
         return $return;
