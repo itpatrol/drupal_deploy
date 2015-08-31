@@ -46,7 +46,9 @@ function drupal_deploy_import_taxonomy_items($data, $vocabulary_name = ''){
     
     $terms = $item['terms'];
     unset($item['terms']);
-    $item['nodes'] = $item['node_types'];
+    fpreach($item['node_types'] as $type){
+      $item['nodes'][$type] = TRUE;
+    }
     unset($item['node_types']);
       
     $stored_vocabulary = db_fetch_object(db_query("SELECT * FROM {vocabulary} WHERE module='%s' AND name='%s'", $item['module'], $item['name']));
@@ -54,9 +56,7 @@ function drupal_deploy_import_taxonomy_items($data, $vocabulary_name = ''){
     if($stored_vocabulary){
       $item['vid'] = $stored_vocabulary->vid;
     }
-    print_r($item);
     $status = taxonomy_save_vocabulary($item);
-    exit();
     if($status == SAVED_UPDATED || $status == SAVED_NEW)
     {
       drupal_set_message(t('Vocabulary !name imported',array('!name' => $item['name'])));
