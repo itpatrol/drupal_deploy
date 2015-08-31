@@ -83,9 +83,9 @@ function drupal_deploy_save_term($term, $vid, $parent = 0){
   if($stored_term){
     $term['tid'] = $stored_term->tid;
   }
-
+  echo "--------------------\n";
   print_r($term);  
-
+  echo "--------------------\n";
   
   $status = taxonomy_save_term($term);
   if($status == SAVED_UPDATED || $status == SAVED_NEW)
