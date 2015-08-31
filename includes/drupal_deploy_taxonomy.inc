@@ -79,7 +79,7 @@ function drupal_deploy_save_term($term, $vid, $parent = 0){
     $term['synonyms'] = implode("\n", $term['synonyms']);
   }
   
-  $stored_term = db_fetch_object(db_query("SELECT * FROM {term_data} WHERE name='%s' AND vid=%d", $term['name'], $vid));
+  $stored_term = db_fetch_object(db_query("SELECT * FROM {term_data} td LEFT JOIN {term_hierarchy} th ON th.tid = td.tid WHERE name='%s' AND vid=%d  AND parent = %d", $term['name'], $vid, $parent));
   if($stored_term){
     $term['tid'] = $stored_term->tid;
   }
