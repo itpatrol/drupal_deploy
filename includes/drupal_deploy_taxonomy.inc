@@ -46,7 +46,8 @@ function drupal_deploy_import_taxonomy_items($data, $vocabulary_name = ''){
     
     $terms = $item['terms'];
     unset($item['terms']);
-    fpreach($item['node_types'] as $type){
+
+    foreach($item['node_types'] as $type){
       $item['nodes'][$type] = TRUE;
     }
     unset($item['node_types']);
