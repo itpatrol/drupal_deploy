@@ -54,8 +54,9 @@ function drupal_deploy_import_taxonomy_items($data, $vocabulary_name = ''){
     if($stored_vocabulary){
       $item['vid'] = $stored_vocabulary->vid;
     }
-    
+    print_r($item);
     $status = taxonomy_save_vocabulary($item);
+    exit();
     if($status == SAVED_UPDATED || $status == SAVED_NEW)
     {
       drupal_set_message(t('Vocabulary !name imported',array('!name' => $item['name'])));
