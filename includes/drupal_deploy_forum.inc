@@ -30,16 +30,20 @@ function drupal_deploy_export_forum_fetch_data(){
   $items = array();
   
   $terms = variable_get('forum_containers', FALSE);
+  $vocabulary_id = variable_get('forum_nav_vocabulary', FALSE);
   
-  $result = db_query("SELECT td.name, v.name as v_name FROM {term_data} td LEFT JOIN {vocabulary} v ON v.vid = td.vid WHERE td.tid IN (%s)", implode(",", $terms));
+  $stored_vocabulary = db_fetch_object(db_query("SELECT * FROM {vocabulary} WHERE vid=%d", $vocabulary_id));
+  
+  $items['vocabulary'] = $stored_vocabulary->name;
+  
+  $result = db_query("SELECT td.name, v.name as v_name FROM {term_data} td LEFT JOIN {vocabulary} v ON v.vid = td.vid WHERE td.tid IN (%s) and vid=%d", implode(",", $terms), $vocabulary_id);
 
   while ($db_item = db_fetch_object($result)) {
     $item = array(
       'name' => $db_item->name,
-      'vocabulary' => $db_item->v_name,
     );
 
-    $items[] = $item;    
+    $items['terms'][] = $item;    
   }
   
   return $items;
@@ -47,17 +51,18 @@ function drupal_deploy_export_forum_fetch_data(){
 
 function drupal_deploy_import_forum_items($data){
   $forum_containers = array();
-  foreach($data as $item){
-
-    $stored_vocabulary = db_fetch_object(db_query("SELECT * FROM {vocabulary} WHERE  name='%s'", $item['vocabulary']));
-    if($stored_vocabulary){
+  $vocabulary = $data['vocabulary'];
+  $stored_vocabulary = db_fetch_object(db_query("SELECT * FROM {vocabulary} WHERE  name='%s'", $data['vocabulary']));
+  if($stored_vocabulary){
+    foreach($data['terms'] as $item){
       $stored_term = db_fetch_object(db_query("SELECT * FROM {term_data} WHERE name='%s' AND vid=%d", $item['name'], $stored_vocabulary->vid));
-      
+        
       if($stored_term){
         $forum_containers[] = $stored_term->tid;
         drupal_set_message(t('Container !name imported',array('!name' => $stored_term->name)));
       }
     }
+    variable_set('forum_containers', $forum_containers);
+    variable_set('forum_nav_vocabulary', $stored_vocabulary->vid);
   }
-  variable_set('forum_containers', $forum_containers);
 }
