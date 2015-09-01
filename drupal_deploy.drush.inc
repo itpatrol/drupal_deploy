@@ -124,6 +124,11 @@ function drupal_deploy_export($type = '') {
       include_once(drupal_get_path('module', 'drupal_deploy') .'/includes/drupal_deploy_taxonomy.inc');
       drupal_deploy_export_taxonomy($filename);
       break;
+    case 'forum':
+      include_once(drupal_get_path('module', 'drupal_deploy') .'/includes/drupal_deploy_forum.inc');
+      drupal_deploy_export_forum($filename);
+      break;
+
   }
 }
 
@@ -160,6 +165,11 @@ function drupal_deploy_import($type = '', $option = '') {
       include_once(drupal_get_path('module', 'drupal_deploy') .'/includes/drupal_deploy_taxonomy.inc');
       drupal_deploy_import_taxonomy($filename);
       break;
+    case 'forum':
+      include_once(drupal_get_path('module', 'drupal_deploy') .'/includes/drupal_deploy_forum.inc');
+      drupal_deploy_import_forum($filename);
+      break;
+      
   }
 }
 
