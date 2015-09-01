@@ -36,7 +36,7 @@ function drupal_deploy_export_forum_fetch_data(){
   
   $items['vocabulary'] = $stored_vocabulary->name;
   
-  $result = db_query("SELECT td.name, v.name as v_name FROM {term_data} td LEFT JOIN {vocabulary} v ON v.vid = td.vid WHERE td.tid IN (%s) and vid=%d", implode(",", $terms), $vocabulary_id);
+  $result = db_query("SELECT * FROM {term_data} td WHERE tid IN (%s) and vid=%d", implode(",", $terms), $vocabulary_id);
 
   while ($db_item = db_fetch_object($result)) {
     $item = array(
