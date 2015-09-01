@@ -22,7 +22,7 @@ function drupal_deploy_import_forum($filename = ''){
   if(!$data = json_decode($data, TRUE)){
     drupal_set_message(t('Json decode error!'), 'error');
   }
-  drupal_deploy_import_forum_items($data, $vocabulary_name);
+  drupal_deploy_import_forum_items($data);
 }
 
 
@@ -43,4 +43,21 @@ function drupal_deploy_export_forum_fetch_data(){
   }
   
   return $items;
-}  
+}
+
+function drupal_deploy_import_forum_items($data){
+  $forum_containers = array();
+  foreach($data as $item){
+
+    $stored_vocabulary = db_fetch_object(db_query("SELECT * FROM {vocabulary} WHERE  name='%s'", $item['vocabulary']));
+    if($stored_vocabulary){
+      $stored_term = db_fetch_object(db_query("SELECT * FROM {term_data} WHERE name='%s' AND vid=%d", $item['name'], $stored_vocabulary->vid));
+      
+      if($stored_term){
+        $forum_containers[] = $stored_term->tid;
+        drupal_set_message(t('Container !name imported',array('!name' => $stored_term->name)));
+      }
+    }
+  }
+  variable_set('forum_containers', $forum_containers);
+}
