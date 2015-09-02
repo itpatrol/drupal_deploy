@@ -139,6 +139,7 @@ function drupal_deploy_export($type = '') {
       drupal_deploy_export_cck($filename);
       break;
     case 'users':
+      include_once(drupal_get_path('module', 'user') .'/user.pages.inc');
       include_once(drupal_get_path('module', 'drupal_deploy') .'/includes/drupal_deploy_users.inc');
       drupal_deploy_export_users($filename);
       break;
