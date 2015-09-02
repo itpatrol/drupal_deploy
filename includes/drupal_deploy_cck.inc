@@ -29,8 +29,11 @@ function drupal_deploy_import_cck_items($data)
 
   include_once('./'. drupal_get_path('module', 'content') .'/includes/content.admin.inc');
 
-
+  $content_instances = array();
+  
   foreach($data['instance'] as $item){
+    $content_instances[$item['field_name']] = $item['type_name'];
+    
     $existing_item = db_fetch_object(db_query("SELECT * FROM {" . content_instance_tablename() . "} WHERE field_name = '%s'", $item['field_name']));
     if($existing_item)
     {
@@ -52,14 +55,19 @@ function drupal_deploy_import_cck_items($data)
   
   foreach($data['fields'] as $item){  
     $existing_item = db_fetch_array(db_query("SELECT * FROM {" . content_field_tablename() . "} WHERE field_name = '%s'", $item['field_name']));
+    $item['columns'] = $item['db_columns'];
+    if(!isset($content_instances[$item['field_name']])){
+       drupal_set_message(t('Field !field_name skipped.', array('!field_name' => $item['field_name'])), 'warning');
+      continue;
+    }
+    
+    $item['type_name'] = $content_instances[$item['field_name']];  
     if($existing_item)
     {
       $existing_item['columns'] = unserialize($existing_item['db_columns']);
+      $existing_item['type_name'] = $item['type_name'];
       if(drupal_write_record(content_field_tablename(), $item, 'field_name'))
       {
-        $item['columns'] = $item['db_columns'];
-        print_r($existing_item);
-        print_r($item);        
         content_alter_schema((array)$existing_item, (array)$item);
         drupal_set_message(t('Field !field_name updated.', array('!field_name' => $item['field_name'])));
       }
@@ -68,8 +76,6 @@ function drupal_deploy_import_cck_items($data)
     {
       if(drupal_write_record(content_field_tablename(), $item))
       {
-        print_r($item);        
-        $item['columns'] = $item['db_columns'];
         content_alter_schema(array(), (array)$item);
         drupal_set_message(t('Field !field_name created.', array('!field_name' => $item['field_name'])));
       }
