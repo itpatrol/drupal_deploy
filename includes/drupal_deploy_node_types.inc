@@ -167,7 +167,7 @@ function drupal_deploy_export_node_types_fetch_data()
     
       $fields = _content_type_info();
       print_r($groups);
-      print_r($fields[$db_item->type]);
+      print_r($fields);
     }
   
     $item = array(
