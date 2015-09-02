@@ -50,7 +50,7 @@ function drupal_deploy_export_cck_fetch_data()
 {
   $items = array();
   $result = db_query("SELECT * FROM {" . content_field_tablename() . "} ORDER BY field_name");
-  while ($db_item = db_fetch_object($result)) {
+  while ($db_item = db_fetch_array($result)) {
     
     $db_item['global_settings'] = unserialize($db_item['global_settings']);
     $db_item['db_columns'] = unserialize($db_item['db_columns']);
