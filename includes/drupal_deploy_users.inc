@@ -91,7 +91,7 @@ function drupal_deploy_export_users_fetch_data()
 function drupal_deploy_export_get_user_forms($account){
   $result = array();
   foreach (module_implements('user') as $module) {
-    if ($user_form = module_invoke($module, 'user', 'form', $account)) {
+    if ($user_form = module_invoke($module, 'user', 'form', (array)$account, $account)) {
       $result += $user_form;
     }
   }
