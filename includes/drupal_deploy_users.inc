@@ -98,7 +98,7 @@ function drupal_deploy_export_get_user_forms($account){
     $function = $module . '_user';
     $edit = (array)$account;
     if (function_exists($function) && ($data = $function('form', $edit, $account, 'account'))) {
-      $groups = array_merge_recursive($data, $groups);
+      $groups[$module] = $data;
       
     }
   }
