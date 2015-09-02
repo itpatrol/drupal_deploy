@@ -128,7 +128,10 @@ function drupal_deploy_export($type = '') {
       include_once(drupal_get_path('module', 'drupal_deploy') .'/includes/drupal_deploy_forum.inc');
       drupal_deploy_export_forum($filename);
       break;
-
+    case 'cck':
+      include_once(drupal_get_path('module', 'drupal_deploy') .'/includes/drupal_deploy_cck.inc');
+      drupal_deploy_export_cck($filename);
+      break;
   }
 }
 
@@ -169,6 +172,10 @@ function drupal_deploy_import($type = '', $option = '') {
       include_once(drupal_get_path('module', 'drupal_deploy') .'/includes/drupal_deploy_forum.inc');
       drupal_deploy_import_forum($filename);
       break;
+    case 'cck':
+      include_once(drupal_get_path('module', 'drupal_deploy') .'/includes/drupal_deploy_cck.inc');
+      drupal_deploy_import_cck($filename);
+      break;      
       
   }
 }
