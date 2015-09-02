@@ -31,7 +31,6 @@ function drupal_deploy_import_cck_items($data)
     $existing_item = db_fetch_object(db_query("SELECT * FROM {" . content_instance_tablename() . "} WHERE field_name = '%s'", $item['field_name']));
     if($existing_item)
     {
-      
       if(drupal_write_record(content_instance_tablename(), $item, 'field_name'))
       {
         drupal_set_message(t('Field instance !field_name updated.', array('!field_name' => $item['field_name'])));
@@ -41,6 +40,7 @@ function drupal_deploy_import_cck_items($data)
     {
       if(drupal_write_record(content_instance_tablename(), $item))
       {
+        
         drupal_set_message(t('Field instance !field_name created.', array('!field_name' => $item['field_name'])));
       }
     }
@@ -48,12 +48,13 @@ function drupal_deploy_import_cck_items($data)
 
   
   foreach($data['fields'] as $item){  
-    $existing_item = db_fetch_object(db_query("SELECT * FROM {" . content_field_tablename() . "} WHERE field_name = '%s'", $item['field_name']));
+    $existing_item = db_fetch_array(db_query("SELECT * FROM {" . content_field_tablename() . "} WHERE field_name = '%s'", $item['field_name']));
     if($existing_item)
     {
-      
+      $existing_item['db_columns'] = unserialize($existing_item['db_columns']);
       if(drupal_write_record(content_field_tablename(), $item, 'field_name'))
       {
+        content_alter_schema((array)$existing_item, (array)$item);
         drupal_set_message(t('Field !field_name updated.', array('!field_name' => $item['field_name'])));
       }
     }
@@ -61,10 +62,15 @@ function drupal_deploy_import_cck_items($data)
     {
       if(drupal_write_record(content_field_tablename(), $item))
       {
+        content_alter_schema(array(), (array)$item);
         drupal_set_message(t('Field !field_name created.', array('!field_name' => $item['field_name'])));
       }
     }
   }
+  
+  
+  content_clear_type_cache(TRUE);
+  menu_rebuild();
 }
 
 function drupal_deploy_export_cck_fetch_data()
