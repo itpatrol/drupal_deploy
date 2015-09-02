@@ -55,7 +55,7 @@ function drupal_deploy_export_cck_fetch_data()
     $db_item['global_settings'] = unserialize($db_item['global_settings']);
     $db_item['db_columns'] = unserialize($db_item['db_columns']);
     
-    $items[] = $item;
+    $items[] = $db_item;
   }
   return $items;
 }
