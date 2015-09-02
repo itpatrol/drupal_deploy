@@ -27,6 +27,9 @@ function drupal_deploy_import_cck($filename){
 function drupal_deploy_import_cck_items($data)
 {
 
+  include_once('./'. drupal_get_path('module', 'content') .'/includes/content.admin.inc');
+
+
   foreach($data['instance'] as $item){
     $existing_item = db_fetch_object(db_query("SELECT * FROM {" . content_instance_tablename() . "} WHERE field_name = '%s'", $item['field_name']));
     if($existing_item)
