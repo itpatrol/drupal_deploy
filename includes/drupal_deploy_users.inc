@@ -93,7 +93,8 @@ function drupal_deploy_export_get_user_forms($account){
   foreach (module_implements('user') as $module) {
     // $edit and $account need to be passed by reference.
     $function = $module . '_user';
-    if (function_exists($function) && ($data = $function('form', (array)$account, $account, 'account'))) {
+    $edit = (array)$account;
+    if (function_exists($function) && ($data = $function('form', $edit, $account, 'account'))) {
       $groups = array_merge_recursive($data, $groups);
       
     }
