@@ -18,6 +18,7 @@ function drupal_deploy_drush_command() {
       'drush dde taxonomy --name=Forums' => dt('Export taxonomy vocabulary Forums.'),
       'drush dde forum' => dt('Export forum container links to taxonomy tid.'),
       'drush dde cck' => dt('Export cck fields.'),
+      'drush dde users' => dt('Export users.'),
     ),
     'aliases' => array('dde'),
     'arguments' => array(
@@ -43,6 +44,7 @@ function drupal_deploy_drush_command() {
       'drush ddi taxonomy --name=Forums' => dt('Import taxonomy vocabulary Forums.'),      
       'drush ddi forum' => dt('Import forum container links to taxonomy tid.'),
       'drush ddi cck' => dt('Import cck fields.'),
+      'drush ddi users' => dt('Import users.'),      
       
     ),
     'aliases' => array('ddi'),
@@ -136,6 +138,10 @@ function drupal_deploy_export($type = '') {
       include_once(drupal_get_path('module', 'drupal_deploy') .'/includes/drupal_deploy_cck.inc');
       drupal_deploy_export_cck($filename);
       break;
+    case 'users':
+      include_once(drupal_get_path('module', 'drupal_deploy') .'/includes/drupal_deploy_users.inc');
+      drupal_deploy_export_users($filename);
+      break;
   }
 }
 
@@ -179,8 +185,11 @@ function drupal_deploy_import($type = '', $option = '') {
     case 'cck':
       include_once(drupal_get_path('module', 'drupal_deploy') .'/includes/drupal_deploy_cck.inc');
       drupal_deploy_import_cck($filename);
-      break;      
-      
+      break;  
+    case 'users':
+      include_once(drupal_get_path('module', 'drupal_deploy') .'/includes/drupal_deploy_users.inc');
+      drupal_deploy_import_users($filename);
+      break;
   }
 }
 
