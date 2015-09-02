@@ -28,8 +28,6 @@ function drupal_deploy_import_cck_items($data)
 {
 
   foreach($data['instance'] as $item){
-    echo "instance: ";
-    print_r($item);
     $existing_item = db_fetch_object(db_query("SELECT * FROM {" . content_instance_tablename() . "} WHERE field_name = '%s'", $item['field_name']));
     if($existing_item)
     {
@@ -41,7 +39,7 @@ function drupal_deploy_import_cck_items($data)
     }
     else
     {
-      if(drupal_write_record(content_field_tablename(), $item))
+      if(drupal_write_record(content_instance_tablename(), $item))
       {
         drupal_set_message(t('Field instance !field_name created.', array('!field_name' => $item['field_name'])));
       }
@@ -49,9 +47,7 @@ function drupal_deploy_import_cck_items($data)
   }
 
   
-  foreach($data['fields'] as $item){
-    echo "field: ";
-    print_r($item);    
+  foreach($data['fields'] as $item){  
     $existing_item = db_fetch_object(db_query("SELECT * FROM {" . content_field_tablename() . "} WHERE field_name = '%s'", $item['field_name']));
     if($existing_item)
     {
