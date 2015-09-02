@@ -16,6 +16,8 @@ function drupal_deploy_drush_command() {
       'drush dde roles' => dt('Export roles.'),
       'drush dde node_types --type=blog' => dt('Export node type blog.'),
       'drush dde taxonomy --name=Forums' => dt('Export taxonomy vocabulary Forums.'),
+      'drush dde forum' => dt('Export forum container links to taxonomy tid.'),
+      'drush dde cck' => dt('Export cck fields.'),
     ),
     'aliases' => array('dde'),
     'arguments' => array(
@@ -39,6 +41,8 @@ function drupal_deploy_drush_command() {
       'drush ddi roles' => dt('Import roles.'),
       'drush ddi node_types --type=blog' => dt('Import node type blog.'),
       'drush ddi taxonomy --name=Forums' => dt('Import taxonomy vocabulary Forums.'),      
+      'drush ddi forum' => dt('Import forum container links to taxonomy tid.'),
+      'drush ddi cck' => dt('Import cck fields.'),
       
     ),
     'aliases' => array('ddi'),
