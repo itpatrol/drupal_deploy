@@ -86,9 +86,9 @@ function drupal_deploy_export_get_variables($account){
   global $language;
   
   $language->language = 'en';
-  $form_id = 'user_edit_form';
+  $form_id = 'user_profile_form';
   $form_state = array();
-  $form = user_edit_form($form_state, $account->uid, (array)$account);
+  $form = user_profile_form($form_state, $account);
   drupal_prepare_form($form_id, $form, $form_state);
 
   $return = array();
