@@ -89,11 +89,14 @@ function drupal_deploy_export_users_fetch_data()
 }
 
 function drupal_deploy_export_get_user_forms($account){
-  $result = array();
+  $groups = array();
   foreach (module_implements('user') as $module) {
-    if ($user_form = module_invoke($module, 'user', 'form', (array)$account, $account)) {
-      $result += $user_form;
+    // $edit and $account need to be passed by reference.
+    $function = $module . '_user';
+    if (function_exists($function) && ($data = $function('form', (array)$account, $account, 'account'))) {
+      $groups = array_merge_recursive($data, $groups);
+      
     }
   }
-  return $result;
+  return $groups;
 }
