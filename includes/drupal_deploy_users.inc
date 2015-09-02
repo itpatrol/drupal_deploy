@@ -65,9 +65,11 @@ function drupal_deploy_export_users_fetch_data()
   $items = array();
   $result = db_query("SELECT * FROM {users} ORDER BY name");
   while ($db_item = db_fetch_object($result)) {
-    $user = user_load($db_item->uid);
+    $account = user_load($db_item->uid);
     print_r($user);
     print_r($db_item);
+    $data = drupal_deploy_export_get_variables($account);
+    print_r($data);
     $item = array(
       'name' => $db_item->name,
       'permissions' => $permission,
@@ -77,4 +79,79 @@ function drupal_deploy_export_users_fetch_data()
   }
     exit();  
   return $items;
+}
+
+function drupal_deploy_export_get_variables($account){
+  
+  global $language;
+  
+  $language->language = 'en';
+  $form_id = 'user_edit_form';
+  $form_state = array();
+  $form = user_edit_form($form_state, $account->uid, (array)$account);
+  drupal_prepare_form($form_id, $form, $form_state);
+
+  $return = array();
+  
+  unset($form['identity']);
+  unset($form['submission']);
+  unset($form['old_type']);
+  unset($form['orig_type']);
+  unset($form['module']);
+  unset($form['custom']);
+  unset($form['modified']);
+  unset($form['locked']);
+  unset($form['submit']);
+  unset($form['reset']);  
+  unset($form['delete']);
+  unset($form['form_id']);
+
+  $tmp_array = array();
+  foreach($form as $key => $val){
+    if($key[0] == '#')
+    {
+      continue;
+    }else{
+      $return[$key] = _process_form_variable($val);  
+    }
+  }
+  
+  
+  return $return;
+}
+
+function _process_form_variable($array)
+{
+  if(isset($array['#type'])){
+    switch($array['#type']){
+      case 'fieldset':
+      case 'item':
+        $return = array();
+        foreach($array as $key => $val){
+          if($key[0] == '#')
+          {
+            continue;
+          }else{
+            $return[$key] = _process_form_variable($val);
+          }
+        }
+        return $return;
+        break;
+      case 'checkbox':
+      case 'textarea':
+      case 'textfield':
+        return $array['#default_value'];
+        break;
+      case 'radios':
+      case 'select':
+        return $array['#options'][$array['#default_value']];
+        break;
+      case 'checkboxes':
+        $return = array();
+        foreach($array['#default_value'] as $val){
+           $return[] =  $array['#options'][$val];
+        }
+        return $return;
+    }
+  }
 }
