@@ -72,10 +72,9 @@ function drupal_deploy_export_users_fetch_data()
   $items = array();
   $result = db_query("SELECT * FROM {users} ORDER BY name");
   while ($db_item = db_fetch_object($result)) {
-    $account = user_load($db_item->uid);
-    $data = drupal_deploy_export_get_user_forms($account);
+    $data = drupal_deploy_export_get_user_forms($db_item->uid);
 
-    $result_roles = db_query("SELECT * FROM {users_roles} ur LEFT JOIN {role} r ON r.rid = ur.rid ORDER BY r.name");
+    $result_roles = db_query("SELECT r.* FROM {users_roles} ur LEFT JOIN {role} r ON r.rid = ur.rid WHERE ur.uid = %d ORDER BY r.name", $db_item->uid);
     $roles = array();
     while ($role_item = db_fetch_object($result)) {
       $roles[] = $role_item->name;
@@ -108,7 +107,8 @@ function drupal_deploy_export_users_fetch_data()
   return $items;
 }
 
-function drupal_deploy_export_get_user_forms($account){
+function drupal_deploy_export_get_user_forms($uid){
+  $account = user_load($uid);
   $groups = array();
   foreach (module_implements('user') as $module) {
     if( in_array($module, array('user','system', 'locale'))){
