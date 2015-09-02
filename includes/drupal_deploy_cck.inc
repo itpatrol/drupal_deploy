@@ -28,6 +28,8 @@ function drupal_deploy_import_cck_items($data)
 {
 
   foreach($data['instance'] as $item){
+    echo "instance: ";
+    print_r($item);
     $existing_item = db_fetch_object(db_query("SELECT * FROM {" . content_instance_tablename() . "} WHERE field_name = '%s'", $item['field_name']));
     if($existing_item)
     {
@@ -48,6 +50,8 @@ function drupal_deploy_import_cck_items($data)
 
   
   foreach($data['fields'] as $item){
+    echo "field: ";
+    print_r($item);    
     $existing_item = db_fetch_object(db_query("SELECT * FROM {" . content_field_tablename() . "} WHERE field_name = '%s'", $item['field_name']));
     if($existing_item)
     {
