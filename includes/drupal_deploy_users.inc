@@ -107,6 +107,7 @@ function drupal_deploy_export_get_user_forms($account){
 
 function _process_form_variable($array)
 {
+  print_r($array);
   if(isset($array['#type'])){
     switch($array['#type']){
       case 'fieldset':
