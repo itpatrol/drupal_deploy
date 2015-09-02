@@ -67,7 +67,7 @@ function drupal_deploy_export_users_fetch_data()
   while ($db_item = db_fetch_object($result)) {
     $user = user_load($db_item->uid);
     print_r($user);
-    exit();
+
     $item = array(
       'name' => $db_item->name,
       'permissions' => $permission,
@@ -75,5 +75,6 @@ function drupal_deploy_export_users_fetch_data()
 
     $items[] = $item;
   }
+    exit();  
   return $items;
 }
