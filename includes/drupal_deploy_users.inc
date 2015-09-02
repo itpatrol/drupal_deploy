@@ -92,7 +92,7 @@ function drupal_deploy_export_get_user_forms($account){
   $groups = array();
   foreach (module_implements('user') as $module) {
     // $edit and $account need to be passed by reference.
-    if( in_array($module, array('user','system')){
+    if( in_array($module, array('user','system', 'locale')){
       continue;
     }
     $function = $module . '_user';
