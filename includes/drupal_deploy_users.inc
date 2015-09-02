@@ -73,17 +73,37 @@ function drupal_deploy_export_users_fetch_data()
   $result = db_query("SELECT * FROM {users} ORDER BY name");
   while ($db_item = db_fetch_object($result)) {
     $account = user_load($db_item->uid);
-    print_r($user);
-    print_r($db_item);
     $data = drupal_deploy_export_get_user_forms($account);
-    print_r($data);
+
+    $result_roles = db_query("SELECT * FROM {users_roles} ur LEFT JOIN {role} r ON r.rid = ur.rid ORDER BY r.name");
+    $roles = array();
+    while ($role_item = db_fetch_object($result)) {
+      $roles[] = $role_item->name;
+    }
     $item = array(
       'name' => $db_item->name,
-      'permissions' => $permission,
+      'pass' => $db_item->pass,
+      'mail' => $db_item->mail,
+      'mode' => $db_item->mode,
+      'sort' => $db_item->sort,
+      'theme' => $db_item->theme,
+      'signature' =>  $db_item->signature,
+      'signature_format' =>  $db_item->signature,
+      'created' => $db_item->created,
+      'access' => $db_item->access,
+      'login' => $db_item->login,
+      'status' => $db_item->status,
+      'timezone' => $db_item->timezone,
+      'language' => $db_item->language,
+      'picture' => $db_item->picture,
+      'init' => $db_item->init,
+      'roles' => $roles,
+      'modules' => $data,
     );
 
     $items[] = $item;
   }
+  print_r($items);
     exit();  
   return $items;
 }
@@ -91,7 +111,6 @@ function drupal_deploy_export_users_fetch_data()
 function drupal_deploy_export_get_user_forms($account){
   $groups = array();
   foreach (module_implements('user') as $module) {
-    // $edit and $account need to be passed by reference.
     if( in_array($module, array('user','system', 'locale'))){
       continue;
     }
