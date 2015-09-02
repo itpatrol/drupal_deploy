@@ -104,8 +104,6 @@ function drupal_deploy_export_users_fetch_data()
 
     $items[] = $item;
   }
-  print_r($items);
-    exit();  
   return $items;
 }
 
