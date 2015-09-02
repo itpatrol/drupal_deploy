@@ -159,17 +159,6 @@ function drupal_deploy_export_node_types_fetch_data()
   }
   while ($db_item = db_fetch_object($result)) {
     
-    if (module_exists('content')) {
-
-      if (module_exists('fieldgroup')) {
-        $groups = fieldgroup_groups($db_item->type);
-      }
-    
-      $fields = _content_type_info();
-      print_r($groups);
-      print_r($fields);
-    }
-  
     $item = array(
       'type' => $db_item->type,
       'name' => $db_item->name,
