@@ -98,7 +98,17 @@ function drupal_deploy_export_get_user_forms($account){
     $function = $module . '_user';
     $edit = (array)$account;
     if (function_exists($function) && ($data = $function('form', $edit, $account, 'account'))) {
-      $groups[$module] = _process_form_variable($data);
+      $return = array();
+      foreach($data as $key => $val){
+        if($key[0] == '#')
+        {
+          continue;
+        }else{
+          $return[$key] = _process_form_variable($val);  
+        }
+      }
+  
+      $groups[$module] = $return;
       
     }
   }
@@ -107,7 +117,6 @@ function drupal_deploy_export_get_user_forms($account){
 
 function _process_form_variable($array)
 {
-  print_r($array);
   if(isset($array['#type'])){
     switch($array['#type']){
       case 'fieldset':
