@@ -98,9 +98,45 @@ function drupal_deploy_export_get_user_forms($account){
     $function = $module . '_user';
     $edit = (array)$account;
     if (function_exists($function) && ($data = $function('form', $edit, $account, 'account'))) {
-      $groups[$module] = $data;
+      $groups[$module] = _process_form_variable($data);
       
     }
   }
   return $groups;
+}
+
+function _process_form_variable($array)
+{
+  if(isset($array['#type'])){
+    switch($array['#type']){
+      case 'fieldset':
+      case 'item':
+        $return = array();
+        foreach($array as $key => $val){
+          if($key[0] == '#')
+          {
+            continue;
+          }else{
+            $return[$key] = _process_form_variable($val);
+          }
+        }
+        return $return;
+        break;
+      case 'checkbox':
+      case 'textarea':
+      case 'textfield':
+        return $array['#default_value'];
+        break;
+      case 'radios':
+      case 'select':
+        return $array['#options'][$array['#default_value']];
+        break;
+      case 'checkboxes':
+        $return = array();
+        foreach($array['#default_value'] as $val){
+           $return[] =  $array['#options'][$val];
+        }
+        return $return;
+    }
+  }
 }
