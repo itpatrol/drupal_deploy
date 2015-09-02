@@ -54,9 +54,10 @@ function drupal_deploy_import_cck_items($data)
     $existing_item = db_fetch_array(db_query("SELECT * FROM {" . content_field_tablename() . "} WHERE field_name = '%s'", $item['field_name']));
     if($existing_item)
     {
-      $existing_item['db_columns'] = unserialize($existing_item['db_columns']);
+      $existing_item['columns'] = unserialize($existing_item['db_columns']);
       if(drupal_write_record(content_field_tablename(), $item, 'field_name'))
       {
+        $item['columns'] = $item['db_columns'];
         print_r($existing_item);
         print_r($item);        
         content_alter_schema((array)$existing_item, (array)$item);
@@ -68,7 +69,7 @@ function drupal_deploy_import_cck_items($data)
       if(drupal_write_record(content_field_tablename(), $item))
       {
         print_r($item);        
-       
+        $item['columns'] = $item['db_columns'];
         content_alter_schema(array(), (array)$item);
         drupal_set_message(t('Field !field_name created.', array('!field_name' => $item['field_name'])));
       }
