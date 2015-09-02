@@ -76,7 +76,7 @@ function drupal_deploy_export_users_fetch_data()
 
     $result_roles = db_query("SELECT r.* FROM {users_roles} ur LEFT JOIN {role} r ON r.rid = ur.rid WHERE ur.uid = %d ORDER BY r.name", $db_item->uid);
     $roles = array();
-    while ($role_item = db_fetch_object($result)) {
+    while ($role_item = db_fetch_object($result_roles)) {
       $roles[] = $role_item->name;
     }
     $item = array(
