@@ -26,7 +26,28 @@ function drupal_deploy_import_cck($filename){
 
 function drupal_deploy_import_cck_items($data)
 {
-  foreach($data as $item){
+
+  foreach($data['instance'] as $item){
+    $existing_item = db_fetch_object(db_query("SELECT * FROM {" . content_instance_tablename() . "} WHERE field_name = '%s'", $item['field_name']));
+    if($existing_item)
+    {
+      
+      if(drupal_write_record(content_instance_tablename(), $item, 'field_name'))
+      {
+        drupal_set_message(t('Field instance !field_name updated.', array('!field_name' => $item['field_name'])));
+      }
+    }
+    else
+    {
+      if(drupal_write_record(content_field_tablename(), $item))
+      {
+        drupal_set_message(t('Field instance !field_name created.', array('!field_name' => $item['field_name'])));
+      }
+    }
+  }
+
+  
+  foreach($data['fields'] as $item){
     $existing_item = db_fetch_object(db_query("SELECT * FROM {" . content_field_tablename() . "} WHERE field_name = '%s'", $item['field_name']));
     if($existing_item)
     {
@@ -51,11 +72,19 @@ function drupal_deploy_export_cck_fetch_data()
   $items = array();
   $result = db_query("SELECT * FROM {" . content_field_tablename() . "} ORDER BY field_name");
   while ($db_item = db_fetch_array($result)) {
-    
     $db_item['global_settings'] = unserialize($db_item['global_settings']);
     $db_item['db_columns'] = unserialize($db_item['db_columns']);
     
-    $items[] = $db_item;
+    $items['fields'][] = $db_item;
   }
+
+  $result = db_query("SELECT * FROM {" . content_instance_tablename() . "} ORDER BY field_name");
+  while ($db_item = db_fetch_array($result)) {
+    $db_item['widget_settings'] = unserialize($db_item['widget_settings']);
+    $db_item['display_settings'] = unserialize($db_item['display_settings']);
+    
+    $items['instance'][] = $db_item;
+  }
+
   return $items;
 }
