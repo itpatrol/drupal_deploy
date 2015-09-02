@@ -79,8 +79,10 @@ function drupal_deploy_export_users_fetch_data()
     while ($role_item = db_fetch_object($result_roles)) {
       $roles[] = $role_item->name;
     }
-    
-    $pic = base64_encode(file_get_contents($db_item->picture));
+    $pic = '';
+    if(is_file($db_item->picture)){
+      $pic = base64_encode(file_get_contents($db_item->picture));
+    }
     $item = array(
       'name' => $db_item->name,
       'pass' => $db_item->pass,
