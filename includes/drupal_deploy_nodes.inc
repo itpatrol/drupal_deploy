@@ -56,6 +56,8 @@ function drupal_deploy_export_get_node_forms($nid){
   if (!function_exists($form_id)) {
     $module = node_get_types('module', $node);
     echo $module;
+    $account = user_load(1);
+    $access = module_invoke($module, 'access', 'update', $node, $account);
   }
   $form = $form_id($form_state, $node);
   drupal_prepare_form($form_id, $form, $form_state);
