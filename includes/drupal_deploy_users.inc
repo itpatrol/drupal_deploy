@@ -83,6 +83,7 @@ function drupal_deploy_import_users_items($data)
     $modules = $item['modules'];
     foreach($data as $module => $settings){
       print_r($settings);
+      print_r($modules['module']);
       $modules['module'] = _replace_values($modules['module'], $settings);
       $modules['module'] = _prepare_item_values_to_save($modules['module'], $settings);
       print_r($modules['module']);
