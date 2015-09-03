@@ -54,7 +54,7 @@ function drupal_deploy_import_users_items($data)
           $role_data = db_fetch_object(db_query("SELECT * FROM {role} WHERE name = '%s'", $role));
           print_r($role_data);
           if($role_data){
-            $user_roles = array($item['uid'], $role_data->rid);
+            $user_roles = array('uid' => $item['uid'], 'rid' => $role_data->rid);
             if(drupal_write_record('users_roles', $user_roles)){
               drupal_set_message(t('Role !role permissions granted to !user.', array('!role' => $role_data->name, '!user' => $item['name'])));
             }
@@ -70,7 +70,7 @@ function drupal_deploy_import_users_items($data)
         foreach($item['roles'] as $role){
           $role_data = db_fetch_object(db_query("SELECT * FROM {role} WHERE name = '%s'", $role));
           if($role_data){
-            $user_roles = array($item['uid'], $role_data->rid);
+            $user_roles = array('uid' => $item['uid'], 'rid' => $role_data->rid);
             if(drupal_write_record('users_roles', $user_roles)){
               drupal_set_message(t('Role !role permissions granted to !user.', array('!role' => $role_data->name, '!user' => $item['name'])));
             }
