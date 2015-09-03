@@ -79,8 +79,10 @@ function drupal_deploy_import_users_items($data)
     }
     
     $data = drupal_deploy_import_get_user_forms($item['uid']);
+    print_r($data);
     $modules = $item['modules'];
     foreach($data as $module => $settings){
+      print_r($settings);
       $modules['module'] = _replace_values($modules['module'], $settings);
       $modules['module'] = _prepare_item_values_to_save($modules['module'], $settings);
       print_r($modules['module']);
