@@ -34,7 +34,7 @@ function drupal_deploy_export_nodes_fetch_data(){
   }
   
   $items = array();
-  $result = db_query("SELECT * FROM {node} ORDER BY title");
+  $result = db_query("SELECT * FROM {node} ORDER BY title LIMIT 10");
   while ($db_item = db_fetch_object($result)) {
     $data = drupal_deploy_export_get_node_forms($db_item->nid);
   }
@@ -59,5 +59,4 @@ function drupal_deploy_export_get_node_forms($nid){
   drupal_prepare_form($form_id, $form, $form_state);
   $result = drupal_deploy_export_process_form($form);
   print_r($result);
-  exit();
 }
