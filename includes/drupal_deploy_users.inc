@@ -31,7 +31,7 @@ function drupal_deploy_import_users_items($data)
     $existing_item = db_fetch_object(db_query("SELECT * FROM {users} WHERE name = '%s'", $item['name']));
     if($existing_item)
     {
-      $item['uid'] = $existing_item;
+      $item['uid'] = $existing_item->uid;
       
       $filename = $item['picture'];
       $info = pathinfo($item['picture']);
