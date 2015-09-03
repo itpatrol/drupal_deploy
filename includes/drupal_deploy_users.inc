@@ -37,7 +37,7 @@ function drupal_deploy_import_users_items($data)
       $info = pathinfo($item['picture']);
       $directory = variable_get('user_picture_path', 'pictures');
       
-      $destination = $directory . '/picture-' . $item['uid'] . '.' . $info ['extension'];
+      $directory = file_directory_path() . '/' . variable_get('user_picture_path', 'pictures');
       if(file_exists($destination)){
         file_delete($destination);
       }
@@ -78,7 +78,7 @@ function drupal_deploy_import_users_items($data)
         }
         $filename = $item['picture'];
         $info = pathinfo($item['picture']);
-        $directory = variable_get('user_picture_path', 'pictures');
+        $directory = file_directory_path() . '/' . variable_get('user_picture_path', 'pictures');
         
         $destination = $directory . '/picture-' . $item['uid'] . '.' . $info ['extension'];
         if(file_exists($destination)){
