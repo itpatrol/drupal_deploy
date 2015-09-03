@@ -53,7 +53,12 @@ function drupal_deploy_export_get_node_forms($nid){
   $node = node_load($nid);
   $form_state = array();
   $form_id = $node->type . '_node_form';
+  if (!function_exists($form_id)) {
+    $module = node_get_types('module', $node);
+    echo $module;
+  }
   $form = $form_id($form_state, $node);
   drupal_prepare_form($form_id, $form, $form_state);
   print_r($form);
+  exit();
 }
