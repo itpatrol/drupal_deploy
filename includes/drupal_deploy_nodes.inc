@@ -51,6 +51,7 @@ function drupal_deploy_export_get_node_forms($nid){
   $language->language = 'en';
     
   $node = node_load($nid);
+  print_r($node);
   $form_state = array();
   $function = $node->type . '_form'; 
   $form_id = $node->type . '_node_form';
