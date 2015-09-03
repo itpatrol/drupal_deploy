@@ -26,6 +26,12 @@ function drupal_deploy_import_users($filename){
 
 function drupal_deploy_import_users_items($data)
 {
+  global $user;
+  if ($user->uid != 1) {
+    drush_log('dde users really only works as user #1. Use the "drush -u 1 " option on the commandline, or mysterious things may fail due to permissions during the node creation process. User was ' . $user->uid . ' - switching to uid1 now', 'notice');
+    $user = user_load(1);
+  }
+  
   foreach($data as $item){
     print_r($item);
     $existing_item = db_fetch_object(db_query("SELECT * FROM {users} WHERE name = '%s'", $item['name']));
@@ -70,6 +76,14 @@ function drupal_deploy_import_users_items($data)
       file_put_contents($destination, base64_decode($item['picture_data']));
       $item['picture'] = $destination;
       drupal_write_record('users', $item, 'uid');
+    }
+    
+    $data = drupal_deploy_import_get_user_forms($item['uid']);
+    $modules = $item['modules'];
+    foreach($data as $module => $settings){
+      $modules['module'] = _replace_values($modules['module'], $settings);
+      $modules['module'] = _prepare_item_values_to_save($modules['module'], $settings);
+      print_r($modules['module']);
     }
   }
 }
@@ -122,6 +136,135 @@ function drupal_deploy_export_users_fetch_data()
     $items[] = $item;
   }
   return $items;
+}
+
+function _prepare_item_values_to_save($item, $values_options){
+  $result = array_diff($item, $values_options);
+  foreach($values_options as $key => $val){
+    if(is_array($val)){
+      if(array_key_exists('#tree',$val)){
+        if($val['#tree']){
+          $result[$key] = _prepare_item_values_to_save($item[$key],$values_options[$key]);
+        }
+        else
+        {
+          $tmp_arr = _prepare_item_values_to_save($item[$key],$values_options[$key]);
+          foreach($tmp_arr as $tkey => $tval){
+            $result[$tkey] = $tval;
+          }
+        }
+      }
+      else{
+        $result[$key] = $item[$key];
+      }
+    } else{
+      $result[$key] = $item[$key];
+    }
+  }
+  if(array_key_exists('#tree',$result)){
+    unset($result['#tree']);
+  }
+  return $result;
+}
+
+function _replace_values($item, $values_options){
+  if(is_array($values_options)){
+    $values_array = FALSE;
+    foreach($values_options as $key => $val){
+      if(is_array($val)){
+        $values_array = TRUE;
+        $item[$key] = _replace_values($item[$key],$values_options[$key]);
+      }
+    }
+    if($values_array == FALSE){
+      $result = NULL;
+      foreach($values_options as $key => $val){
+        if(is_array($item)){
+          if($val == TRUE){
+            $result = FALSE;
+            break;
+          }
+          foreach($item as $item_val){
+            if($item_val == $val){
+              $result[] = $key;
+            }
+          }
+        }else{
+          if($item == $val){
+            return $key;
+          }
+        }
+      }
+      if(!$result){
+        return $item;
+      }     
+      return $result;
+    }
+  }
+  return $item;
+}
+
+function drupal_deploy_import_get_user_forms($uid){
+  $account = user_load($uid);
+  $groups = array();
+  foreach (module_implements('user') as $module) {
+    if( in_array($module, array('user','system', 'locale'))){
+      continue;
+    }
+    $function = $module . '_user';
+    $edit = (array)$account;
+    if (function_exists($function) && ($data = $function('form', $edit, $account, 'account'))) {
+      $return = array();
+      foreach($data as $key => $val){
+        if($key[0] == '#')
+        {
+          continue;
+        }else{
+          $return[$key] = _process_form_variable_import($val);  
+        }
+      }
+  
+      $groups[$module] = $return;
+      
+    }
+  }
+  return $groups;
+}
+
+function _process_form_variable_import($array)
+{
+  if(isset($array['#type'])){
+    switch($array['#type']){
+      case 'fieldset':
+      case 'item':
+        $return = array();
+        if($array['#tree']){
+          $return['#tree'] = $array['#tree'];
+        }else{
+          $return['#tree'] = FALSE;
+        }
+        foreach($array as $key => $val){
+          if($key[0] == '#')
+          {
+            continue;
+          }else{
+            $return[$key] = _process_form_variable_import($val);
+          }
+        }
+        return $return;
+        break;
+      case 'checkbox':
+      case 'textarea':
+      case 'textfield':
+        return TRUE;
+        break;
+      case 'radios':
+      case 'select':
+      case 'checkboxes':
+        return $array['#options'];
+        break;
+    }
+  }
 }
 
 function drupal_deploy_export_get_user_forms($uid){
