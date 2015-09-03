@@ -20,7 +20,7 @@ function drupal_deploy_drush_command() {
       'drush dde cck' => dt('Export cck fields.'),
       'drush dde users' => dt('Export users.'),
       'drush dde imagecache' => dt('Export imagecache presets.'),
-      'drush dde nodes' => dt('Export nodes with comments.'),
+      'drush dde nodes --nid=1,2,3' => dt('Export nodes 1,2,3 with comments and revisions.'),
     ),
     'aliases' => array('dde'),
     'arguments' => array(
@@ -31,6 +31,7 @@ function drupal_deploy_drush_command() {
       'name' => 'Menu or Vocabulary name',
       'theme' => 'Theme name',
       'type' => 'Node type',
+      'nid' => 'Node id or ids',
     ),
   );
 
@@ -48,7 +49,7 @@ function drupal_deploy_drush_command() {
       'drush ddi cck' => dt('Import cck fields.'),
       'drush ddi users' => dt('Import users.'),
       'drush ddi imagecache' => dt('Import imagecache presets.'),
-      'drush ddi nodes' => dt('Import nodes with comments.'),
+      'drush ddi nodes' => dt('Import nodes with comments and revisions.'),
     ),
     'aliases' => array('ddi'),
     'arguments' => array(
@@ -58,7 +59,8 @@ function drupal_deploy_drush_command() {
       'file' => 'File to import data from.',
       'name' => 'Menu or Vocabulary name',
       'theme' => 'Theme name',
-      'type' => 'Node type',          
+      'type' => 'Node type',
+      'nid' => 'Node id or ids',      
     ),
   );
 
