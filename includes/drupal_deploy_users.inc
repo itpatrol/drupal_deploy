@@ -33,7 +33,6 @@ function drupal_deploy_import_users_items($data)
   }
   
   foreach($data as $item){
-    print_r($item);
     $existing_item = db_fetch_object(db_query("SELECT * FROM {users} WHERE name = '%s'", $item['name']));
     if($existing_item)
     {
