@@ -79,17 +79,28 @@ function drupal_deploy_import_users_items($data)
     }
     
     $data = drupal_deploy_import_get_user_forms($item['uid']);
-    print_r($data);
     $modules = $item['modules'];
     foreach($data as $module => $settings){
-      echo "\n==============\n";
-      print_r($modules[$module]);
-      print_r($settings);      
-      echo "\n==============\n";
+
       $modules[$module] = _replace_values($modules[$module], $settings);
       $modules[$module] = _prepare_item_values_to_save($modules[$module], $settings);
-      print_r($modules[$module]);
+
+      $account = $item;      
+      foreach($modules[$module] as $key => $val){
+        $account[$key] = $val;
+      }
+      
+      drupal_deploy_import_form_hook_send($module, $account);
+      
     }
+  }
+}
+
+function drupal_deploy_import_form_hook_send($module, $edit){
+  $function = $module . '_user';
+  $account = (object)$edit;
+  if (function_exists($function)){
+    $function('submit', $edit, $account, 'account');
   }
 }
 
