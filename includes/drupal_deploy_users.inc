@@ -86,8 +86,8 @@ function drupal_deploy_import_users_items($data)
       print_r($modules[$module]);
       print_r($settings);      
       echo "\n==============\n";
-      $modules['module'] = _replace_values($modules[$module], $settings);
-      $modules['module'] = _prepare_item_values_to_save($modules[$module], $settings);
+      $modules[$module] = _replace_values($modules[$module], $settings);
+      $modules[$module] = _prepare_item_values_to_save($modules[$module], $settings);
       print_r($modules[$module]);
     }
   }
