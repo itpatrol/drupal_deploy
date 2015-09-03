@@ -28,7 +28,7 @@ function drupal_deploy_import_users_items($data)
 {
   global $user;
   if ($user->uid != 1) {
-    drush_log('dde users really only works as user #1. Use the "drush -u 1 " option on the commandline, or mysterious things may fail due to permissions during the node creation process. User was ' . $user->uid . ' - switching to uid1 now', 'notice');
+    drush_log('Switching to uid=1 now', 'notice');
     $user = user_load(1);
   }
   
@@ -108,7 +108,7 @@ function drupal_deploy_export_users_fetch_data()
   
   global $user;
   if ($user->uid != 1) {
-    drush_log('dde users really only works as user #1. Use the "drush -u 1 " option on the commandline, or mysterious things may fail due to permissions during the node creation process. User was ' . $user->uid . ' - switching to uid1 now', 'notice');
+    drush_log('Switching to uid=1 now', 'notice');
     $user = user_load(1);
   }
   
