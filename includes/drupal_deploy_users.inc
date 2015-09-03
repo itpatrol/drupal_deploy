@@ -283,6 +283,10 @@ function _process_form_variable_import($array)
 }
 
 function drupal_deploy_export_get_user_forms($uid){
+  global $language;
+  
+  $language->language = 'en';
+    
   $account = user_load($uid);
   $groups = array();
   foreach (module_implements('user') as $module) {
