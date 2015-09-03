@@ -20,6 +20,7 @@ function drupal_deploy_drush_command() {
       'drush dde cck' => dt('Export cck fields.'),
       'drush dde users' => dt('Export users.'),
       'drush dde imagecache' => dt('Export imagecache presets.'),
+      'drush dde nodes' => dt('Export nodes with comments.'),
     ),
     'aliases' => array('dde'),
     'arguments' => array(
@@ -47,7 +48,7 @@ function drupal_deploy_drush_command() {
       'drush ddi cck' => dt('Import cck fields.'),
       'drush ddi users' => dt('Import users.'),
       'drush ddi imagecache' => dt('Import imagecache presets.'),
-      
+      'drush ddi nodes' => dt('Import nodes with comments.'),
     ),
     'aliases' => array('ddi'),
     'arguments' => array(
@@ -149,6 +150,10 @@ function drupal_deploy_export($type = '') {
       include_once(drupal_get_path('module', 'drupal_deploy') .'/includes/drupal_deploy_imagecache.inc');
       drupal_deploy_export_imagecache($filename);
       break;
+    case 'nodes':
+      include_once(drupal_get_path('module', 'drupal_deploy') .'/includes/drupal_deploy_nodes.inc');
+      drupal_deploy_export_nodes($filename);
+      break;
   }
 }
 
@@ -200,7 +205,12 @@ function drupal_deploy_import($type = '', $option = '') {
     case 'imagecache':
       include_once(drupal_get_path('module', 'drupal_deploy') .'/includes/drupal_deploy_imagecache.inc');
       drupal_deploy_import_imagecache($filename);
-      break;      
+      break;
+    case 'nodes':
+      include_once(drupal_get_path('module', 'drupal_deploy') .'/includes/drupal_deploy_nodes.inc');
+      drupal_deploy_import_nodes($filename);
+      break;
+
   }
 }
 
