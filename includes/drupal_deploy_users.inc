@@ -50,7 +50,9 @@ function drupal_deploy_import_users_items($data)
         drupal_set_message(t('User !user updated.', array('!user' => $item['name'])));
         db_query('DELETE FROM {users_roles} WHERE uid=%d', $item['uid']);
         foreach($item['roles'] as $role){
+          echo $role;
           $role_data = db_fetch_object(db_query("SELECT * FROM {role} WHERE name = '%s'", $role));
+          print_r($role_data);
           if($role_data){
             $user_roles = array($item['uid'], $role_data->rid);
             if(drupal_write_record('users_roles', $user_roles)){
