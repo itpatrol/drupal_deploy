@@ -28,36 +28,43 @@ function drupal_deploy_import_nodes($filename = ''){
 
 function drupal_deploy_export_nodes_fetch_data(){
   global $user;
-  if ($user->uid != 1) {
-    drush_log('Switching to uid=1 now', 'notice');
-    $user = user_load(1);
-  }
   
   $items = array();
-  $result = db_query("SELECT * FROM {node} ORDER BY title LIMIT 10");
+  if($nids = drush_get_option('nid', FALSE)){
+    $result = db_query("SELECT * FROM {node} WHERE nid in (%s) ORDER BY title LIMIT 10", $nids);
+  }else{
+    $result = db_query("SELECT * FROM {node} ORDER BY title LIMIT 10");
+  }
+
   while ($db_item = db_fetch_object($result)) {
-    $data = drupal_deploy_export_get_node_forms($db_item->nid);
+    drupal_deploy_export_node_load($db_item);
+    
+    $revisions_result = db_query("SELECT * FROM {node_revisions} WHERE nid=%d ORDER BY vid", $db_item->nid);
+    while ($db_rev_item = db_fetch_object($revisions_result)) {
+      $db_item->revisions[] =  $db_rev_item;
+    }
+
+    print_r($db_item);
   }
    
   return $items;
+}
+
+function drupal_deploy_export_node_load(&$node){
+  if ($extra = node_invoke($node, 'load')) {
+    foreach ($extra as $key => $value) {
+      $node->$key = $value;
+    }
+  }
+
+  if ($extra = node_invoke_nodeapi($node, 'load')) {
+    foreach ($extra as $key => $value) {
+      $node->$key = $value;
+    }
+  }
 }
 
 function drupal_deploy_import_nodes_items($data){
  
 }
 
-function drupal_deploy_export_get_node_forms($nid){
-  global $language;
-  $language->language = 'en';
-    
-  $node = node_load($nid);
-  print_r($node);
-  $form_state = array();
-  $function = $node->type . '_form'; 
-  $form_id = $node->type . '_node_form';
-  $form = $function($form_state, $node);
-  drupal_prepare_form($form_id, $form, $form_state);
-  print_r($form);
-  $result = drupal_deploy_export_process_form($form);
-  print_r($result);
-}
