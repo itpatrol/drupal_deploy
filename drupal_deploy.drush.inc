@@ -151,6 +151,7 @@ function drupal_deploy_export($type = '') {
       drupal_deploy_export_imagecache($filename);
       break;
     case 'nodes':
+      include_once(drupal_get_path('module', 'node') .'/modules/node/node.pages.inc');
       include_once(drupal_get_path('module', 'drupal_deploy') .'/includes/drupal_deploy_nodes.inc');
       drupal_deploy_export_nodes($filename);
       break;
