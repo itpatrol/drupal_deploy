@@ -33,18 +33,19 @@ function drupal_deploy_import_users_items($data)
     {
       $item['uid'] = $existing_item->uid;
       
-      $filename = $item['picture'];
-      $info = pathinfo($item['picture']);
-      $directory = variable_get('user_picture_path', 'pictures');
-      
-      $directory = file_directory_path() . '/' . variable_get('user_picture_path', 'pictures');
-      if(file_exists($destination)){
-        file_delete($destination);
+      if(!empty($item['picture'])){
+        $filename = $item['picture'];
+        $info = pathinfo($item['picture']);
+        $directory = variable_get('user_picture_path', 'pictures');
+        
+        $directory = file_directory_path() . '/' . variable_get('user_picture_path', 'pictures');
+        if(file_exists($destination)){
+          file_delete($destination);
+        }
+        file_check_directory($directory, FILE_CREATE_DIRECTORY);
+        file_put_contents($destination, base64_decode($item['picture_data']));
+        $item['picture'] = $destination;
       }
-      file_check_directory($directory, FILE_CREATE_DIRECTORY);
-      file_put_contents($destination, base64_decode($item['picture_data']));
-      $item['picture'] = $destination;
-      
       if(drupal_write_record('users', $item, 'uid'))
       {
         drupal_set_message(t('User !user updated.', array('!user' => $item['name'])));
@@ -76,18 +77,20 @@ function drupal_deploy_import_users_items($data)
             }
           }
         }
-        $filename = $item['picture'];
-        $info = pathinfo($item['picture']);
-        $directory = file_directory_path() . '/' . variable_get('user_picture_path', 'pictures');
-        
-        $destination = $directory . '/picture-' . $item['uid'] . '.' . $info ['extension'];
-        if(file_exists($destination)){
-          file_delete($destination);
+        if(!empty($item['picture'])){
+          $filename = $item['picture'];
+          $info = pathinfo($item['picture']);
+          $directory = file_directory_path() . '/' . variable_get('user_picture_path', 'pictures');
+          
+          $destination = $directory . '/picture-' . $item['uid'] . '.' . $info ['extension'];
+          if(file_exists($destination)){
+            file_delete($destination);
+          }
+          file_check_directory($directory, FILE_CREATE_DIRECTORY);
+          file_put_contents($destination, base64_decode($item['picture_data']));
+          $item['picture'] = $destination;
+          drupal_write_record('users', $item, 'uid');
         }
-        file_check_directory($directory, FILE_CREATE_DIRECTORY);
-        file_put_contents($destination, base64_decode($item['picture_data']));
-        $item['picture'] = $destination;
-        drupal_write_record('users', $item, 'uid');
       }
     }
   }
