@@ -56,6 +56,7 @@ function drupal_deploy_export_get_node_forms($nid){
   $form_id = $node->type . '_node_form';
   $form = $function($form_state, $node);
   drupal_prepare_form($form_id, $form, $form_state);
-  print_r($form);
+  $result = drupal_deploy_export_process_form($form);
+  print_r($result);
   exit();
 }
