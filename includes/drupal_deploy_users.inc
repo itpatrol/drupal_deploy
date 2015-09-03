@@ -27,34 +27,64 @@ function drupal_deploy_import_users($filename){
 function drupal_deploy_import_users_items($data)
 {
   foreach($data as $item){
-    $existing_item = db_fetch_object(db_query("SELECT * FROM {role} WHERE name = '%s'", $item['name']));
+    $existing_item = db_fetch_object(db_query("SELECT * FROM {users} WHERE name = '%s'", $item['name']));
     if($existing_item)
     {
-      $role_perms = array(
-        'rid' => $existing_item->rid,
-        'perm' => implode(", ", $item['permissions']),
-      );
+      $item['uid'] = $existing_item;
       
-      if(drupal_write_record('permission', $role_perms, 'rid'))
+      $filename = $item['picture'];
+      $info = pathinfo($item['picture']);
+      $directory = variable_get('user_picture_path', 'pictures');
+      
+      $destination = $directory . '/picture-' . $item['uid'] . '.' . $info ['extension'];
+      if(file_exists($destination)){
+        file_delete($destination);
+      }
+      file_check_directory($directory, FILE_CREATE_DIRECTORY);
+      file_put_contents($destination, base64_decode($item['picture_data']));
+      $item['picture'] = $destination;
+      
+      if(drupal_write_record('users', $item, 'uid'))
       {
-        drupal_set_message(t('Role !role permissions updated.', array('!role' => $item['name'])));
+        drupal_set_message(t('User !user updated.', array('!user' => $item['name'])));
+        db_query('DELETE FROM {users_roles} WHERE uid=%d', $item['uid']);
+        foreach($item['roles'] as $role){
+          $role_data = db_fetch_object(db_query("SELECT * FROM {role} WHERE name = '%s'", $role));
+          if($role_data){
+            $user_roles = array($item['uid'], $role_data->rid);
+            if(drupal_write_record('users_roles', $user_roles)){
+              drupal_set_message(t('Role !role permissions granted to !user.', array('!role' => $role_data->name, '!user' => $item['name'])));
+            }
+          }
+        }
       }
     }
     else
     {
-      $role = array(
-        'name' => $item['name'],
-      );
-      if(drupal_write_record('role', $role))
+      if(drupal_write_record('users', $item))
       {
-        $role_perms = array(
-          'rid' => $role->rid,
-          'perm' => implode(", ", $item['permissions']),
-        );
-        if(drupal_write_record('permission', $role_perms))
-        {
-          drupal_set_message(t('Role !role permissions created.', array('!role' => $item['name'])));
+        drupal_set_message(t('User !user created.', array('!user' => $item['name'])));
+        foreach($item['roles'] as $role){
+          $role_data = db_fetch_object(db_query("SELECT * FROM {role} WHERE name = '%s'", $role));
+          if($role_data){
+            $user_roles = array($item['uid'], $role_data->rid);
+            if(drupal_write_record('users_roles', $user_roles)){
+              drupal_set_message(t('Role !role permissions granted to !user.', array('!role' => $role_data->name, '!user' => $item['name'])));
+            }
+          }
         }
+        $filename = $item['picture'];
+        $info = pathinfo($item['picture']);
+        $directory = variable_get('user_picture_path', 'pictures');
+        
+        $destination = $directory . '/picture-' . $item['uid'] . '.' . $info ['extension'];
+        if(file_exists($destination)){
+          file_delete($destination);
+        }
+        file_check_directory($directory, FILE_CREATE_DIRECTORY);
+        file_put_contents($destination, base64_decode($item['picture_data']));
+        $item['picture'] = $destination;
+        drupal_write_record('users', $item, 'uid');
       }
     }
   }
