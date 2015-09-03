@@ -41,6 +41,7 @@ function drupal_deploy_export_nodes_fetch_data(){
     
     $revisions_result = db_query("SELECT * FROM {node_revisions} WHERE nid=%d ORDER BY vid", $db_item->nid);
     while ($db_rev_item = db_fetch_object($revisions_result)) {
+      drupal_deploy_export_node_load($db_rev_item);
       $db_item->revisions[] =  $db_rev_item;
     }
 
