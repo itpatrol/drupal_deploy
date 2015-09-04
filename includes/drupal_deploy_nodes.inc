@@ -99,9 +99,9 @@ function _get_sub_comments($comment){
   while ($db_comm_item = db_fetch_object($comments_result)) {
     if($comments = _get_sub_comments($db_comm_item)){
       $db_comm_item->comments = $comments;
-      _clean_comment($db_comm_item);
     }
 
+    _clean_comment($db_comm_item);
     $result[] = $db_comm_item;
   }
   return $result;
