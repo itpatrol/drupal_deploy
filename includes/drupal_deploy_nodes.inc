@@ -77,8 +77,12 @@ function drupal_deploy_export_node_clean(&$item){
     }
     
     list($key,$value) = each($res);
-    
-    $terms[$stored_vocabulary->name][$key] = $value;
+    if(isset($terms[$stored_vocabulary->name][$key])){
+      $terms[$stored_vocabulary->name][$key] = array_merge_recursive($terms[$stored_vocabulary->name][$key],$value);
+    }
+    else {
+      $terms[$stored_vocabulary->name][$key] = $value;
+    }
   }
   $item->taxonomy = $terms;
   
