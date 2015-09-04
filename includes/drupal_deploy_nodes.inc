@@ -274,7 +274,8 @@ function ddi_node_save($node){
       $comment->format = _get_format_id($comment->format);
       ddi_comment_save($comment);
     }
-  }  
+  }
+  print_r($revision);
 }
 
 function ddi_set_term($terms, $parent_term_name, $vid, $revision){
