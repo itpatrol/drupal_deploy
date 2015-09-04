@@ -66,9 +66,19 @@ function drupal_deploy_export_node_clean(&$item){
   $terms = array();
   foreach($item->taxonomy as $term){
     $stored_vocabulary = db_fetch_object(db_query("SELECT * FROM {vocabulary} WHERE vid=%d", $term->vid));
-    $tree = array_reverse(explode("\n",_get_term_tree($term)));
+    $tree = explode("\n",_get_term_tree($term));
+    $res=array();
+    foreach($tree as $term){
+      if(empty($res)){
+        $res = array($term);
+      }else{
+        $res = array( $term => $res);
+      }
+    }
     
-    $terms[$stored_vocabulary->name][] = $res;
+    list($key,$value) = each($res);
+    
+    $terms[$stored_vocabulary->name][$key] = $value;
   }
   $item->taxonomy = $terms;
   
