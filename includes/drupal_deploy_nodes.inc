@@ -226,7 +226,7 @@ function drupal_deploy_import_nodes_items($data){
 
 function ddi_node_save($node){
   drupal_write_record('node', $node);
-  foreach($item->revisions as $revision){
+  foreach($node->revisions as $revision){
     $revision = (object) $revision;
     $revision->format = _get_format_id($revision->format);
     $revision->uid = _get_user_id($revision->user);
