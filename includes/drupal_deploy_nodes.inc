@@ -117,8 +117,10 @@ function _get_user_name($uid){
 }
 
 function _get_user_id($name){
-  $user = db_fetch_object(db_query("SELECT * FROM {users} WHERE name='%s'", $name));
-  return $user->uid;
+  if($user = db_fetch_object(db_query("SELECT * FROM {users} WHERE name='%s'", $name))){
+    return $user->uid;
+  }
+  return 0;
 }
 
 
@@ -128,8 +130,11 @@ function _get_format_name($format){
 }
 
 function _get_format_id($format){
-  $format = db_fetch_object(db_query("SELECT * FROM {filter_formats} WHERE name='%s'", $format));
-  return $format->format;
+  if($format = db_fetch_object(db_query("SELECT * FROM {filter_formats} WHERE name='%s'", $format))){
+    return $format->format;
+  }else{
+    return 0;
+  }
 }
 
 function drupal_deploy_export_node_clean(&$item){
@@ -212,6 +217,7 @@ function drupal_deploy_export_node_load(&$node){
 function drupal_deploy_import_nodes_items($data){
   foreach($data as $item){
     $item->format = _get_format_id($item->format);
+    $item->uid = _get_user_id($item->user);
     print_r($item);
     if(count($item->revisions) == 0){
       // No revisions at all.
