@@ -174,7 +174,7 @@ function drupal_deploy_export_node_load(&$node){
   if ($extra = node_invoke($node, 'load')) {
     foreach ($extra as $key => $value) {
       if(!empty($value)){
-        $node->$key = $value;
+        $node->extra2->$key = $value;
       }
     }
   }
