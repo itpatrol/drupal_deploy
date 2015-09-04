@@ -7,6 +7,9 @@ function drupal_deploy_export_nodes($filename = ''){
   
   if(empty($filename)){
     $filename = 'nodes.export';
+    if($node_type){
+      $filename = $node_type . '.taxonomy.export';  
+    }
   }
   drupal_deploy_export_save($items, $filename);
 }
@@ -28,14 +31,19 @@ function drupal_deploy_import_nodes($filename = ''){
 }
 
 
-function drupal_deploy_export_nodes_fetch_data(){
+function drupal_deploy_export_nodes_fetch_data($node_type){
   global $user;
   
   $items = array();
+  
   if($nids = drush_get_option('nid', FALSE)){
     $result = db_query("SELECT * FROM {node} WHERE nid in (%s) ORDER BY title LIMIT 10", $nids);
   }else{
-    $result = db_query("SELECT * FROM {node} ORDER BY title LIMIT 10");
+    if($node_type){
+      $result = db_query("SELECT * FROM {node} WHERE type='%s' ORDER BY title LIMIT 10",$node_type);
+    }else{
+      $result = db_query("SELECT * FROM {node} ORDER BY title LIMIT 10");
+    }
   }
 
   while ($db_item = db_fetch_object($result)) {
