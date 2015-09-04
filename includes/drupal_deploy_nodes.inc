@@ -219,10 +219,18 @@ function drupal_deploy_import_nodes_items($data){
     $item->format = _get_format_id($item->format);
     $item->uid = _get_user_id($item->user);
     print_r($item);
-    if(count($item->revisions) == 0){
-      // No revisions at all.
-    }
+    ddi_node_save($item);
   }
+}
+
+function ddi_node_save($node){
+  drupal_write_record('node', $node);
+  foreach($item->revisions as $revision){
+    drupal_write_record('node_revisions', $revision);
+    $node->vid = $revision->vid;
+  }
+  drupal_write_record('node', $node, 'nid');
+  
 }
 
 function ddi_node_save_revision(&$node, $uid, $update = NULL) {
