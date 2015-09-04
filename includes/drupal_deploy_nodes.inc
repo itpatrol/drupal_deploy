@@ -216,6 +216,7 @@ function drupal_deploy_export_node_load(&$node){
 
 function drupal_deploy_import_nodes_items($data){
   foreach($data as $item){
+    $item = (object) $item;
     $item->uid = _get_user_id($item->user);
     ddi_node_save($item);
     print_r($item);    
@@ -226,6 +227,7 @@ function drupal_deploy_import_nodes_items($data){
 function ddi_node_save($node){
   drupal_write_record('node', $node);
   foreach($item->revisions as $revision){
+    $revision = (object) $revision;
     $revision->format = _get_format_id($revision->format);
     $revision->uid = _get_user_id($revision->user);
     
@@ -261,6 +263,7 @@ function ddi_node_save($node){
   drupal_write_record('node', $node, 'nid');
   if(!empty($node->comments)){
     foreach($node->comments as $comment){
+      $comment = (object) $comment;
       $comment->nid = $node->nid;
       $comment->uid = _get_user_id($comment->user);
       $comment->format = _get_format_id($comment->format);
