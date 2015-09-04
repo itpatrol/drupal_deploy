@@ -187,6 +187,7 @@ function drupal_deploy_export_node_load(&$node){
       }
     }
   }
+  print_r($node);  
 }
 
 function dde_node_invoke_nodeapi($node){
