@@ -219,7 +219,6 @@ function drupal_deploy_import_nodes_items($data){
     $item = (object) $item;
     $item->uid = _get_user_id($item->user);
     ddi_node_save($item);
-    print_r($item);    
     exit();
   }
 }
@@ -231,8 +230,6 @@ function ddi_node_save($node){
     $revision->format = _get_format_id($revision->format);
     $revision->uid = _get_user_id($revision->user);
     $revision->nid = $node->nid;
-    
-    print_r($revision);
     
     drupal_write_record('node_revisions', $revision);
     $node->vid = $revision->vid;
@@ -304,7 +301,6 @@ function ddi_set_term($terms, $parent_term_name, $vid, $revision){
           }
         }
       }
-      echo "TERM" . print_r($stored_term);
       if($stored_term){
         $term_node = array(
           'nid' => $revision->nid,
