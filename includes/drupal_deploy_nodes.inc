@@ -56,8 +56,7 @@ function drupal_deploy_export_nodes_fetch_data($node_type){
       $db_item->revisions[] =  $db_rev_item;
     }
     
-    $user = user_load($db_item->uid);
-    $db_item->user = $user->name;
+    $db_item->user = _get_user_name($db_item->uid);
 
     $db_item->comments = NULL;
     
@@ -86,8 +85,7 @@ function _clean_comment(&$comment){
   unset($comment->nid);
   unset($comment->pid);
   unset($comment->cid); 
-  $user = user_load($comment->uid);
-  $comment->username = $user->name;       
+  $comment->username = _get_user_name($comment->uid);
   unset($comment->uid);
   
   $comment->format = _get_format_name($comment->format);
@@ -113,14 +111,29 @@ function _get_sub_comments($comment){
   return $result;
 }
 
+function _get_user_name($uid){
+  $user = db_fetch_object(db_query("SELECT * FROM {users} WHERE uid=%d", $uid));
+  return $user->name;
+}
+
+function _get_user_id($name){
+  $user = db_fetch_object(db_query("SELECT * FROM {users} WHERE name='%s'", $name));
+  return $user->uid;
+}
+
+
 function _get_format_name($format){
   $format = db_fetch_object(db_query("SELECT * FROM {filter_formats} WHERE format=%d", $format));
   return $format->name;
 }
 
+function _get_format_id($format){
+  $format = db_fetch_object(db_query("SELECT * FROM {filter_formats} WHERE name='%s'", $format));
+  return $format->format;
+}
+
 function drupal_deploy_export_node_clean(&$item){
-  $user = user_load($item->uid);
-  $item->user = $user->name;
+  $item->user = _get_user_name($item->uid);
   unset($item->nid);
   unset($item->vid);
   unset($item->tid);
@@ -198,8 +211,22 @@ function drupal_deploy_export_node_load(&$node){
 
 function drupal_deploy_import_nodes_items($data){
   foreach($data as $item){
+    $item->format = _get_format_id($item->format);
     print_r($item);
-    exit();
+    if(count($item->revisions) == 0){
+      // No revisions at all.
+    }
   }
 }
 
+function ddi_node_save_revision(&$node, $uid, $update = NULL) {
+  $temp_uid = $node->uid;
+  $node->uid = $uid;
+  if (isset($update)) {
+    drupal_write_record('node_revisions', $node, $update);
+  }
+  else {
+    drupal_write_record('node_revisions', $node);
+  }
+  $node->uid = $temp_uid;
+}
