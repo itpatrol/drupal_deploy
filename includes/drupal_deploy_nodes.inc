@@ -133,7 +133,7 @@ function _get_format_id($format){
   if($format = db_fetch_object(db_query("SELECT * FROM {filter_formats} WHERE name='%s'", $format))){
     return $format->format;
   }else{
-    return 0;
+    return FILTER_FORMAT_DEFAULT;
   }
 }
 
