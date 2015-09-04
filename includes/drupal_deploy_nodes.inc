@@ -46,6 +46,15 @@ function drupal_deploy_export_nodes_fetch_data(){
       drupal_deploy_export_node_clean($db_rev_item);
       $db_item->revisions[] =  $db_rev_item;
     }
+    
+    $user = user_load($db_item->uid);
+    $db_item->user = $user->name;
+    unset($db_item->nid);
+    unset($db_item->vid);
+    unset($db_item->uid);
+    unset($db_item->translate);
+    unset($db_item->tnid);
+  
    // drupal_deploy_export_node_clean($db_item);
     $items[] = $db_item;
   }
