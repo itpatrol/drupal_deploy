@@ -216,7 +216,6 @@ function drupal_deploy_export_node_load(&$node){
 
 function drupal_deploy_import_nodes_items($data){
   foreach($data as $item){
-    $item->format = _get_format_id($item->format);
     $item->uid = _get_user_id($item->user);
     ddi_node_save($item);
     print_r($item);    
@@ -227,7 +226,11 @@ function drupal_deploy_import_nodes_items($data){
 function ddi_node_save($node){
   drupal_write_record('node', $node);
   foreach($item->revisions as $revision){
+    $revision->format = _get_format_id($revision->format);
+    $revision->uid = _get_user_id($revision->user);
+    
     print_r($revision);
+    
     drupal_write_record('node_revisions', $revision);
     $node->vid = $revision->vid;
     if(!empty($revision->taxonomy)){
