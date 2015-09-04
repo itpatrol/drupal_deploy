@@ -78,7 +78,8 @@ function _get_term_tree($term){
   print_r($term);
   $stored_term = db_fetch_object(db_query("SELECT t.tid, t.*, parent FROM {term_data} t LEFT JOIN {term_hierarchy} h ON t.tid = h.tid WHERE t.tid=%d", $term->tid));
   if($stored_term->parent){
-    $result[$stored_term->name] = _get_term_tree($stored_term);
+    $parent_term = db_fetch_object(db_query("SELECT t.tid, t.*, parent FROM {term_data} t LEFT JOIN {term_hierarchy} h ON t.tid = h.tid WHERE t.tid=%d", $stored_term->parent));
+    $result[$stored_term->name] = _get_term_tree($parent_term);
   }else{
     $result = $stored_term->name;
   }
