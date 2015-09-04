@@ -66,6 +66,7 @@ function drupal_deploy_export_node_clean(&$item){
   $terms = array();
   foreach($item->taxonomy as $term){
     $stored_vocabulary = db_fetch_object(db_query("SELECT * FROM {vocabulary} WHERE vid=%d", $term->vid));
+
     $terms[$stored_vocabulary->name][] = _get_term_tree($term);
   }
   $item->taxonomy = $terms;
@@ -74,12 +75,11 @@ function drupal_deploy_export_node_clean(&$item){
 }
 
 function _get_term_tree($term){
-  $result = array();
-  print_r($term);
+  $result = '';
   $stored_term = db_fetch_object(db_query("SELECT t.tid, t.*, parent FROM {term_data} t LEFT JOIN {term_hierarchy} h ON t.tid = h.tid WHERE t.tid=%d", $term->tid));
   if($stored_term->parent){
     $parent_term = db_fetch_object(db_query("SELECT t.tid, t.*, parent FROM {term_data} t LEFT JOIN {term_hierarchy} h ON t.tid = h.tid WHERE t.tid=%d", $stored_term->parent));
-    $result[$stored_term->name] = _get_term_tree($parent_term);
+    $result = $stored_term->name . "::" . _get_term_tree($parent_term);
   }else{
     $result = $stored_term->name;
   }
