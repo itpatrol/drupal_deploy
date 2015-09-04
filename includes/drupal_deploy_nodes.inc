@@ -1,7 +1,9 @@
 <?php
   
 function drupal_deploy_export_nodes($filename = ''){
-  $items = drupal_deploy_export_nodes_fetch_data($vocabulary_name);
+  $node_type = drush_get_option('type', FALSE);
+  
+  $items = drupal_deploy_export_nodes_fetch_data($node_type);
   
   if(empty($filename)){
     $filename = 'nodes.export';

@@ -21,6 +21,7 @@ function drupal_deploy_drush_command() {
       'drush dde users' => dt('Export users.'),
       'drush dde imagecache' => dt('Export imagecache presets.'),
       'drush dde nodes --nid=1,2,3' => dt('Export nodes 1,2,3 with comments and revisions.'),
+      'drush dde nodes --type=forum' => dt('Export forum nodes with comments and revisions.'),
     ),
     'aliases' => array('dde'),
     'arguments' => array(
