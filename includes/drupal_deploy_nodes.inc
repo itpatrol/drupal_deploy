@@ -197,6 +197,9 @@ function drupal_deploy_export_node_load(&$node){
 
 
 function drupal_deploy_import_nodes_items($data){
- 
+  foreach($data as $item){
+    print_r($item);
+    exit();
+  }
 }
 
