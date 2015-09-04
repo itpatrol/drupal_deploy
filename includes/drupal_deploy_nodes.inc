@@ -117,6 +117,7 @@ function drupal_deploy_export_node_clean(&$item){
   $item->user = $user->name;
   unset($item->nid);
   unset($item->vid);
+  unset($item->tid);
   unset($item->uid);
   
   $item->format = _get_format_name($item->format);
@@ -152,6 +153,8 @@ function drupal_deploy_export_node_clean(&$item){
   
   unset($item->tags);
   unset($item->type);
+  unset($item->last_comment_timestamp);
+  unset($item->comment_count);  
   //tnid
 }
 
@@ -171,18 +174,27 @@ function drupal_deploy_export_node_load(&$node){
   if ($extra = node_invoke($node, 'load')) {
     foreach ($extra as $key => $value) {
       if(!empty($value)){
-        $node->extra[$key] = $value;
-      }
-    }
-  }
-
-  if ($extra = node_invoke_nodeapi($node, 'load')) {
-    foreach ($extra as $key => $value) {
-      if(!empty($value)){
         $node->$key = $value;
       }
     }
   }
+
+  if ($extra = dde_node_invoke_nodeapi($node)) {
+    foreach ($extra as $key => $value) {
+      if(!empty($value)){
+        $node->$key = $value;  
+      }
+    }
+  }
+}
+
+function dde_node_invoke_nodeapi($node){
+  $result = array();
+  foreach (module_implements('nodeapi') as $name) {
+    $function = $name . '_nodeapi';
+    $result[$name] = $function($node, 'load');
+  }
+  return $result;
 }
 
 function drupal_deploy_import_nodes_items($data){
