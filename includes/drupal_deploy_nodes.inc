@@ -259,7 +259,7 @@ function ddi_node_save($node){
        
         echo "VID" . $vid;
         reset($terms);
-        ddi_set_term($terms, '', $vid, $node->nid);
+        ddi_set_term($terms, '', $vid, $node);
       }
     }
   }
@@ -275,10 +275,10 @@ function ddi_node_save($node){
   }  
 }
 
-function ddi_set_term($terms, $parent_term_name, $vid, $nid){
+function ddi_set_term($terms, $parent_term_name, $vid, $node){
   foreach($terms as $sub_parent_term_name => $sub_terms){
     if(is_array($sub_terms)){
-      ddi_set_term($sub_terms, $sub_parent_term_name, $vid, $nid);
+      ddi_set_term($sub_terms, $sub_parent_term_name, $vid, $node);
     }else{
       echo "STORING " . $sub_terms . "\n";
       $stored_term = FALSE;
@@ -305,8 +305,8 @@ function ddi_set_term($terms, $parent_term_name, $vid, $nid){
       
       if($stored_term){
         $term_node = array(
-          'nid' => $nid,
-          'vid' => $vid,
+          'nid' => $node->nid,
+          'vid' => $node->vid,
           'tid' => $stored_term->tid,
         );
         drupal_write_record('term_node', $term_node);
