@@ -104,13 +104,17 @@ function _get_term_tree($term){
 function drupal_deploy_export_node_load(&$node){
   if ($extra = node_invoke($node, 'load')) {
     foreach ($extra as $key => $value) {
-      $node->extra[$key] = $value;
+      if(!empty($value)){
+        $node->extra[$key] = $value;
+      }
     }
   }
 
   if ($extra = node_invoke_nodeapi($node, 'load')) {
     foreach ($extra as $key => $value) {
-      $node->extra2[$key] = $value;
+      if(!empty($value)){
+        $node->$key = $value;
+      }
     }
   }
 }
