@@ -57,14 +57,7 @@ function drupal_deploy_export_nodes_fetch_data(){
       if($comments = _get_sub_comments($db_comm_item)){
         $db_comm_item->comments = $comments;
       }
-      unset($db_comm_item->nid);
-      unset($db_comm_item->pid);
-      unset($db_comm_item->cid); 
-      $user = user_load($db_comm_item->uid);
-      $db_comm_item->username = $user->name;       
-      unset($db_comm_item->uid);
-      
-      $db_comm_item->format = _get_format_name($db_comm_item->format);
+      _clean_comment($db_comm_item);
       
       $db_item->comments[] = $db_comm_item;
     }
@@ -83,21 +76,32 @@ function drupal_deploy_export_nodes_fetch_data(){
   return $items;
 }
 
+function _clean_comment(&$comment){
+  unset($comment->nid);
+  unset($comment->pid);
+  unset($comment->cid); 
+  $user = user_load($comment->uid);
+  $comment->username = $user->name;       
+  unset($comment->uid);
+  
+  $comment->format = _get_format_name($comment->format);
+  
+  if($comment->status){
+    $comment->status = 'Not Published';
+  }else{
+    $comment->status = 'Published';
+  }  
+}
+
 function _get_sub_comments($comment){
   $result = FALSE;
   $comments_result = db_query("SELECT * FROM {comments} WHERE nid=%d AND pid=%d ORDER BY cid", $comment->nid, $comment->cid);
   while ($db_comm_item = db_fetch_object($comments_result)) {
     if($comments = _get_sub_comments($db_comm_item)){
-      $db_comm_item->comments = $comments;  
+      $db_comm_item->comments = $comments;
+      _clean_comment($db_comm_item);
     }
-    unset($db_comm_item->nid);
-    unset($db_comm_item->pid);
-    unset($db_comm_item->cid); 
-    $user = user_load($db_comm_item->uid);
-    $db_comm_item->username = $user->name;       
-    unset($db_comm_item->uid);
-    
-    $db_comm_item->format = _get_format_name($db_comm_item->format);
+
     $result[] = $db_comm_item;
   }
   return $result;
