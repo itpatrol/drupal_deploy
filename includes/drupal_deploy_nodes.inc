@@ -264,6 +264,7 @@ function ddi_node_save($node){
     }
   }
   drupal_write_record('node', $node, 'nid');
+  drupal_write_record('node_comment_statistics',$node);
   if(!empty($node->comments)){
     foreach($node->comments as $comment){
       $comment = (object) $comment;
