@@ -227,6 +227,7 @@ function drupal_deploy_import_nodes_items($data){
 function ddi_node_save($node){
   drupal_write_record('node', $node);
   foreach($item->revisions as $revision){
+    print_r($revision);
     drupal_write_record('node_revisions', $revision);
     $node->vid = $revision->vid;
     if(!empty($revision->taxonomy)){
