@@ -303,7 +303,6 @@ function ddi_set_term($terms, $parent_term_name, $vid, $node){
         }
       }
       echo "TERM" . print_r($stored_term);
-      
       if($stored_term){
         $term_node = array(
           'nid' => $node->nid,
@@ -311,6 +310,12 @@ function ddi_set_term($terms, $parent_term_name, $vid, $node){
           'tid' => $stored_term->tid,
         );
         drupal_write_record('term_node', $term_node);
+        if(isset($node->forum_term)){
+          if($node->forum_term == $stored_term->name){
+            drupal_write_record('forum', $term_node);
+          }
+        }
+
       }
         
     }
