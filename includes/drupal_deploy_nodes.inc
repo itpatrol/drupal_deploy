@@ -218,8 +218,9 @@ function drupal_deploy_import_nodes_items($data){
   foreach($data as $item){
     $item->format = _get_format_id($item->format);
     $item->uid = _get_user_id($item->user);
-    print_r($item);
     ddi_node_save($item);
+    print_r($item);    
+    exit();
   }
 }
 
