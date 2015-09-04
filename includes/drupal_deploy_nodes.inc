@@ -230,6 +230,7 @@ function ddi_node_save($node){
     $revision = (object) $revision;
     $revision->format = _get_format_id($revision->format);
     $revision->uid = _get_user_id($revision->user);
+    $revision->nid = $node->nid;
     
     print_r($revision);
     
@@ -259,7 +260,7 @@ function ddi_node_save($node){
        
         echo "VID" . $vid;
         reset($terms);
-        ddi_set_term($terms, '', $vid, $node);
+        ddi_set_term($terms, '', $vid, $revision);
       }
     }
   }
@@ -276,10 +277,10 @@ function ddi_node_save($node){
   }  
 }
 
-function ddi_set_term($terms, $parent_term_name, $vid, $node){
+function ddi_set_term($terms, $parent_term_name, $vid, $revision){
   foreach($terms as $sub_parent_term_name => $sub_terms){
     if(is_array($sub_terms)){
-      ddi_set_term($sub_terms, $sub_parent_term_name, $vid, $node);
+      ddi_set_term($sub_terms, $sub_parent_term_name, $vid, $revision);
     }else{
       echo "STORING " . $sub_terms . "\n";
       $stored_term = FALSE;
@@ -305,8 +306,8 @@ function ddi_set_term($terms, $parent_term_name, $vid, $node){
       echo "TERM" . print_r($stored_term);
       if($stored_term){
         $term_node = array(
-          'nid' => $node->nid,
-          'vid' => $node->vid,
+          'nid' => $revision->nid,
+          'vid' => $revision->vid,
           'tid' => $stored_term->tid,
         );
         drupal_write_record('term_node', $term_node);
