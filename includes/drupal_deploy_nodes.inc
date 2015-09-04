@@ -92,6 +92,8 @@ function drupal_deploy_export_node_clean(&$item){
     unset($item->forum_tid);
   }
   
+  unset($item->tags);
+  unset($item->type);
   //tnid
 }
 
