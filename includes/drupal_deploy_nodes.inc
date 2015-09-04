@@ -37,19 +37,32 @@ function drupal_deploy_export_nodes_fetch_data(){
   }
 
   while ($db_item = db_fetch_object($result)) {
-    drupal_deploy_export_node_load($db_item);
+//    drupal_deploy_export_node_load($db_item);
     
     $revisions_result = db_query("SELECT * FROM {node_revisions} WHERE nid=%d ORDER BY vid", $db_item->nid);
     while ($db_rev_item = db_fetch_object($revisions_result)) {
       $db_rev_item->type = $db_item->type;
       drupal_deploy_export_node_load($db_rev_item);
+      drupal_deploy_export_node_clean($db_rev_item);
       $db_item->revisions[] =  $db_rev_item;
     }
-
-    print_r($db_item);
+    drupal_deploy_export_node_clean($db_item);
+    $items[] = $db_item;
   }
    
   return $items;
+}
+
+function drupal_deploy_export_node_clean($item){
+  $user = user_load($item->uid);
+  $item->user = $user->name;
+  unset($item->nid);
+  unset($item->vid);
+  unset($item->uid);
+  
+  //tnid
+  //format
+  //taxonomy
 }
 
 function drupal_deploy_export_node_load(&$node){
