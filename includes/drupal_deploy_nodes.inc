@@ -86,6 +86,12 @@ function drupal_deploy_export_node_clean(&$item){
   }
   $item->taxonomy = $terms;
   
+  if(isset($item->forum_tid)){
+    $term = db_fetch_object(db_query("SELECT t.name FROM {term_data} WHERE tid=%d", ($item->forum_tid)));
+    $item->forum_term = $term->name;
+    unset($item->forum_tid);
+  }
+  
   //tnid
 }
 
