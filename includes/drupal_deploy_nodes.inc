@@ -237,7 +237,7 @@ function ddi_node_save($node){
     $node->vid = $revision->vid;
     if(!empty($revision->taxonomy)){
       foreach($revision->taxonomy as $vocabulary => $terms){
-        $vocab_results = db_query("SELECT * FROM {vocabulary} WHERE name='%s'", $vocabulary);
+        $vocab_results = db_query("SELECT * FROM {vocabulary} v LEFT JOIN {vocabulary_node_types} vnt ON vnt.vid = v.vid WHERE v.name='%s' AND vnt.type='%s'", $vocabulary, $node->type);
         $vocabularies = array();
         while($stored_vocabulary = db_fetch_object($vocab_results)){
           $vocabularies[] = $stored_vocabulary->vid;
@@ -256,7 +256,10 @@ function ddi_node_save($node){
             }
           }
         }
+       
         echo "VID" . $vid;
+        reset($terms);
+        ddi_set_term($terms, '', $vid, $node->nid);
       }
     }
   }
@@ -270,6 +273,47 @@ function ddi_node_save($node){
       ddi_comment_save($comment);
     }
   }  
+}
+
+function ddi_set_term($terms, $parent_term_name, $vid, $nid){
+  foreach($terms as $sub_parent_term_name => $sub_terms){
+    if(is_array($sub_terms)){
+      ddi_set_term($sub_terms, $sub_parent_term_name, $vid, $nid);
+    }else{
+      echo "STORING " . $sub_terms . "\n";
+      $stored_term = FALSE;
+      $stored_parent_term_results = db_query("SELECT * FROM {term_data} WHERE name='%s' AND vid=%d",$parent_term_name, $vid);
+      $parent_terms = array();
+      while($stored_parent_term = db_fetch_object($stored_parent_term_results)){
+        $parent_terms[] = $stored_parent_term->tid;
+      }
+      if(empty($parent_terms)){
+        continue;
+      }
+      if(count($parent_terms) == 1){
+        $ptid = $parent_terms[0];
+        $stored_term = db_fetch_object(db_query("SELECT * FROM {term_data} td LEFT JOIN {term_hierarchy} th ON th.tid = td.tid WHERE name='%s' AND vid=%d AND parent=%d",$sub_terms, $vid, $ptid));
+      }
+      if(count($parent_terms) > 1){
+        foreach($parent_terms as $ptid){
+          if($stored_term = db_fetch_object(db_query("SELECT * FROM {term_data} td LEFT JOIN {term_hierarchy} th ON th.tid = td.tid WHERE name='%s' AND vid=%d AND parent=%d",$sub_terms, $vid, $ptid))){
+            break;
+          }
+        }
+      }
+      echo "TERM" . print_r($stored_term);
+      
+      if($stored_term){
+        $term_node = array(
+          'nid' => $nid,
+          'vid' => $vid,
+          'tid' => $stored_term->tid,
+        );
+        drupal_write_record('term_node', $term_node);
+      }
+        
+    }
+  }
 }
 
 function ddi_comment_save($comment, $pid = 0){
