@@ -72,7 +72,7 @@ function drupal_deploy_export_node_clean(&$item){
       if(empty($res)){
         $res = array($term);
       }else{
-        $res[$term] = $res;
+        $res = array( $term => $res);
       }
     }
     
