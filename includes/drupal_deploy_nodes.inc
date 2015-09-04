@@ -230,7 +230,27 @@ function ddi_node_save($node){
     $node->vid = $revision->vid;
   }
   drupal_write_record('node', $node, 'nid');
-  
+  if(!empty($node->comments)){
+    foreach($node->comments as $comment){
+      $comment->nid = $node->nid;
+      $comment->uid = _get_user_id($comment->user);
+      $comment->format = _get_format_id($comment->format);
+      ddi_comment_save($comment);
+    }
+  }  
+}
+
+function ddi_comment_save($comment, $pid = 0){
+  //pid
+  $comment->pid = $pid;
+  drupal_write_record('comments', $comment);
+  echo "Comment saved" . print_r($comment,true);  
+  if(!empty($comment->comments)){
+    foreach($comment->comments as $sub_comment){
+      ddi_comment_save($sub_comment, $comment->cid);
+
+    }
+  }
 }
 
 function ddi_node_save_revision(&$node, $uid, $update = NULL) {
