@@ -75,6 +75,7 @@ function drupal_deploy_export_node_clean(&$item){
 
 function _get_term_tree($term){
   $result = array();
+  print_r($term);
   $stored_term = db_fetch_object(db_query("SELECT t.tid, t.*, parent FROM {term_data} t LEFT JOIN {term_hierarchy} h ON t.tid = h.tid WHERE t.tid=%d", $term->tid));
   if($stored_term->parent){
     $result[$stored_term->name] = _get_term_tree($stored_term);
