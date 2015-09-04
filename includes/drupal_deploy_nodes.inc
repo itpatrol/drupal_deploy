@@ -49,12 +49,7 @@ function drupal_deploy_export_nodes_fetch_data(){
     
     $user = user_load($db_item->uid);
     $db_item->user = $user->name;
-    unset($db_item->nid);
-    unset($db_item->vid);
-    unset($db_item->uid);
-    unset($db_item->translate);
-    unset($db_item->tnid);
-    
+
     $db_item->comments = NULL;
     
     $comments_result = db_query("SELECT * FROM {comments} WHERE nid=%d AND pid=0 ORDER BY cid", $db_item->nid);
@@ -64,6 +59,13 @@ function drupal_deploy_export_nodes_fetch_data(){
       }
       $db_item->comments[] = $db_comm_item;
     }
+    
+    unset($db_item->nid);
+    unset($db_item->vid);
+    unset($db_item->uid);
+    unset($db_item->translate);
+    unset($db_item->tnid);
+
   
    // drupal_deploy_export_node_clean($db_item);
     $items[] = $db_item;
