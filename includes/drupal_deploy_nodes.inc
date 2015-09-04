@@ -66,7 +66,7 @@ function drupal_deploy_export_node_clean(&$item){
   $terms = array();
   foreach($item->taxonomy as $term){
     $stored_vocabulary = db_fetch_object(db_query("SELECT * FROM {vocabulary} WHERE vid=%d", $term->vid));
-    $terms[$stored_vocabulary][] = _get_term_tree($term);
+    $terms[$stored_vocabulary->name][] = _get_term_tree($term);
   }
   $item->taxonomy_tree = $terms;
   
