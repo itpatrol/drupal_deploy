@@ -171,6 +171,7 @@ function _get_term_tree($term){
 }
 
 function drupal_deploy_export_node_load(&$node){
+  print_r($node);
   if ($extra = node_invoke($node, 'load')) {
     foreach ($extra as $key => $value) {
       if(!empty($value)){
