@@ -171,7 +171,7 @@ function _get_term_tree($term){
 }
 
 function drupal_deploy_export_node_load(&$node){
-  print_r($node);
+
   if ($extra = node_invoke($node, 'load')) {
     foreach ($extra as $key => $value) {
       if(!empty($value)){
@@ -180,28 +180,15 @@ function drupal_deploy_export_node_load(&$node){
     }
   }
 
-  print_r($node);
-    echo "------\n";  
-  if ($extra = dde_node_invoke_nodeapi($node)) {
-    echo "------\n";
-  print_r($node);
+  if ($extra = node_invoke_nodeapi($node,'loas')) {
     foreach ($extra as $key => $value) {
       if(!empty($value)){
-        $node->extra->$key = $value;  
+        $node->$key = $value;  
       }
     }
   }
-  print_r($node);  
 }
 
-function dde_node_invoke_nodeapi($node){
-  $result = array();
-  foreach (module_implements('nodeapi') as $name) {
-    $function = $name . '_nodeapi';
-    $result[$name] = $function($node, 'load');
-  }
-  return $result;
-}
 
 function drupal_deploy_import_nodes_items($data){
  
