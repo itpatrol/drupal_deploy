@@ -311,8 +311,8 @@ function ddi_set_term($terms, $parent_term_name, $vid, $revision){
           'tid' => $stored_term->tid,
         );
         drupal_write_record('term_node', $term_node);
-        if(isset($node->forum_term)){
-          if($node->forum_term == $stored_term->name){
+        if(isset($revision->forum_term)){
+          if($revision->forum_term == $stored_term->name){
             drupal_write_record('forum', $term_node);
           }
         }
