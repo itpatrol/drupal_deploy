@@ -228,6 +228,30 @@ function ddi_node_save($node){
   foreach($item->revisions as $revision){
     drupal_write_record('node_revisions', $revision);
     $node->vid = $revision->vid;
+    if(!empty($revision->taxonomy)){
+      foreach($revision->taxonomy as $vocabulary => $terms){
+        $vocab_results = db_query("SELECT * FROM {vocabulary} WHERE name='%s'", $vocabulary);
+        $vocabularies = array();
+        while($stored_vocabulary = db_fetch_object($vocab_results)){
+          $vocabularies[] = $stored_vocabulary->vid;
+        }
+        if(empty($vocabularies)){
+          continue;
+        }
+        if(count($vocabularies) == 1){
+          $vid = $vocabularies[0];
+        }
+        if(count($vocabularies) > 1){
+          $term = key($terms);
+          foreach($vocabularies as $vid){
+            if($stored_term = db_fetch_object(db_query("SELECT * FROM {term_data} WHERE name='%s' AND vid=%d",$term, $vid))){
+              break;
+            }
+          }
+        }
+        echo "VID" . $vid;
+      }
+    }
   }
   drupal_write_record('node', $node, 'nid');
   if(!empty($node->comments)){
