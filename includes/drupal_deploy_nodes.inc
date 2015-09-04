@@ -47,7 +47,6 @@ function drupal_deploy_export_nodes_fetch_data($node_type){
   }
 
   while ($db_item = db_fetch_object($result)) {
-//    drupal_deploy_export_node_load($db_item);
     
     $revisions_result = db_query("SELECT * FROM {node_revisions} WHERE nid=%d ORDER BY vid", $db_item->nid);
     while ($db_rev_item = db_fetch_object($revisions_result)) {
@@ -78,11 +77,8 @@ function drupal_deploy_export_nodes_fetch_data($node_type){
     unset($db_item->translate);
     unset($db_item->tnid);
 
-  
-   // drupal_deploy_export_node_clean($db_item);
     $items[] = $db_item;
   }
-  print_r($items);
   return $items;
 }
 
