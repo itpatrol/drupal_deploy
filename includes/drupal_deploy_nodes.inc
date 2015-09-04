@@ -8,7 +8,7 @@ function drupal_deploy_export_nodes($filename = ''){
   if(empty($filename)){
     $filename = 'nodes.export';
     if($node_type){
-      $filename = $node_type . '.taxonomy.export';  
+      $filename = $node_type . '.nodes.export';  
     }
   }
   drupal_deploy_export_save($items, $filename);
