@@ -180,7 +180,7 @@ function drupal_deploy_export_node_load(&$node){
     }
   }
 
-  if ($extra = node_invoke_nodeapi($node,'loas')) {
+  if ($extra = node_invoke_nodeapi($node,'load')) {
     foreach ($extra as $key => $value) {
       if(!empty($value)){
         $node->$key = $value;  
