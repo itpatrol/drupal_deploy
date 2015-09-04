@@ -57,6 +57,15 @@ function drupal_deploy_export_nodes_fetch_data(){
       if($comments = _get_sub_comments($db_comm_item)){
         $db_comm_item->comments = $comments;
       }
+      unset($db_comm_item->nid);
+      unset($db_comm_item->pid);
+      unset($db_comm_item->cid); 
+      $user = user_load($db_comm_item->uid);
+      $db_comm_item->username = $user->name;       
+      unset($db_comm_item->uid);
+      
+      $db_comm_item->format = _get_format_name($db_comm_item->format);
+      
       $db_item->comments[] = $db_comm_item;
     }
     
@@ -81,9 +90,22 @@ function _get_sub_comments($comment){
     if($comments = _get_sub_comments($db_comm_item)){
       $db_comm_item->comments = $comments;  
     }
+    unset($db_comm_item->nid);
+    unset($db_comm_item->pid);
+    unset($db_comm_item->cid); 
+    $user = user_load($db_comm_item->uid);
+    $db_comm_item->username = $user->name;       
+    unset($db_comm_item->uid);
+    
+    $db_comm_item->format = _get_format_name($db_comm_item->format);
     $result[] = $db_comm_item;
   }
   return $result;
+}
+
+function _get_format_name($format){
+  $format = db_fetch_object(db_query("SELECT * FROM {filter_formats} WHERE format=%d", $format));
+  return $format->name;
 }
 
 function drupal_deploy_export_node_clean(&$item){
@@ -93,8 +115,7 @@ function drupal_deploy_export_node_clean(&$item){
   unset($item->vid);
   unset($item->uid);
   
-  $format = db_fetch_object(db_query("SELECT * FROM {filter_formats} WHERE format=%d", $item->format));
-  $item->format = $format->name;
+  $item->format = _get_format_name($item->format);
   
   $terms = array();
   foreach($item->taxonomy as $term){
