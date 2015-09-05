@@ -23,6 +23,7 @@ function drupal_deploy_drush_command() {
       'drush dde nodes --nid=1,2,3' => dt('Export nodes 1,2,3 with comments and revisions.'),
       'drush dde nodes --type=forum' => dt('Export forum nodes with comments and revisions.'),
       'drush dde pathauto' => dt('Export pathauto settings.'),
+      'drush dde language --name=ru' => dt('Export RU language translation.'),
     ),
     'aliases' => array('dde'),
     'arguments' => array(
@@ -30,7 +31,7 @@ function drupal_deploy_drush_command() {
     ),
     'options' => array(
       'file' => 'File to export data. File will be overwritten.',
-      'name' => 'Menu or Vocabulary name',
+      'name' => 'Language, Menu or Vocabulary name',
       'theme' => 'Theme name',
       'type' => 'Node type',
       'nid' => 'Node id or ids',
@@ -52,7 +53,9 @@ function drupal_deploy_drush_command() {
       'drush ddi users' => dt('Import users.'),
       'drush ddi imagecache' => dt('Import imagecache presets.'),
       'drush ddi nodes' => dt('Import nodes with comments and revisions.'),
-      'drush ddi pathauto' => dt('Import pathauto settings.'),      
+      'drush ddi pathauto' => dt('Import pathauto settings.'),  
+      'drush ddi language --name=ru --mode=replace' => dt('Import RU language translation. Replace existing ones, new ones are added.'),
+          
     ),
     'aliases' => array('ddi'),
     'arguments' => array(
@@ -60,10 +63,11 @@ function drupal_deploy_drush_command() {
     ),
     'options' => array(
       'file' => 'File to import data from.',
-      'name' => 'Menu or Vocabulary name',
+      'name' => 'Language, Menu or Vocabulary name',
       'theme' => 'Theme name',
       'type' => 'Node type',
-      'nid' => 'Node id or ids',      
+      'nid' => 'Node id or ids', 
+      'mode' => 'Import language mode. Values: add, replace'     
     ),
   );
 
@@ -164,6 +168,10 @@ function drupal_deploy_export($type = '') {
       include_once(drupal_get_path('module', 'drupal_deploy') .'/includes/drupal_deploy_pathauto.inc');
       drupal_deploy_export_pathauto($filename);
       break;
+    case 'language':
+      include_once(drupal_get_path('module', 'drupal_deploy') .'/includes/drupal_deploy_language.inc');
+      drupal_deploy_export_language($filename);
+      break;
   }
 }
 
@@ -223,6 +231,10 @@ function drupal_deploy_import($type = '', $option = '') {
     case 'pathauto':
       include_once(drupal_get_path('module', 'drupal_deploy') .'/includes/drupal_deploy_pathauto.inc');
       drupal_deploy_import_pathauto($filename);
+      break;
+    case 'language':
+      include_once(drupal_get_path('module', 'drupal_deploy') .'/includes/drupal_deploy_language.inc');
+      drupal_deploy_import_language($filename);
       break;
   }
 }
