@@ -24,6 +24,7 @@ function drupal_deploy_drush_command() {
       'drush dde nodes --type=forum' => dt('Export forum nodes with comments and revisions.'),
       'drush dde pathauto' => dt('Export pathauto settings.'),
       'drush dde language --name=ru --group=default' => dt('Export RU language translation.'),
+      'drush dde comment_notify' => dt('Export comment_notify settings.'),
     ),
     'aliases' => array('dde'),
     'arguments' => array(
@@ -57,7 +58,7 @@ function drupal_deploy_drush_command() {
       'drush ddi pathauto' => dt('Import pathauto settings.'),  
       'drush ddi language --name=ru --mode=replace' => dt('Import RU language translation. Replace existing ones, new ones are added.'),
       'drush ddi language --name=ru --set-default=true' => dt('Import RU language translation. Replace existing ones, new ones are added.'),
-          
+      'drush ddi comment_notify' => dt('Export comment_notify settings.'),
     ),
     'aliases' => array('ddi'),
     'arguments' => array(
@@ -177,6 +178,10 @@ function drupal_deploy_export($type = '') {
       include_once(drupal_get_path('module', 'drupal_deploy') .'/includes/drupal_deploy_language.inc');
       drupal_deploy_export_language($filename);
       break;
+    case 'comment_notify':
+      include_once(drupal_get_path('module', 'drupal_deploy') .'/includes/drupal_deploy_comment_notify.inc');
+      drupal_deploy_export_comment_notify($filename);
+      break;
   }
 }
 
@@ -242,6 +247,11 @@ function drupal_deploy_import($type = '', $option = '') {
       include_once(drupal_get_path('module', 'drupal_deploy') .'/includes/drupal_deploy_language.inc');
       drupal_deploy_import_language($filename);
       break;
+    case 'comment_notify':
+      include_once(drupal_get_path('module', 'drupal_deploy') .'/includes/drupal_deploy_comment_notify.inc');
+      drupal_deploy_import_comment_notify($filename);
+      break;
+
   }
 }
 
