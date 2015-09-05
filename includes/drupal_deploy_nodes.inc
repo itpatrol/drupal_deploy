@@ -272,7 +272,6 @@ function ddi_node_save($node){
     }
   }
   ddi_prepare_node_save($node);
-  print_r($node);
   node_invoke($node, 'insert');
   node_invoke_nodeapi($node, 'insert');
 }
@@ -288,8 +287,8 @@ function ddi_prepare_node_save(&$node){
   unset($revision['user']);
   unset($revision['forum_term']);
   unset($revision['taxonomy']);
+  $revision['format'] = _get_format_id($revision['format']);
   
-  print_r($revision);
   foreach($revision as $field => $value){
     $node->$field = $value;
   }  
