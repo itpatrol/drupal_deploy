@@ -8,7 +8,7 @@ function drupal_deploy_export_language($filename = ''){
   if(empty($filename)){
     $filename = 'language.export';
     if($language){
-      $filename = $language . '.nodes.export';  
+      $filename = $language . '.language.export';  
     }
     
   }
@@ -21,7 +21,7 @@ function drupal_deploy_import_language($filename = ''){
   if(empty($filename)){
     $filename = 'language.export';
     if($language){
-      $filename = $language . '.nodes.export';  
+      $filename = $language . '.language.export';  
     }    
   }
   if(!is_file($filename)){
@@ -39,6 +39,13 @@ function drupal_deploy_import_language($filename = ''){
 function drupal_deploy_export_language_fetch_data($language){
   $groups = module_invoke_all('locale', 'groups');
   print_r($groups);
+  
+  $languages = language_list();
+  $language = $languages[$language];
+  
+  foreach($groups as $group => $description){
+    $item[$group] = _locale_export_po_generate($language, _locale_export_get_strings($language, $group));
+  }
   
   return $items;
 }
