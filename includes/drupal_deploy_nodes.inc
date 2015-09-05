@@ -282,7 +282,7 @@ function drupal_deploy_import_nodes_items($data){
       print_r($item);
       ddi_node_save($item);
       print_r($item);
-      exit();
+      return;
     }
   }
 }
