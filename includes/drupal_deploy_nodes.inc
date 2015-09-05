@@ -294,7 +294,11 @@ function ddi_prepare_node_save(&$node){
   
   foreach($revision as $field => $value){
     $node->$field = $value;
-  }  
+  }
+  
+  if($node->path){
+    $node->pathauto_perform_alias = FALSE;
+  }
 }
 
 function ddi_set_term($terms, $parent_term_name, $vid, $revision){
