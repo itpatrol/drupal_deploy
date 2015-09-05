@@ -29,7 +29,7 @@ function drupal_deploy_import_nodes($filename = ''){
     drupal_set_message(t('Json decode error!'), 'error');
   }
   if(!empty($data['files'])){
-    drupal_deploy_import_files($data['files']);
+    drupal_deploy_import_files($data['files'], $filename);
   }
   drupal_deploy_import_nodes_items($data['nodes']);
 }
@@ -531,7 +531,9 @@ function dde_nodes_files_imported($op, $file){
 }
 
 
-function drupal_deploy_import_files($files){
+function drupal_deploy_import_files($files, $filename){
+  $info = pathinfo($filename);
+  $dir = $info['dirname'];
   foreach($files as $file){
     $file['uid'] = _get_user_id($file['username']);
     if($stored_file = db_fetch_array(db_query("SELECT * FROM {files} WHERE filepath='%s'", $file['filepath']))){
@@ -540,8 +542,9 @@ function drupal_deploy_import_files($files){
     }else{
       drupal_write_record('files', $file);
       dde_nodes_files_imported('set', $file);
-      file_put_contents($file['filepath'], base64_decode($file['content']));
-    
+      copy($dir . '/' .$file['stored_filepath'], $file['filepath']);
+      echo $dir;
+      print_r($file);
       drush_log(dt('!filename imported.', array('!filename' => $file['filename'])), 'ok');
     }
   }
