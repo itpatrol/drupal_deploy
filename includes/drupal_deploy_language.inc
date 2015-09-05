@@ -1,18 +1,17 @@
 <?php
   
 function drupal_deploy_export_language($filename = ''){
-  $items = drupal_deploy_export_language_fetch_data($language);
-  
-  $language = drush_get_option('name', FALSE);
+  $language = drush_get_option('name', 'en');
+  $group = drush_get_option('group', 'default');
+
+  $data = drupal_deploy_export_language_fetch_data($language, $group);
   
   if(empty($filename)){
-    $filename = 'language.export';
-    if($language){
-      $filename = $language . '.language.export';  
-    }
-    
+    $filename = $group . '.' .$language . '.language.export';  
   }
-  drupal_deploy_export_save($items, $filename);
+  if(file_put_contents($filename, $data)){
+    drupal_set_message(t('Exported to file !filename', array('!filename' => $filename)));
+  }
 }
 
 function drupal_deploy_import_language($filename = ''){
@@ -36,19 +35,11 @@ function drupal_deploy_import_language($filename = ''){
 }
 
 
-function drupal_deploy_export_language_fetch_data($language){
-  $groups = module_invoke_all('locale', 'groups');
-  print_r($groups);
+function drupal_deploy_export_language_fetch_data($language, $group){
   
   $languages = language_list();
   $language = $languages[$language];
-  
-  foreach($groups as $group => $description){
-//    $items[$group] = _locale_export_po_generate($language, _locale_export_get_strings($language, $group));
-    print_r(_locale_export_get_strings($language, $group));
-  }
-  
-  return $items;
+  return _locale_export_po_generate($language, _locale_export_get_strings($language, $group));
 }
 
 function drupal_deploy_import_language_items($data){

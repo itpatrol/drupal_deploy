@@ -23,7 +23,7 @@ function drupal_deploy_drush_command() {
       'drush dde nodes --nid=1,2,3' => dt('Export nodes 1,2,3 with comments and revisions.'),
       'drush dde nodes --type=forum' => dt('Export forum nodes with comments and revisions.'),
       'drush dde pathauto' => dt('Export pathauto settings.'),
-      'drush dde language --name=ru' => dt('Export RU language translation.'),
+      'drush dde language --name=ru --group=default' => dt('Export RU language translation.'),
     ),
     'aliases' => array('dde'),
     'arguments' => array(
@@ -35,6 +35,7 @@ function drupal_deploy_drush_command() {
       'theme' => 'Theme name',
       'type' => 'Node type',
       'nid' => 'Node id or ids',
+      'group' => 'Translation group name',
     ),
   );
 
