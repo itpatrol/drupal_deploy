@@ -156,27 +156,29 @@ function drupal_deploy_export_node_clean(&$item){
   $item->format = _get_format_name($item->format);
   
   $terms = array();
-  foreach($item->taxonomy as $term){
-    $stored_vocabulary = db_fetch_object(db_query("SELECT * FROM {vocabulary} WHERE vid=%d", $term->vid));
-    $tree = explode("\n",_get_term_tree($term));
-    $res=array();
-    foreach($tree as $term){
-      if(empty($res)){
-        $res = array($term);
-      }else{
-        $res = array( $term => $res);
+  if(is_array(($item->taxonomy)){
+    foreach($item->taxonomy as $term){
+      $stored_vocabulary = db_fetch_object(db_query("SELECT * FROM {vocabulary} WHERE vid=%d", $term->vid));
+      $tree = explode("\n",_get_term_tree($term));
+      $res=array();
+      foreach($tree as $term){
+        if(empty($res)){
+          $res = array($term);
+        }else{
+          $res = array( $term => $res);
+        }
+      }
+      
+      list($key,$value) = each($res);
+      if(isset($terms[$stored_vocabulary->name][$key])){
+        $terms[$stored_vocabulary->name][$key] = array_merge_recursive($terms[$stored_vocabulary->name][$key],$value);
+      }
+      else {
+        $terms[$stored_vocabulary->name][$key] = $value;
       }
     }
-    
-    list($key,$value) = each($res);
-    if(isset($terms[$stored_vocabulary->name][$key])){
-      $terms[$stored_vocabulary->name][$key] = array_merge_recursive($terms[$stored_vocabulary->name][$key],$value);
-    }
-    else {
-      $terms[$stored_vocabulary->name][$key] = $value;
-    }
+    $item->taxonomy = $terms;
   }
-  $item->taxonomy = $terms;
   
   if(isset($item->forum_tid)){
     $term = db_fetch_object(db_query("SELECT * FROM {term_data} WHERE tid=%d", ($item->forum_tid)));
