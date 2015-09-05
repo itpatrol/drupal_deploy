@@ -524,15 +524,14 @@ function dde_nodes_files_imported($op, $file){
 function drupal_deploy_import_files($files){
   foreach($files as $file){
     $file['uid'] = _get_user_id($file['username']);
-    $content = base64_decode($file['content']);
-    unset($file['username']);
-    unset($file['content']);
     if($stored_file = db_fetch_array(db_query("SELECT * FROM {files} WHERE filepath='%s'", $file['filepath']))){
       drush_log(dt('!filename already stored. No changes', array('!filename' => $stored_file['filename'])));
       dde_nodes_files_imported('set', $stored_file);
     }else{
       drupal_write_record('files', $file);
       dde_nodes_files_imported('set', $file);
+      file_put_contents($file['filepath'], base64_decode($file['content']));
+    
       drush_log(dt('!filename imported.', array('!filename' => $file['filename'])), 'ok');
     }
   }
