@@ -56,6 +56,7 @@ function drupal_deploy_drush_command() {
       'drush ddi nodes' => dt('Import nodes with comments and revisions.'),
       'drush ddi pathauto' => dt('Import pathauto settings.'),  
       'drush ddi language --name=ru --mode=replace' => dt('Import RU language translation. Replace existing ones, new ones are added.'),
+      'drush ddi language --name=ru --set-default=true' => dt('Import RU language translation. Replace existing ones, new ones are added.'),
           
     ),
     'aliases' => array('ddi'),
@@ -70,6 +71,7 @@ function drupal_deploy_drush_command() {
       'nid' => 'Node id or ids', 
       'mode' => 'Import language mode. Values: add, replace',
       'group' => 'Translation group name',
+      'set-default' => 'Set language as default',
     ),
   );
 

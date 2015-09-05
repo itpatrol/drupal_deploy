@@ -19,6 +19,8 @@ function drupal_deploy_import_language($filename = ''){
   $group = drush_get_option('group', 'default');
   $mode = drush_get_option('mode', 'add');
   
+  $set_default = drush_get_option('set-default', FALSE);
+  
   if($mode == 'add'){
     $mode = LOCALE_IMPORT_KEEP;
   }else{
@@ -47,6 +49,11 @@ function drupal_deploy_import_language($filename = ''){
     drupal_set_message(t('The translation import of %filename failed.', $variables), 'error');
   }else{
     drupal_set_message(t('Translation imported !lancode.', array('!lancode', $language)), 'success');
+  }
+  
+  if($set_default){
+    variable_set('language_default', $languages[$language]);
+    cache_clear_all('*', 'cache_page', TRUE);
   }
 }
 
