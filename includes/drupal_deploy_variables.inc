@@ -21,6 +21,7 @@ function drupal_deploy_export_variables($filename = ''){
     if($names){
       $name_for_file = str_replace("_%", "", $name);
       $name_for_file = str_replace("%", "", $name_for_file);
+      $name_for_file = str_replace(",", ".", $name_for_file);
       $filename = $name_for_file . '.variables.export';
     }
   }
