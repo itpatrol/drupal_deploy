@@ -76,8 +76,9 @@ function drupal_deploy_export_nodes_fetch_data($node_type){
     unset($db_item->translate);
     unset($db_item->tnid);
 
-    $items[] = $db_item;
+    $items['nodes'][] = $db_item;
   }
+  $items['files'] = dde_nodes_files_to_export('get');
   return $items;
 }
 
@@ -198,6 +199,20 @@ function drupal_deploy_export_node_clean(&$item){
   //tnid
 }
 
+function dde_nodes_files_to_export($op, $fid){
+  static $files;
+  if($op == 'export'){
+    if(!isset($files[$fid])){
+      $file = db_fetch_object(db_query("SELECT * FROM {files} WHERE fid=%d", $fid));
+      $file->content = base64_encode(file_get_contents($file->filepath));
+      $files[$fid] = $file; 
+    }
+  }
+  if($op == 'get'){
+    return $files;
+  }
+}
+
 function dde_nodes_replace_and_clean_vars($object){
   $is_object = TRUE;
   if(is_array($object)){
@@ -212,6 +227,8 @@ function dde_nodes_replace_and_clean_vars($object){
       }
     }else{
       switch($key){
+        case 'fid':
+          dde_nodes_files_to_export('export', $val);
         case 'nid':
         case 'vid':
           if($is_object){
