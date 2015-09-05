@@ -1,7 +1,7 @@
 <?php
   
 function drupal_deploy_export_imagecache($filename = ''){
-  $items = drupal_deploy_export_imagecache_fetch_data($vocabulary_name);
+  $items = drupal_deploy_export_imagecache_fetch_data();
   
   if(empty($filename)){
     $filename = 'imagecache.export';
