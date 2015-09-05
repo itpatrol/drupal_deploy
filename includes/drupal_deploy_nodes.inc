@@ -222,13 +222,14 @@ function drupal_deploy_import_nodes_items($data){
     $item = (object) $item;
     $item->uid = _get_user_id($item->user);
     if($node_saved = ddi_check_node($item)){
-      drush_log(t('Node !title imported already. Skip it.', array('!title' => $item->title)), 'info');
+      drush_log(dt('Node !title imported already. Skip it.', array('!title' => $item->title)));
     }else{
       ddi_node_save($item);
+      exit();
     }
-    exit();
   }
 }
+
 function ddi_check_node($node){
   if($node_saved = db_fetch_object(db_query("SELECT * FROM {node} WHERE title='%s' AND type='%s' AND uid=%d",$node->title, $node->type, $node->uid))){  
     return $node_saved;
