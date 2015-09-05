@@ -27,7 +27,10 @@ function drupal_deploy_import_nodes($filename = ''){
   if(!$data = json_decode($data, TRUE)){
     drupal_set_message(t('Json decode error!'), 'error');
   }
-  drupal_deploy_import_nodes_items($data);
+  if(!empty($data['files'])){
+    drupal_deploy_import_files($data['files']);
+  }
+  drupal_deploy_import_nodes_items($data['nodes']);
 }
 
 
@@ -199,23 +202,6 @@ function drupal_deploy_export_node_clean(&$item){
   //tnid
 }
 
-function dde_nodes_files_to_export($op, $fid = NULL){
-  static $files;
-  if($op == 'export' && !empty($fid)){
-    if(!isset($files[$fid])){
-      $file = db_fetch_object(db_query("SELECT * FROM {files} WHERE fid=%d", $fid));
-      $file->content = base64_encode(file_get_contents($file->filepath));
-      $file->username = _get_user_name($file->uid);
-      unset($file->uid);
-      unset($file->fid);      
-      $files[$fid] = $file; 
-    }
-  }
-  if($op == 'get'){
-    return $files;
-  }
-}
-
 function dde_nodes_replace_and_clean_vars($object){
   $is_object = TRUE;
   if(is_array($object)){
@@ -297,7 +283,11 @@ function drupal_deploy_import_nodes_items($data){
     if($node_saved = ddi_check_node($item)){
       drush_log(dt('Node !title imported already. Skip it.', array('!title' => $item->title)));
     }else{
-      print_r($item);
+      foreach($item as $key => $val){
+        if(is_array($val)){
+          $item[$key] = ddi_nodes_prepare_vars($val);
+        }
+      }
       ddi_node_save($item);
       print_r($item);
       cache_clear_all();
@@ -305,6 +295,43 @@ function drupal_deploy_import_nodes_items($data){
     }
   }
   cache_clear_all();
+}
+
+function ddi_nodes_prepare_vars($object){
+  $is_object = TRUE;
+  if(is_array($object)){
+    $is_object = FALSE;  
+  }
+  foreach($object as $key => $val){
+    if(is_array($val) or is_object($val)){
+      if($is_object){
+        $object->$key = ddi_nodes_prepare_vars($val);
+      }else{
+        $object[$key] = ddi_nodes_prepare_vars($val);
+      }
+    }else{
+      switch($key){
+        case 'filepath':
+          $file = dde_nodes_files_imported('get', $object);
+          if($is_object){
+            $object->fid = $file['fid'];
+          }else{
+            $object['fid'] = $file['fid'];
+          }
+          break;
+        case 'username':
+          if($is_object){
+            $object->uid = _get_user_id($val);
+            unset($object->$key);
+          }else{
+            $object['uid'] = _get_user_id($val);
+            unset($object[$key]);
+          }
+          break;          
+      }
+    }
+  }
+  return $object;  
 }
 
 function ddi_check_node($node){
@@ -461,4 +488,52 @@ function ddi_node_save_revision(&$node, $uid, $update = NULL) {
     drupal_write_record('node_revisions', $node);
   }
   $node->uid = $temp_uid;
+}
+
+
+function dde_nodes_files_to_export($op, $fid = NULL){
+  static $files;
+  if($op == 'export' && !empty($fid)){
+    if(!isset($files[$fid])){
+      $file = db_fetch_object(db_query("SELECT * FROM {files} WHERE fid=%d", $fid));
+      $file->content = base64_encode(file_get_contents($file->filepath));
+      $file->username = _get_user_name($file->uid);
+      unset($file->uid);
+      unset($file->fid);      
+      $files[$fid] = $file; 
+    }
+  }
+  if($op == 'get'){
+    return $files;
+  }
+}
+
+function dde_nodes_files_imported($op, $file){
+  static $files;
+  if($op == 'set'){
+    if(!isset($files[$file['filepath']])){
+      $files[$file['filepath']] = $file;
+    }
+  }
+  if($op == 'get'){
+    return $files[$file['filepath']];
+  }
+}
+
+
+function drupal_deploy_import_files($files){
+  foreach($files as $file){
+    $file['uid'] = _get_user_id($file['username']);
+    $content = base64_decode($file['content']);
+    unset($file['username']);
+    unset($file['content']);
+    if($stored_file = db_fetch_array(db_query("SELECT * FROM {files} WHERE filepath='%s'", $file['filepath']))){
+      drush_log(dt('!filename already stored. No changes', array('!filename' => $stored_file['filename'])));
+      dde_nodes_files_imported('set', $stored_file);
+    }else{
+      drupal_write_record('files', $file);
+      dde_nodes_files_imported('set', $file);
+      drush_log(dt('!filename imported.', array('!filename' => $file['filename'])), 'ok');
+    }
+  }
 }
