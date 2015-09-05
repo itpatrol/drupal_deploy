@@ -285,7 +285,7 @@ function drupal_deploy_import_nodes_items($data){
     }else{
       foreach($item as $key => $val){
         if(is_array($val)){
-          $item[$key] = ddi_nodes_prepare_vars($val);
+          $item->$key = ddi_nodes_prepare_vars($val);
         }
       }
       ddi_node_save($item);
