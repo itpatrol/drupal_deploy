@@ -175,18 +175,10 @@ function drupal_deploy_export($type = '') {
       include_once(drupal_get_path('module', 'drupal_deploy') .'/includes/drupal_deploy_nodes.inc');
       drupal_deploy_export_nodes($filename);
       break;
-    case 'pathauto':
-      include_once(drupal_get_path('module', 'drupal_deploy') .'/includes/drupal_deploy_pathauto.inc');
-      drupal_deploy_export_pathauto($filename);
-      break;
     case 'language':
       include_once('includes/locale.inc');
       include_once(drupal_get_path('module', 'drupal_deploy') .'/includes/drupal_deploy_language.inc');
       drupal_deploy_export_language($filename);
-      break;
-    case 'comment_notify':
-      include_once(drupal_get_path('module', 'drupal_deploy') .'/includes/drupal_deploy_comment_notify.inc');
-      drupal_deploy_export_comment_notify($filename);
       break;
     case 'variables':
       include_once(drupal_get_path('module', 'drupal_deploy') .'/includes/drupal_deploy_variables.inc');
@@ -248,18 +240,10 @@ function drupal_deploy_import($type = '', $option = '') {
       include_once(drupal_get_path('module', 'drupal_deploy') .'/includes/drupal_deploy_nodes.inc');
       drupal_deploy_import_nodes($filename);
       break;
-    case 'pathauto':
-      include_once(drupal_get_path('module', 'drupal_deploy') .'/includes/drupal_deploy_pathauto.inc');
-      drupal_deploy_import_pathauto($filename);
-      break;
     case 'language':
       include_once('includes/locale.inc');    
       include_once(drupal_get_path('module', 'drupal_deploy') .'/includes/drupal_deploy_language.inc');
       drupal_deploy_import_language($filename);
-      break;
-    case 'comment_notify':
-      include_once(drupal_get_path('module', 'drupal_deploy') .'/includes/drupal_deploy_comment_notify.inc');
-      drupal_deploy_import_comment_notify($filename);
       break;
     case 'variables':
       include_once(drupal_get_path('module', 'drupal_deploy') .'/includes/drupal_deploy_variables.inc');
