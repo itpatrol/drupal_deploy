@@ -169,6 +169,7 @@ function drupal_deploy_export($type = '') {
       drupal_deploy_export_pathauto($filename);
       break;
     case 'language':
+      include_once('includes/locale.inc');
       include_once(drupal_get_path('module', 'drupal_deploy') .'/includes/drupal_deploy_language.inc');
       drupal_deploy_export_language($filename);
       break;
@@ -233,6 +234,7 @@ function drupal_deploy_import($type = '', $option = '') {
       drupal_deploy_import_pathauto($filename);
       break;
     case 'language':
+      include_once('includes/locale.inc');    
       include_once(drupal_get_path('module', 'drupal_deploy') .'/includes/drupal_deploy_language.inc');
       drupal_deploy_import_language($filename);
       break;
