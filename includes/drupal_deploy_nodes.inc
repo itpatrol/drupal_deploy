@@ -2,15 +2,16 @@
   
 function drupal_deploy_export_nodes($filename = ''){
   $node_type = drush_get_option('type', FALSE);
-  
-  $items = drupal_deploy_export_nodes_fetch_data($node_type);
-  
+
   if(empty($filename)){
     $filename = 'nodes.export';
     if($node_type){
       $filename = $node_type . '.nodes.export';  
     }
   }
+  
+  $items = drupal_deploy_export_nodes_fetch_data($node_type, $filename);
+
   drupal_deploy_export_save($items, $filename);
 }
 
@@ -34,7 +35,7 @@ function drupal_deploy_import_nodes($filename = ''){
 }
 
 
-function drupal_deploy_export_nodes_fetch_data($node_type){
+function drupal_deploy_export_nodes_fetch_data($node_type, $filename){
   global $user;
   
   $items = array();
@@ -81,7 +82,17 @@ function drupal_deploy_export_nodes_fetch_data($node_type){
 
     $items['nodes'][] = $db_item;
   }
-  $items['files'] = dde_nodes_files_to_export('get');
+
+  $export_folder = $filename . '.files';
+  mkdir($export_folder);
+  $files = dde_nodes_files_to_export('get');
+  foreach($files as $file){
+    $basename = basename($file->filepath);
+    $store_filepath = $export_folder . '/' . $basename;
+    copy($file->filepath, $store_filepath);
+    $file->stored_filepath = $store_filepath;
+    $items['files'][] = $file;
+  }
   return $items;
 }
 
@@ -496,7 +507,6 @@ function dde_nodes_files_to_export($op, $fid = NULL){
   if($op == 'export' && !empty($fid)){
     if(!isset($files[$fid])){
       $file = db_fetch_object(db_query("SELECT * FROM {files} WHERE fid=%d", $fid));
-      $file->content = base64_encode(file_get_contents($file->filepath));
       $file->username = _get_user_name($file->uid);
       unset($file->uid);
       unset($file->fid);      
