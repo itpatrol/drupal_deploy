@@ -284,16 +284,17 @@ function ddi_node_save($node){
       }
     }
   }
+
   drupal_write_record('node', $node, 'nid');
+  ddi_prepare_node_save($node);
+  node_invoke($node, 'insert');
+  node_invoke_nodeapi($node, 'insert');
   if(!empty($node->comments)){
     foreach($node->comments as $comment){
       $comment = (object) $comment;
       ddi_comment_save($comment, $node->nid);
     }
-  }
-  ddi_prepare_node_save($node);
-  node_invoke($node, 'insert');
-  node_invoke_nodeapi($node, 'insert');
+  }  
 }
 
 function ddi_prepare_node_save(&$node){
