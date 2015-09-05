@@ -279,15 +279,15 @@ function ddi_node_save($node){
 
 function ddi_prepare_node_save(&$node){
   $revisions = count($node->revisions);
-  $revision = $node->revisions[$revisions-1];
+  $revision = (array)$node->revisions[$revisions-1];
   unset($node->revisions);
   unset($node->user);
   
-  unset($revision->log);
-  unset($revision->timestamp);
-  unset($revision->user);
-  unset($revision->forum_term);
-  unset($revision->taxonomy);
+  unset($revision['log']);
+  unset($revision['timestamp']);
+  unset($revision['user']);
+  unset($revision['forum_term']);
+  unset($revision['taxonomy']);
   
   print_r($revision);
   foreach($revision as $field => $value){
