@@ -205,6 +205,9 @@ function dde_nodes_files_to_export($op, $fid = NULL){
     if(!isset($files[$fid])){
       $file = db_fetch_object(db_query("SELECT * FROM {files} WHERE fid=%d", $fid));
       $file->content = base64_encode(file_get_contents($file->filepath));
+      $file->username = _get_user_name($file->uid);
+      unset($file->uid);
+      unset($file->fid);      
       $files[$fid] = $file; 
     }
   }
