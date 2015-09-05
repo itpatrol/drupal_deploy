@@ -14,10 +14,13 @@ function drupal_deploy_export_variables($filename = ''){
   if(empty($filename)){
     $filename = 'variables.export';
     if($name){
+      $name = str_replace("_%", "", $name);
+      $name = str_replace("%", "", $name);
       $filename = $name . '.variables.export';  
     }
     if($names){
-      $name_for_file = str_replace("%", "", $name);
+      $name_for_file = str_replace("_%", "", $name);
+      $name_for_file = str_replace("%", "", $name_for_file);
       $filename = $name_for_file . '.variables.export';
     }
   }
