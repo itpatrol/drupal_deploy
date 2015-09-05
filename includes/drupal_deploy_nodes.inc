@@ -199,18 +199,35 @@ function drupal_deploy_export_node_clean(&$item){
 }
 
 function dde_nodes_replace_and_clean_vars($object){
+  $is_object = TRUE;
+  if(is_array($object)){
+    $is_object = FALSE;  
+  }
   foreach($object as $key => $val){
     if(is_array($val)){
-      $object->$key = dde_nodes_replace_and_clean_vars($val);
+      if($is_object){
+        $object->$key = dde_nodes_replace_and_clean_vars($val);
+      }else{
+        $object[$key] = dde_nodes_replace_and_clean_vars($val);
+      }
     }else{
       switch($key){
         case 'nid':
         case 'vid':
-          unset($object->key);
+          if($is_object){
+            unset($object->$key);
+          }else{
+            unset($object[$key]);
+          }
           break;
         case 'uid':
-          $object->username = _get_user_name($val);
-          unset($object->key);
+          if($is_object){
+            $object->username = _get_user_name($val);
+            unset($object->$key);
+          }else{
+            $object['username'] = _get_user_name($val);
+            unset($object[$key]);
+          }
           break;          
       }
     }
