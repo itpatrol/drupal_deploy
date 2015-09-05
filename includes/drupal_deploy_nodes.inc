@@ -156,7 +156,7 @@ function drupal_deploy_export_node_clean(&$item){
   $item->format = _get_format_name($item->format);
   
   $terms = array();
-  if(is_array(($item->taxonomy)){
+  if(is_array($item->taxonomy)){
     foreach($item->taxonomy as $term){
       $stored_vocabulary = db_fetch_object(db_query("SELECT * FROM {vocabulary} WHERE vid=%d", $term->vid));
       $tree = explode("\n",_get_term_tree($term));
@@ -186,11 +186,36 @@ function drupal_deploy_export_node_clean(&$item){
     unset($item->forum_tid);
   }
   
+  foreach($item as $key => $val){
+    if(is_array($val)){
+      $item->$key = dde_nodes_replace_and_clean_vars($val);
+    }
+  }
   unset($item->tags);
   unset($item->type);
   unset($item->last_comment_timestamp);
   unset($item->comment_count);  
   //tnid
+}
+
+function dde_nodes_replace_and_clean_vars($object){
+  foreach($object as $key => $val){
+    if(is_array($val)){
+      $object->$key = dde_nodes_replace_and_clean_vars($val);
+    }else{
+      switch($key){
+        case 'nid':
+        case 'vid':
+          unset($object->key);
+          break;
+        case 'uid':
+          $object->username = _get_user_name($val);
+          unset($object->key);
+          break;          
+      }
+    }
+  }
+  return $object;
 }
 
 function _get_term_tree($term){
