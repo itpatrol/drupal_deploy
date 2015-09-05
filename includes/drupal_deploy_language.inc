@@ -44,7 +44,7 @@ function drupal_deploy_export_language_fetch_data($language){
   $language = $languages[$language];
   
   foreach($groups as $group => $description){
-    $item[$group] = _locale_export_po_generate($language, _locale_export_get_strings($language, $group));
+    $items[$group] = _locale_export_po_generate($language, _locale_export_get_strings($language, $group));
   }
   
   return $items;
