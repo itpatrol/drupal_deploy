@@ -284,7 +284,6 @@ function ddi_node_save($node){
       }
     }
   }
-
   drupal_write_record('node', $node, 'nid');
   ddi_prepare_node_save($node);
   node_invoke($node, 'insert');
@@ -294,7 +293,9 @@ function ddi_node_save($node){
       $comment = (object) $comment;
       ddi_comment_save($comment, $node->nid);
     }
-  }  
+  }
+  
+  _comment_update_node_statistics($node->nid);
 }
 
 function ddi_prepare_node_save(&$node){
