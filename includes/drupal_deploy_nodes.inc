@@ -215,6 +215,9 @@ function drupal_deploy_export_node_load(&$node){
 
 
 function drupal_deploy_import_nodes_items($data){
+  global $user;
+  $user = user_load(1);
+  
   foreach($data as $item){
     $item = (object) $item;
     $item->uid = _get_user_id($item->user);
