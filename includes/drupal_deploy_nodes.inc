@@ -272,7 +272,26 @@ function ddi_node_save($node){
       ddi_comment_save($comment);
     }
   }
-  print_r($revision);
+  ddi_prepare_node_save($node);
+  print_r($node);
+  node_invoke($node, 'insert');
+  node_invoke_nodeapi($node, 'insert');
+}
+
+function ddi_prepare_node_save(&$node){
+  $revisions = count($node->revisions);
+  $revision = $node->revisions[$revisions-1];
+  unset($node->revisions);
+  unset($node->user);
+  
+  unset($revision->log);
+  unset($revision->timestamp);
+  unset($revision->user);
+  unset($revision->forum_term);
+    
+  foreach($revision as $field => $value){
+    $node->$field = $value;
+  }  
 }
 
 function ddi_set_term($terms, $parent_term_name, $vid, $revision){
