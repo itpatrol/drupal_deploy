@@ -277,6 +277,8 @@ function drupal_deploy_import_nodes_items($data){
     if($node_saved = ddi_check_node($item)){
       drush_log(dt('Node !title imported already. Skip it.', array('!title' => $item->title)));
     }else{
+      print_r($item);
+      
       ddi_node_save($item);
       print_r($item);
       exit();
