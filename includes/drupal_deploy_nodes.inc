@@ -200,6 +200,7 @@ function drupal_deploy_export_node_clean(&$item){
 
 function dde_nodes_replace_and_clean_vars($object){
   $is_object = TRUE;
+  echo "process: ".print_r($object,true);
   if(is_array($object)){
     $is_object = FALSE;  
   }
@@ -232,6 +233,7 @@ function dde_nodes_replace_and_clean_vars($object){
       }
     }
   }
+  echo "return: ".print_r($object,true);  
   return $object;
 }
 
