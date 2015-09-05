@@ -280,9 +280,11 @@ function drupal_deploy_import_nodes_items($data){
       print_r($item);
       ddi_node_save($item);
       print_r($item);
+      cache_clear_all();
       return;
     }
   }
+  cache_clear_all();
 }
 
 function ddi_check_node($node){
