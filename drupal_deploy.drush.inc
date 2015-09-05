@@ -68,7 +68,8 @@ function drupal_deploy_drush_command() {
       'theme' => 'Theme name',
       'type' => 'Node type',
       'nid' => 'Node id or ids', 
-      'mode' => 'Import language mode. Values: add, replace'     
+      'mode' => 'Import language mode. Values: add, replace',
+      'group' => 'Translation group name',
     ),
   );
 
