@@ -89,12 +89,21 @@ function _clean_comment(&$comment){
   unset($comment->uid);
   
   $comment->format = _get_format_name($comment->format);
-  
-  if($comment->status){
-    $comment->status = 'Not Published';
-  }else{
-    $comment->status = 'Published';
-  }  
+  $comment->status = _get_comment_status($comment->status);
+}
+
+function _get_comment_status($status){
+  if($status){
+    return  'Not Published';
+  }
+  return 'Published';
+}
+
+function _get_comment_status_id($title){
+  if($title == 'Not Published'){
+    return 1;
+  }
+  return 0;
 }
 
 function _get_sub_comments($comment){
@@ -279,10 +288,7 @@ function ddi_node_save($node){
   if(!empty($node->comments)){
     foreach($node->comments as $comment){
       $comment = (object) $comment;
-      $comment->nid = $node->nid;
-      $comment->uid = _get_user_id($comment->user);
-      $comment->format = _get_format_id($comment->format);
-      ddi_comment_save($comment);
+      ddi_comment_save($comment, $node->nid);
     }
   }
   ddi_prepare_node_save($node);
@@ -357,14 +363,19 @@ function ddi_set_term($terms, $parent_term_name, $vid, $revision){
   }
 }
 
-function ddi_comment_save($comment, $pid = 0){
-  //pid
+function ddi_comment_save($comment, $nid, $pid = 0){
+  $comment->nid = $nid;
+  $comment->uid = _get_user_id($comment->username);
+  $comment->format = _get_format_id($comment->format);
   $comment->pid = $pid;
+  $comment->status = _get_comment_status_id($comment->status);
+  
+
   drupal_write_record('comments', $comment);
   echo "Comment saved" . print_r($comment,true);  
   if(!empty($comment->comments)){
     foreach($comment->comments as $sub_comment){
-      ddi_comment_save($sub_comment, $comment->cid);
+      ddi_comment_save($sub_comment, $nid, $comment->cid);
 
     }
   }
