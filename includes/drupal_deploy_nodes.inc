@@ -272,13 +272,14 @@ function drupal_deploy_import_nodes_items($data){
   $user = user_load(1);
   
   foreach($data as $item){
+      print_r($item);
+    
     $item = (object) $item;
     $item->uid = _get_user_id($item->user);
     if($node_saved = ddi_check_node($item)){
       drush_log(dt('Node !title imported already. Skip it.', array('!title' => $item->title)));
     }else{
       print_r($item);
-      
       ddi_node_save($item);
       print_r($item);
       exit();
