@@ -288,7 +288,8 @@ function ddi_prepare_node_save(&$node){
   unset($revision->user);
   unset($revision->forum_term);
   unset($revision->taxonomy);
-      
+  
+  print_r($revision);
   foreach($revision as $field => $value){
     $node->$field = $value;
   }  
