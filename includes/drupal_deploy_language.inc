@@ -40,8 +40,8 @@ function drupal_deploy_import_language($filename = ''){
     locale_add_language($language);
     drupal_set_message(t('The language %language has been created.', array('%language' => t($predefined[$language][0]))));
   }
-
-  if ($ret = _locale_import_po($filename, $language, $mode, $group) == FALSE) {
+  $file->filename = $filename;
+  if ($ret = _locale_import_po($file, $language, $mode, $group) == FALSE) {
     $variables = array('%filename' => $filename);
     drupal_set_message(t('The translation import of %filename failed.', $variables), 'error');
   }else{
