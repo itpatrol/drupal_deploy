@@ -41,6 +41,7 @@ function drupal_deploy_import_language($filename = ''){
     drupal_set_message(t('The language %language has been created.', array('%language' => t($predefined[$language][0]))));
   }
   $file->filename = $filename;
+  $file->filepath = $filename;  
   if ($ret = _locale_import_po($file, $language, $mode, $group) == FALSE) {
     $variables = array('%filename' => $filename);
     drupal_set_message(t('The translation import of %filename failed.', $variables), 'error');
