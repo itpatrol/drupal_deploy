@@ -48,12 +48,13 @@ function drupal_deploy_import_language($filename = ''){
     $variables = array('%filename' => $filename);
     drupal_set_message(t('The translation import of %filename failed.', $variables), 'error');
   }else{
-    drupal_set_message(t('Translation imported !lancode.', array('!lancode', $language)), 'success');
+    drupal_set_message(t('Translation imported !lancode.', array('!lancode' => $language)), 'success');
   }
   
   if($set_default){
     variable_set('language_default', $languages[$language]);
     cache_clear_all('*', 'cache_page', TRUE);
+    drupal_set_message(t('Set default language !lancode.', array('!lancode' => $language)), 'success');
   }
 }
 
