@@ -26,8 +26,8 @@ function drupal_deploy_import_filters($filename){
 
 function drupal_deploy_import_filters_items($data)
 {
-  db_query("DELETE FROM {filter_formats}");
-  db_query("DELETE FROM {filters}");
+  db_query("TRUNCATE {filter_formats}");
+  db_query("TRUNCATE {filters}");
   $result = db_query('SELECT * FROM {role}');
   $roles = array();
   while($role = db_fetch_object($result)){
