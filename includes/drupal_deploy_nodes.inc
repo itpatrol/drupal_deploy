@@ -221,9 +221,19 @@ function drupal_deploy_import_nodes_items($data){
   foreach($data as $item){
     $item = (object) $item;
     $item->uid = _get_user_id($item->user);
-    ddi_node_save($item);
+    if($node_saved = ddi_check_node($item)){
+      drush_log(t('Node !title imported already. Skip it.', array('!title' => $item->title)), 'info');
+    }else{
+      ddi_node_save($item);
+    }
     exit();
   }
+}
+function ddi_check_node($node){
+  if($node_saved = db_fetch_object(db_query("SELECT * FROM {node} WHERE title='%s' AND type='%s' AND uid=%d",$node->title, $node->type, $node->uid))){  
+    return $node_saved;
+  }
+  return FALSE;
 }
 
 function ddi_node_save($node){
