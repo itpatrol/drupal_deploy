@@ -25,6 +25,9 @@ function drupal_deploy_drush_command() {
       'drush dde pathauto' => dt('Export pathauto settings.'),
       'drush dde language --name=ru --group=default' => dt('Export RU language translation.'),
       'drush dde comment_notify' => dt('Export comment_notify settings.'),
+      'drush dde variables --name=superfish_%' => dt('Export superfish variables settings.'),
+      'drush dde variables --name=comment_notify_%,node_notify_%' => dt('Export comment_notify variable settings.'),            
+      'drush dde variables --name=pathauto_%' => dt('Export pathauto variable settings.'),            
     ),
     'aliases' => array('dde'),
     'arguments' => array(
@@ -32,7 +35,7 @@ function drupal_deploy_drush_command() {
     ),
     'options' => array(
       'file' => 'File to export data. File will be overwritten.',
-      'name' => 'Language, Menu or Vocabulary name',
+      'name' => 'Variable, Language, Menu or Vocabulary name',
       'theme' => 'Theme name',
       'type' => 'Node type',
       'nid' => 'Node id or ids',
@@ -59,6 +62,9 @@ function drupal_deploy_drush_command() {
       'drush ddi language --name=ru --mode=replace' => dt('Import RU language translation. Replace existing ones, new ones are added.'),
       'drush ddi language --name=ru --set-default=true' => dt('Import RU language translation. Replace existing ones, new ones are added.'),
       'drush ddi comment_notify' => dt('Export comment_notify settings.'),
+      'drush ddi variables --name=superfish_%' => dt('Import superfish variables settings.'),      
+      'drush ddi variables --name=comment_notify_%,node_notify_%' => dt('Import comment_notify variable settings.'),
+      'drush ddi variables --name=pathauto_%' => dt('Import pathauto variable settings.'),                  
     ),
     'aliases' => array('ddi'),
     'arguments' => array(
@@ -66,7 +72,7 @@ function drupal_deploy_drush_command() {
     ),
     'options' => array(
       'file' => 'File to import data from.',
-      'name' => 'Language, Menu or Vocabulary name',
+      'name' => 'Variable, Language, Menu or Vocabulary name',
       'theme' => 'Theme name',
       'type' => 'Node type',
       'nid' => 'Node id or ids', 
@@ -182,6 +188,10 @@ function drupal_deploy_export($type = '') {
       include_once(drupal_get_path('module', 'drupal_deploy') .'/includes/drupal_deploy_comment_notify.inc');
       drupal_deploy_export_comment_notify($filename);
       break;
+    case 'variables':
+      include_once(drupal_get_path('module', 'drupal_deploy') .'/includes/drupal_deploy_variables.inc');
+      drupal_deploy_export_variables($filename);
+      break;
   }
 }
 
@@ -251,7 +261,10 @@ function drupal_deploy_import($type = '', $option = '') {
       include_once(drupal_get_path('module', 'drupal_deploy') .'/includes/drupal_deploy_comment_notify.inc');
       drupal_deploy_import_comment_notify($filename);
       break;
-
+    case 'variables':
+      include_once(drupal_get_path('module', 'drupal_deploy') .'/includes/drupal_deploy_variables.inc');
+      drupal_deploy_import_variables($filename);
+      break;
   }
 }
 
