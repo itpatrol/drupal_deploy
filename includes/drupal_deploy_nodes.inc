@@ -256,6 +256,7 @@ function dde_nodes_replace_and_clean_vars($object){
   if(is_array($object)){
     $is_object = FALSE;  
   }
+  print_r($object);
   foreach($object as $key => $val){
     if(is_array($val) or is_object($val)){
       if($is_object){
