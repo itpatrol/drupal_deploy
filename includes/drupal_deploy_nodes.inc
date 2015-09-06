@@ -24,7 +24,6 @@ function drupal_deploy_import_nodes($filename = ''){
     drush_log(dt('File !filename does not exists', array('!filename' => $filename)), 'error');
     return FALSE;
   }
-  echo $filename;
   $data = file_get_contents($filename);
   if(!$data = json_decode($data, TRUE)){
     drush_log(dt('Json decode error!'), 'error');
