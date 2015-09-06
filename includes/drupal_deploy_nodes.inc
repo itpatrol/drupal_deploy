@@ -235,7 +235,7 @@ function dde_node_clean(&$item){
     $item->forum_term = $term->name;
     unset($item->forum_tid);
   }
-  
+  echo "-------\n"
   print_r($item->taxonomy);
   foreach($item as $key => $val){
     if(is_array($val)){
@@ -243,6 +243,7 @@ function dde_node_clean(&$item){
     }
   }
   print_r($item->taxonomy);
+  echo "-------\n"
   unset($item->tags);
   unset($item->type);
   unset($item->last_comment_timestamp);
