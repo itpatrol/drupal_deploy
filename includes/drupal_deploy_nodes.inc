@@ -256,8 +256,6 @@ function dde_nodes_replace_and_clean_vars($object){
   if(is_array($object)){
     $is_object = FALSE;  
   }
-    echo "-||------\n";
-  print_r($object);
   foreach($object as $key => $val){
     if(is_array($val) or is_object($val)){
       if($is_object){
@@ -266,17 +264,13 @@ function dde_nodes_replace_and_clean_vars($object){
         $object[$key] = dde_nodes_replace_and_clean_vars($val);
       }
     }else{
-      echo "key:" . $key."\n";
       if($key == 0){
-        echo "KEy == 0. skip";
         continue;
       }
       switch($key){
         case 'fid':
           if(!empty($val)){
-            if(0 == strcmp($key, 'fid')){
-              dde_nodes_files_to_export('export', $val);
-            }
+            dde_nodes_files_to_export('export', $val);
           }
         case 'nid':
         case 'vid':
@@ -285,7 +279,6 @@ function dde_nodes_replace_and_clean_vars($object){
           }else{
             unset($object[$key]);
           }
-          echo "fid,nid,vid\n";
           break;
         case 'uid':
           if($is_object){
@@ -295,7 +288,6 @@ function dde_nodes_replace_and_clean_vars($object){
             $object['username'] = dde_get_user_name($val);
             unset($object[$key]);
           }
-          echo "uid\n";          
           break;          
       }
     }
