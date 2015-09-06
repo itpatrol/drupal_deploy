@@ -132,7 +132,7 @@ function dd_json_encode_pretty_utf8($var, $options=0, $_indent="") {
      foreach ((array)$var as $i=>$v) {
         $json .= ($empty++ ? ",$_nl" : "")    // comma separators
                . $_tab . ($obj ? ( dd_json_encode_pretty_utf8($i, $options & ~JSON_NUMERIC_CHECK, $_tab) . ":$_space") : "")   // assoc prefix
-               . ( dd_json_encode($v, $options, $_tab));    // value
+               . ( dd_json_encode_pretty_utf8($v, $options, $_tab));    // value
      }
 
      #-- enclose into braces or brackets
