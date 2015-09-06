@@ -222,6 +222,7 @@ function dde_node_clean(&$item){
         $terms[$stored_vocabulary->name][$key] = $value;
       }
     }
+    print_r($terms);
     $item->taxonomy = $terms;
   }
   
