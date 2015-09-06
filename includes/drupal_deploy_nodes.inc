@@ -29,7 +29,7 @@ function drupal_deploy_import_nodes($filename = ''){
     drupal_set_message(t('Json decode error!'), 'error');
   }
   if(!empty($data['files'])){
-    drupal_deploy_import_files($data['files'], $filename);
+    ddi_node_files($data['files'], $filename);
   }
   drupal_deploy_import_nodes_items($data['nodes']);
 }
@@ -75,8 +75,8 @@ function drupal_deploy_export_nodes_fetch_data($node_type, $filename){
     $revisions_result = db_query("SELECT * FROM {node_revisions} WHERE nid=%d ORDER BY vid", $db_item->nid);
     while ($db_rev_item = db_fetch_object($revisions_result)) {
       $db_rev_item->type = $db_item->type;
-      drupal_deploy_export_node_load($db_rev_item);
-      drupal_deploy_export_node_clean($db_rev_item);
+      dde_node_load($db_rev_item);
+      dde_node_clean($db_rev_item);
       $db_item->revisions[] =  $db_rev_item;
     }
     
@@ -181,7 +181,7 @@ function ddi_get_format_id($format){
   }
 }
 
-function drupal_deploy_export_node_clean(&$item){
+function dde_node_clean(&$item){
   $item->user = dde_get_user_name($item->uid);
   unset($item->nid);
   unset($item->vid);
@@ -284,7 +284,7 @@ function dde_get_term_tree($term){
   return $result;
 }
 
-function drupal_deploy_export_node_load(&$node){
+function dde_node_load(&$node){
 
   if ($extra = node_invoke($node, 'load')) {
     foreach ($extra as $key => $value) {
@@ -528,7 +528,7 @@ function dde_nodes_files_imported($op, $file){
 }
 
 
-function drupal_deploy_import_files($files, $filename){
+function ddi_node_files($files, $filename){
   $info = pathinfo($filename);
   $dir = $info['dirname'];
   foreach($files as $file){
