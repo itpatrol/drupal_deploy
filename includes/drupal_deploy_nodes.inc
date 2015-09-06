@@ -227,7 +227,6 @@ function dde_node_clean(&$item){
         }
       }
     }
-    print_r($terms);
     $item->taxonomy = $terms;
   }
   
@@ -237,11 +236,13 @@ function dde_node_clean(&$item){
     unset($item->forum_tid);
   }
   
+  print_r($item->taxonomy);
   foreach($item as $key => $val){
     if(is_array($val)){
       $item->$key = dde_nodes_replace_and_clean_vars($val);
     }
   }
+  print_r($item->taxonomy);
   unset($item->tags);
   unset($item->type);
   unset($item->last_comment_timestamp);
@@ -289,7 +290,6 @@ function dde_nodes_replace_and_clean_vars($object){
       }
     }
   }
-  print_r($object);
   return $object;
 }
 
