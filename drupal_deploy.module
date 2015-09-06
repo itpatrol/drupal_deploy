@@ -139,7 +139,7 @@ function dd_json_encode_pretty_utf8($var, $options=0, $_indent="") {
      $empty = 0; $json = "";
      foreach ((array)$var as $i=>$v) {
         $json .= ($empty++ ? ",$_nl" : "")    // comma separators
-               . $_tab . ($obj ? ( dd_json_encode_pretty_utf8($i, $options & ~JSON_NUMERIC_CHECK, $_tab) . ":$_space") : "")   // assoc prefix
+               . $_tab . ($obj ? ( dd_json_encode_pretty_utf8($i, $options, $_tab) . ":$_space") : "")   // assoc prefix
                . ( dd_json_encode_pretty_utf8($v, $options, $_tab));    // value
      }
 
