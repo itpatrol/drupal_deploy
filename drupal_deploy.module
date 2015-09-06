@@ -122,6 +122,7 @@ if (!defined("JSON_UNESCAPED_SLASHES")) {
 function dd_json_encode($var, $options=0, $_indent="") {
   global ${'.json_last_error'};
   ${'.json_last_error'} = JSON_ERROR_NONE;
+        echo "-->\n". print_r($var,true);  
         
   #-- prepare JSON string
   $obj = ($options & JSON_FORCE_OBJECT);
