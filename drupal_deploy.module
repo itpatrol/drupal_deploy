@@ -132,7 +132,7 @@ function dd_json_encode_pretty_utf8($var, $options=0, $_indent="") {
      #-- check if array is associative
      if (!$obj) {
         $keys = array_keys((array)$var);
-        $obj = !($keys == array_keys($keys));   // keys must be in 0,1,2,3, ordering, but PHP treats integers==strings otherwise
+        $obj = !($keys === array_keys($keys));   // keys must be in 0,1,2,3, ordering, but PHP treats integers==strings otherwise
      }
 
      #-- concat individual entries
