@@ -103,6 +103,21 @@ function drupal_deploy_export_pretty_json($json) {
 }
 
 define("JSON_PRETTY_PRINT", 128);      // 5.4.0
+if (!defined("JSON_UNESCAPED_SLASHES")) {
+   define("JSON_HEX_TAG", 1);
+   define("JSON_HEX_AMP", 2);
+   define("JSON_HEX_APOS", 4);
+   define("JSON_HEX_QUOT", 8);
+   define("JSON_FORCE_OBJECT", 16);
+}
+if (!defined("JSON_NUMERIC_CHECK")) {
+   define("JSON_NUMERIC_CHECK", 32);      // 5.3.3
+ }
+if (!defined("JSON_UNESCAPED_SLASHES")) {
+   define("JSON_UNESCAPED_SLASHES", 64);  // 5.4.0
+   define("JSON_PRETTY_PRINT", 128);      // 5.4.0
+   define("JSON_UNESCAPED_UNICODE", 256); // 5.4.0
+}
 
 function dd_json_encode($var, $options=0, $_indent="") {
   global ${'.json_last_error'};
@@ -247,8 +262,8 @@ function _format_json($json, $html = false) {
 	}
 
 function drupal_deploy_export_save($items, $filename = ''){
-  $data = json_encode($items, JSON_PRETTY_PRINT);
-  $data = _format_json($data);
+  $data = dd_json_encode($items, JSON_PRETTY_PRINT);
+//  $data = _format_json($data);
   if(file_put_contents($filename, $data)){
     drush_log(dt('Exported to file !filename', array('!filename' => $filename)),'ok');
   }
