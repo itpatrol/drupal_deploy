@@ -106,20 +106,23 @@ function drupal_deploy_export_nodes_fetch_data($node_type, $filename){
     print_r($items);
     drush_log(dt('Node !title exported', array('!title' => $db_item->title)));
   }
-
-  $export_folder = $filename . '.files';
-  mkdir($export_folder);
+  
   $files = dde_nodes_files_to_export('get');
-  foreach($files as $file){
-    if(is_file($file->filepath)){
-      $basename = basename($file->filepath);
-      $store_filepath = $export_folder . '/' . $basename;
-      copy($file->filepath, $store_filepath);
-      $file->stored_filepath = $store_filepath;
-      $items['files'][] = $file;
-      drush_log(dt('!filename exported', array('!filename' => $file->filename)));
-    }else{
-      drush_log(dt('!filename does not exists', array('!filename' => $file->filename)), 'warning');
+  if(!empty($files)){
+    $export_folder = $filename . '.files';
+    mkdir($export_folder);
+    
+    foreach($files as $file){
+      if(is_file($file->filepath)){
+        $basename = basename($file->filepath);
+        $store_filepath = $export_folder . '/' . $basename;
+        copy($file->filepath, $store_filepath);
+        $file->stored_filepath = $store_filepath;
+        $items['files'][] = $file;
+        drush_log(dt('!filename exported', array('!filename' => $file->filename)));
+      }else{
+        drush_log(dt('!filename does not exists', array('!filename' => $file->filename)), 'warning');
+      }
     }
   }
   return $items;
