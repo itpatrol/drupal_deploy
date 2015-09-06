@@ -564,18 +564,25 @@ function dde_nodes_files_imported($op, $file){
 function ddi_node_files($files, $filename){
   $info = pathinfo($filename);
   $dir = $info['dirname'];
-  print_r($files);
+  if(!is_dir($dir)){
+    drush_log(dt('File folder !folder does not exists', array('!folder' => $dir)));
+    return FALSE;
+  }
   foreach($files as $file){
     $file['uid'] = ddi_get_user_id($file['username']);
     if($stored_file = db_fetch_array(db_query("SELECT * FROM {files} WHERE filepath='%s'", $file['filepath']))){
-      echo "Already";
-      print_r($stored_file);
       drush_log(dt('!filename already stored. No changes', array('!filename' => $stored_file['filename'])), 'ok');
       dde_nodes_files_imported('set', $stored_file);
     }else{
+      $info = pathinfo($file['filepath']);
+      if(!is_dir($info['dirname'])){
+        mkdir($info['dirname'], 0751, TRUE); 
+      }
+      copy($dir . '/' .$file['stored_filepath'], $file['filepath']);
+      
       drupal_write_record('files', $file);
       dde_nodes_files_imported('set', $file);
-      copy($dir . '/' .$file['stored_filepath'], $file['filepath']);
+      
       drush_log(dt('!filename imported.', array('!filename' => $file['filename'])), 'ok');
     }
   }
