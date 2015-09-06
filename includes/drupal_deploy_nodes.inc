@@ -433,7 +433,7 @@ function ddi_node_update($node, $node_saved){
   $node->vid = $node_saved->vid;
   
   $rev_count = count($node->revisions);
-  $revision = $node->revisions[$rev_count - 1];
+  $revision = (object)$node->revisions[$rev_count - 1];
   $revision->nid = $node->nid;
   $revision->vid = $node->vid;
   $revision->uid = ddi_get_user_id($revision->user);
