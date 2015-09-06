@@ -352,6 +352,9 @@ function ddi_nodes_prepare_vars($object){
         $object[$key] = ddi_nodes_prepare_vars($val);
       }
     }else{
+      if($key === 0){
+        continue;
+      }
       switch($key){
         case 'filepath':
           $file = dde_nodes_files_imported('get', $object);
