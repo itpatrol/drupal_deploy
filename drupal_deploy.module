@@ -122,7 +122,6 @@ if (!defined("JSON_UNESCAPED_SLASHES")) {
 function dd_json_encode($var, $options=0, $_indent="") {
   global ${'.json_last_error'};
   ${'.json_last_error'} = JSON_ERROR_NONE;
-        echo "-->\n". print_r($var,true);  
         
   #-- prepare JSON string
   $obj = ($options & JSON_FORCE_OBJECT);
@@ -145,7 +144,6 @@ function dd_json_encode($var, $options=0, $_indent="") {
      #-- concat individual entries
      $empty = 0; $json = "";
      foreach ((array)$var as $i=>$v) {
-        echo "-->\n". print_r($var,true);
         $json .= ($empty++ ? ",$_nl" : "")    // comma separators
                . $_tab . ($obj ? ( dd_json_encode($i, $options & ~JSON_NUMERIC_CHECK, $_tab) . ":$_space") : "")   // assoc prefix
                . ( dd_json_encode($v, $options, $_tab));    // value
@@ -264,6 +262,7 @@ function _format_json($json, $html = false) {
 	}
 
 function drupal_deploy_export_save($items, $filename = ''){
+  print_r($items);
   $data = dd_json_encode($items, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
 //  $data = drupal_deploy_export_pretty_json($data);
 //  $data = _format_json($data);
