@@ -512,7 +512,7 @@ function ddi_comment_save($comment, $nid, $pid = 0){
   drupal_write_record('comments', $comment);
   if(!empty($comment->comments)){
     foreach($comment->comments as $sub_comment){
-      ddi_comment_save($sub_comment, $nid, $comment->cid);
+      ddi_comment_save((object)$sub_comment, $nid, $comment->cid);
 
     }
   }
