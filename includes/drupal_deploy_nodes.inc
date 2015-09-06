@@ -238,7 +238,7 @@ function dde_node_clean(&$item){
   echo "-------\n";
   print_r($item->taxonomy);
   foreach($item as $key => $val){
-    if(is_array($val)){
+    if(is_array($val) or is_object($val)){
       $item->$key = dde_nodes_replace_and_clean_vars($val);
     }
   }
@@ -252,44 +252,42 @@ function dde_node_clean(&$item){
 }
 
 function dde_nodes_replace_and_clean_vars($object){
-  if(is_array($object) || is_object($object)){
-    $is_object = TRUE;
-    if(is_array($object)){
-      $is_object = FALSE;  
-    }
-    foreach($object as $key => $val){
-      if(is_array($val) or is_object($val)){
-        if($is_object){
-          $object->$key = dde_nodes_replace_and_clean_vars($val);
-        }else{
-          $object[$key] = dde_nodes_replace_and_clean_vars($val);
-        }
+  $is_object = TRUE;
+  if(is_array($object)){
+    $is_object = FALSE;  
+  }
+  foreach($object as $key => $val){
+    if(is_array($val) or is_object($val)){
+      if($is_object){
+        $object->$key = dde_nodes_replace_and_clean_vars($val);
       }else{
-        switch($key){
-          case 'fid':
-            if(!empty($val)){
-              if(0 == strcmp($key, 'fid')){
-                dde_nodes_files_to_export('export', $val);
-              }
+        $object[$key] = dde_nodes_replace_and_clean_vars($val);
+      }
+    }else{
+      switch($key){
+        case 'fid':
+          if(!empty($val)){
+            if(0 == strcmp($key, 'fid')){
+              dde_nodes_files_to_export('export', $val);
             }
-          case 'nid':
-          case 'vid':
-            if($is_object){
-              unset($object->$key);
-            }else{
-              unset($object[$key]);
-            }
-            break;
-          case 'uid':
-            if($is_object){
-              $object->username = dde_get_user_name($val);
-              unset($object->$key);
-            }else{
-              $object['username'] = dde_get_user_name($val);
-              unset($object[$key]);
-            }
-            break;          
-        }
+          }
+        case 'nid':
+        case 'vid':
+          if($is_object){
+            unset($object->$key);
+          }else{
+            unset($object[$key]);
+          }
+          break;
+        case 'uid':
+          if($is_object){
+            $object->username = dde_get_user_name($val);
+            unset($object->$key);
+          }else{
+            $object['username'] = dde_get_user_name($val);
+            unset($object[$key]);
+          }
+          break;          
       }
     }
   }
