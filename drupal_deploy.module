@@ -164,8 +164,10 @@ function dd_json_encode_pretty_utf8($var, $options=0, $_indent="") {
          "\"" => $options & JSON_HEX_QUOT ? "\\u0022" : "\"",
          "&"  => $options & JSON_HEX_AMP  ? "\\u0026" : "&",
          '"'  => '\"',
+         ':'  => '\:',
        "\x08" => "\\f",
        "\x0c" => "\\b",
+       
      );
     $var = strtr($var, $rewrite);
     if (function_exists("iconv")) {
