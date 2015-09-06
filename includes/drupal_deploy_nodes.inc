@@ -86,10 +86,10 @@ function drupal_deploy_export_nodes_fetch_data($node_type, $filename){
     
     $comments_result = db_query("SELECT * FROM {comments} WHERE nid=%d AND pid=0 ORDER BY cid", $db_item->nid);
     while ($db_comm_item = db_fetch_object($comments_result)) {
-      if($comments = _get_sub_comments($db_comm_item)){
+      if($comments = dde_get_sub_comments($db_comm_item)){
         $db_comm_item->comments = $comments;
       }
-      _clean_comment($db_comm_item);
+      dde_clean_comment($db_comm_item);
       
       $db_item->comments[] = $db_comm_item;
     }
@@ -116,7 +116,7 @@ function drupal_deploy_export_nodes_fetch_data($node_type, $filename){
   return $items;
 }
 
-function _clean_comment(&$comment){
+function dde_clean_comment(&$comment){
   unset($comment->nid);
   unset($comment->pid);
   unset($comment->cid); 
@@ -141,15 +141,15 @@ function ddi_get_comment_status_id($title){
   return 0;
 }
 
-function _get_sub_comments($comment){
+function dde_get_sub_comments($comment){
   $result = FALSE;
   $comments_result = db_query("SELECT * FROM {comments} WHERE nid=%d AND pid=%d ORDER BY cid", $comment->nid, $comment->cid);
   while ($db_comm_item = db_fetch_object($comments_result)) {
-    if($comments = _get_sub_comments($db_comm_item)){
+    if($comments = dde_get_sub_comments($db_comm_item)){
       $db_comm_item->comments = $comments;
     }
 
-    _clean_comment($db_comm_item);
+    dde_clean_comment($db_comm_item);
     $result[] = $db_comm_item;
   }
   return $result;
