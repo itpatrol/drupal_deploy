@@ -302,7 +302,7 @@ function drupal_deploy_import_nodes_items($data){
       ddi_node_save($item);
     }
   }
-  cache_clear_all();
+  cache_clear_all('*', 'cache_content');
 }
 
 function ddi_nodes_prepare_vars($object){
