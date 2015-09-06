@@ -134,15 +134,9 @@ function dd_json_encode($var, $options=0, $_indent="") {
   
   #-- add array entries
   if (is_array($var) || ($obj=is_object($var))) {
-     echo "DEBUG->".print_r($var,true);
      #-- check if array is associative
      if (!$obj) {
         $keys = array_keys((array)$var);
-        print_r($keys);
-        print_r(array_keys($keys));
-        if($keys === array_keys($keys)){
-          echo "equal!\n";
-        }
         $obj = !($keys === array_keys($keys));   // keys must be in 0,1,2,3, ordering, but PHP treats integers==strings otherwise
      }
 
@@ -161,12 +155,6 @@ function dd_json_encode($var, $options=0, $_indent="") {
 
   #-- strings need some care
   elseif (is_string($var)) {
-
-     /*if (!utf8_decode($var)) {
-       echo "[[$var]]\n";
-        trigger_error("json_encode: invalid UTF-8 encoding in string, cannot proceed.", E_USER_WARNING);
-        $var = NULL;
-     }*/
      $rewrite = array(
          "\\" => "\\\\",
          "\"" => "\\\"",
@@ -182,11 +170,11 @@ function dd_json_encode($var, $options=0, $_indent="") {
          "\"" => $options & JSON_HEX_QUOT ? "\\u0022" : "\"",
          "&"  => $options & JSON_HEX_AMP  ? "\\u0026" : "&",
      );
-     $var = strtr($var, $rewrite);
+    /* $var = strtr($var, $rewrite);
      //@COMPAT control chars should probably be stripped beforehand, not escaped as here
      if (function_exists("iconv") && ($options & JSON_UNESCAPED_UNICODE) == 0) {
         $var = preg_replace("/[^\\x{0020}-\\x{007F}]/ue", "'\\u'.current(unpack('H*', iconv('UTF-8', 'UCS-2BE', '$0')))", $var);
-     }
+     }*/
      $json = '"' . $var . '"';
   }
 
