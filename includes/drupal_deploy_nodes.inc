@@ -103,7 +103,6 @@ function drupal_deploy_export_nodes_fetch_data($node_type, $filename){
     unset($db_item->tnid);
 
     $items['nodes'][] = $db_item;
-    print_r($items);
     drush_log(dt('Node !title exported', array('!title' => $db_item->title)));
   }
   
@@ -204,11 +203,9 @@ function dde_node_clean(&$item){
   
   $terms = array();
   if(is_array($item->taxonomy)){
-    print_r($item->taxonomy);
     foreach($item->taxonomy as $term){
       $stored_vocabulary = db_fetch_object(db_query("SELECT * FROM {vocabulary} WHERE vid=%d", $term->vid));
       $tree = explode("\n",dde_get_term_tree($term));
-      print_r($tree);
       if(count($tree) == 1){
         $terms[$stored_vocabulary->name][] = $tree[0];
       }else{
@@ -220,7 +217,6 @@ function dde_node_clean(&$item){
             $res = array( $term => $res);
           }
         }
-        print_r($res);
         list($key,$value) = each($res);
         if(isset($terms[$stored_vocabulary->name][$key])){
           $terms[$stored_vocabulary->name][$key] = array_merge_recursive($terms[$stored_vocabulary->name][$key],$value);
@@ -238,15 +234,11 @@ function dde_node_clean(&$item){
     $item->forum_term = $term->name;
     unset($item->forum_tid);
   }
-  echo "-------\n";
-  print_r($item->taxonomy);
   foreach($item as $key => $val){
     if(is_array($val) or is_object($val)){
       $item->$key = dde_nodes_replace_and_clean_vars($val);
     }
   }
-  print_r($item->taxonomy);
-  echo "-------\n";
   unset($item->tags);
   unset($item->type);
   unset($item->last_comment_timestamp);
@@ -503,7 +495,6 @@ function ddi_comment_save($comment, $nid, $pid = 0){
   
 
   drupal_write_record('comments', $comment);
-  echo "Comment saved" . print_r($comment,true);  
   if(!empty($comment->comments)){
     foreach($comment->comments as $sub_comment){
       ddi_comment_save($sub_comment, $nid, $comment->cid);
