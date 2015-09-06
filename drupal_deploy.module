@@ -263,6 +263,7 @@ function _format_json($json, $html = false) {
 
 function drupal_deploy_export_save($items, $filename = ''){
   $data = dd_json_encode($items, JSON_PRETTY_PRINT);
+  $data = drupal_deploy_export_pretty_json($data);
 //  $data = _format_json($data);
   if(file_put_contents($filename, $data)){
     drush_log(dt('Exported to file !filename', array('!filename' => $filename)),'ok');
