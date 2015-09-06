@@ -109,12 +109,27 @@ function drupal_deploy_export_nodes_fetch_data($node_type, $filename){
   $files = dde_nodes_files_to_export('get');
   if(!empty($files)){
     $export_folder = $filename . '.files';
-    mkdir($export_folder);
+    if(!is_dir($export_folder)){
+      mkdir($export_folder);
+    }
+    
+    $file_directory_path = variable_get('file_directory_path', conf_path() . '/files');
+    $file_directory_path_len = strlen($file_directory_path);
     
     foreach($files as $file){
       if(is_file($file->filepath)){
-        $basename = basename($file->filepath);
-        $store_filepath = $export_folder . '/' . $basename;
+        
+        if(0 == strcmp($file_directory_path, substr($file->filepath, 0,$file_directory_path_len))){
+          $store_filepath = $export_folder . '/' . substr($file->filepath, $file_directory_path_len + 1);
+        }else{
+          $store_filepath = $export_folder . '/' . basename($file->filepath);
+        }
+        
+        $info = pathinfo($store_filepath);
+        if(!is_dir($info['dirname'])){
+          mkdir($info['dirname'], 0750, TRUE); 
+        }
+        
         copy($file->filepath, $store_filepath);
         $file->stored_filepath = $store_filepath;
         $items['files'][] = $file;
