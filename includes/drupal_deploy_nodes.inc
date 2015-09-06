@@ -124,17 +124,17 @@ function _clean_comment(&$comment){
   unset($comment->uid);
   
   $comment->format = _get_format_name($comment->format);
-  $comment->status = _get_comment_status($comment->status);
+  $comment->status = dde_get_comment_status($comment->status);
 }
 
-function _get_comment_status($status){
+function dde_get_comment_status($status){
   if($status){
     return  'Not Published';
   }
   return 'Published';
 }
 
-function _get_comment_status_id($title){
+function ddi_get_comment_status_id($title){
   if($title == 'Not Published'){
     return 1;
   }
@@ -473,7 +473,7 @@ function ddi_comment_save($comment, $nid, $pid = 0){
   $comment->uid = _get_user_id($comment->username);
   $comment->format = _get_format_id($comment->format);
   $comment->pid = $pid;
-  $comment->status = _get_comment_status_id($comment->status);
+  $comment->status = ddi_get_comment_status_id($comment->status);
   
 
   drupal_write_record('comments', $comment);
