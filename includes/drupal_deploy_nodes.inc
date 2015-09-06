@@ -253,6 +253,14 @@ function dde_node_clean(&$item){
       $item->$key = dde_nodes_replace_and_clean_vars($val);
     }
   }
+  
+  $module = $item->type;
+  if(module_exists($module)) {
+    $function = $module . '_node_deploy';
+    if(function_exists($function)){
+      $item = $function('export', $item);
+    }
+  }
   unset($item->tags);
   unset($item->type);
   unset($item->last_comment_timestamp);
