@@ -118,7 +118,6 @@ function drupal_deploy_export_nodes_fetch_data($node_type, $filename){
       drush_log(dt('!filename exported', array('!filename' => $file->filename)));
     }else{
       drush_log(dt('!filename does not exists', array('!filename' => $file->filename)), 'warning');
-      print_r($file);
     }
   }
   return $items;
@@ -256,7 +255,11 @@ function dde_nodes_replace_and_clean_vars($object){
     }else{
       switch($key){
         case 'fid':
-          dde_nodes_files_to_export('export', $val);
+          if(!empty($val)){
+            dde_nodes_files_to_export('export', $val);
+          }else{
+            print_r($object);
+          }
         case 'nid':
         case 'vid':
           if($is_object){
