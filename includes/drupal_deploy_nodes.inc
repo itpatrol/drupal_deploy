@@ -214,7 +214,7 @@ function dde_node_clean(&$item){
           if(empty($res)){
             $res = array($subterm);
           }else{
-            $res = array( $term => $res);
+//            $res = array( $term => $res);
           }
         }
         list($key,$value) = each($res);
