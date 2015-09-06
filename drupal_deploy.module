@@ -130,8 +130,8 @@ function dd_json_encode($var, $options=0, $_indent="") {
      $empty = 0; $json = "";
      foreach ((array)$var as $i=>$v) {
         $json .= ($empty++ ? ",$_nl" : "")    // comma separators
-               . $_tab . ($obj ? (json_encode($i, $options & ~JSON_NUMERIC_CHECK, $_tab) . ":$_space") : "")   // assoc prefix
-               . (json_encode($v, $options, $_tab));    // value
+               . $_tab . ($obj ? ( dd_json_encode($i, $options & ~JSON_NUMERIC_CHECK, $_tab) . ":$_space") : "")   // assoc prefix
+               . ( dd_json_encode($v, $options, $_tab));    // value
      }
 
      #-- enclose into braces or brackets
