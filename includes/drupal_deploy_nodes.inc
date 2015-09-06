@@ -40,7 +40,7 @@ function drupal_deploy_import_nodes_items($data){
   
   foreach($data as $item){
     $item = (object) $item;
-    $item->uid = _get_user_id($item->user);
+    $item->uid = ddi_get_user_id($item->user);
     if($node_saved = ddi_check_node($item)){
       drush_log(dt('Node !title imported already. Skip it.', array('!title' => $item->title)));
     }else{
@@ -80,7 +80,7 @@ function drupal_deploy_export_nodes_fetch_data($node_type, $filename){
       $db_item->revisions[] =  $db_rev_item;
     }
     
-    $db_item->user = _get_user_name($db_item->uid);
+    $db_item->user = dde_get_user_name($db_item->uid);
 
     $db_item->comments = NULL;
     
@@ -120,10 +120,10 @@ function _clean_comment(&$comment){
   unset($comment->nid);
   unset($comment->pid);
   unset($comment->cid); 
-  $comment->username = _get_user_name($comment->uid);
+  $comment->username = dde_get_user_name($comment->uid);
   unset($comment->uid);
   
-  $comment->format = _get_format_name($comment->format);
+  $comment->format = dde_get_format_name($comment->format);
   $comment->status = dde_get_comment_status($comment->status);
 }
 
@@ -155,12 +155,12 @@ function _get_sub_comments($comment){
   return $result;
 }
 
-function _get_user_name($uid){
+function dde_get_user_name($uid){
   $user = db_fetch_object(db_query("SELECT * FROM {users} WHERE uid=%d", $uid));
   return $user->name;
 }
 
-function _get_user_id($name){
+function ddi_get_user_id($name){
   if($user = db_fetch_object(db_query("SELECT * FROM {users} WHERE name='%s'", $name))){
     return $user->uid;
   }
@@ -168,12 +168,12 @@ function _get_user_id($name){
 }
 
 
-function _get_format_name($format){
+function dde_get_format_name($format){
   $format = db_fetch_object(db_query("SELECT * FROM {filter_formats} WHERE format=%d", $format));
   return $format->name;
 }
 
-function _get_format_id($format){
+function ddi_get_format_id($format){
   if($format = db_fetch_object(db_query("SELECT * FROM {filter_formats} WHERE name='%s'", $format))){
     return $format->format;
   }else{
@@ -182,19 +182,19 @@ function _get_format_id($format){
 }
 
 function drupal_deploy_export_node_clean(&$item){
-  $item->user = _get_user_name($item->uid);
+  $item->user = dde_get_user_name($item->uid);
   unset($item->nid);
   unset($item->vid);
   unset($item->tid);
   unset($item->uid);
   
-  $item->format = _get_format_name($item->format);
+  $item->format = dde_get_format_name($item->format);
   
   $terms = array();
   if(is_array($item->taxonomy)){
     foreach($item->taxonomy as $term){
       $stored_vocabulary = db_fetch_object(db_query("SELECT * FROM {vocabulary} WHERE vid=%d", $term->vid));
-      $tree = explode("\n",_get_term_tree($term));
+      $tree = explode("\n",dde_get_term_tree($term));
       $res=array();
       foreach($tree as $term){
         if(empty($res)){
@@ -259,10 +259,10 @@ function dde_nodes_replace_and_clean_vars($object){
           break;
         case 'uid':
           if($is_object){
-            $object->username = _get_user_name($val);
+            $object->username = dde_get_user_name($val);
             unset($object->$key);
           }else{
-            $object['username'] = _get_user_name($val);
+            $object['username'] = dde_get_user_name($val);
             unset($object[$key]);
           }
           break;          
@@ -272,12 +272,12 @@ function dde_nodes_replace_and_clean_vars($object){
   return $object;
 }
 
-function _get_term_tree($term){
+function dde_get_term_tree($term){
   $result = '';
   $stored_term = db_fetch_object(db_query("SELECT t.tid, t.*, parent FROM {term_data} t LEFT JOIN {term_hierarchy} h ON t.tid = h.tid WHERE t.tid=%d", $term->tid));
   if($stored_term->parent){
     $parent_term = db_fetch_object(db_query("SELECT t.tid, t.*, parent FROM {term_data} t LEFT JOIN {term_hierarchy} h ON t.tid = h.tid WHERE t.tid=%d", $stored_term->parent));
-    $result = $stored_term->name . "\n" . _get_term_tree($parent_term);
+    $result = $stored_term->name . "\n" . dde_get_term_tree($parent_term);
   }else{
     $result = $stored_term->name;
   }
@@ -329,10 +329,10 @@ function ddi_nodes_prepare_vars($object){
           break;
         case 'username':
           if($is_object){
-            $object->uid = _get_user_id($val);
+            $object->uid = ddi_get_user_id($val);
             unset($object->$key);
           }else{
-            $object['uid'] = _get_user_id($val);
+            $object['uid'] = ddi_get_user_id($val);
             unset($object[$key]);
           }
           break;          
@@ -353,8 +353,8 @@ function ddi_node_save($node){
   drupal_write_record('node', $node);
   foreach($node->revisions as $revision){
     $revision = (object) $revision;
-    $revision->format = _get_format_id($revision->format);
-    $revision->uid = _get_user_id($revision->user);
+    $revision->format = ddi_get_format_id($revision->format);
+    $revision->uid = ddi_get_user_id($revision->user);
     $revision->nid = $node->nid;
     
     drupal_write_record('node_revisions', $revision);
@@ -412,7 +412,7 @@ function ddi_prepare_node_save(&$node){
   unset($revision['user']);
   unset($revision['forum_term']);
   unset($revision['taxonomy']);
-  $revision['format'] = _get_format_id($revision['format']);
+  $revision['format'] = ddi_get_format_id($revision['format']);
   
   foreach($revision as $field => $value){
     $node->$field = $value;
@@ -470,8 +470,8 @@ function ddi_set_term($terms, $parent_term_name, $vid, $revision){
 
 function ddi_comment_save($comment, $nid, $pid = 0){
   $comment->nid = $nid;
-  $comment->uid = _get_user_id($comment->username);
-  $comment->format = _get_format_id($comment->format);
+  $comment->uid = ddi_get_user_id($comment->username);
+  $comment->format = ddi_get_format_id($comment->format);
   $comment->pid = $pid;
   $comment->status = ddi_get_comment_status_id($comment->status);
   
@@ -504,7 +504,7 @@ function dde_nodes_files_to_export($op, $fid = NULL){
   if($op == 'export' && !empty($fid)){
     if(!isset($files[$fid])){
       $file = db_fetch_object(db_query("SELECT * FROM {files} WHERE fid=%d", $fid));
-      $file->username = _get_user_name($file->uid);
+      $file->username = dde_get_user_name($file->uid);
       unset($file->uid);
       unset($file->fid);      
       $files[$fid] = $file; 
@@ -532,7 +532,7 @@ function drupal_deploy_import_files($files, $filename){
   $info = pathinfo($filename);
   $dir = $info['dirname'];
   foreach($files as $file){
-    $file['uid'] = _get_user_id($file['username']);
+    $file['uid'] = ddi_get_user_id($file['username']);
     if($stored_file = db_fetch_array(db_query("SELECT * FROM {files} WHERE filepath='%s'", $file['filepath']))){
       drush_log(dt('!filename already stored. No changes', array('!filename' => $stored_file['filename'])));
       dde_nodes_files_imported('set', $stored_file);
