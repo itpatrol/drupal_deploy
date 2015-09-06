@@ -122,7 +122,7 @@ if (!defined("JSON_UNESCAPED_SLASHES")) {
 function dd_json_encode($var, $options=0, $_indent="") {
   global ${'.json_last_error'};
   ${'.json_last_error'} = JSON_ERROR_NONE;
-      echo "-->$var\n";        
+        
   #-- prepare JSON string
   $obj = ($options & JSON_FORCE_OBJECT);
   list($_space, $_tab, $_nl) = ($options & JSON_PRETTY_PRINT) ? array(" ", "    $_indent", "\n") : array("", "", "");
@@ -144,6 +144,7 @@ function dd_json_encode($var, $options=0, $_indent="") {
      #-- concat individual entries
      $empty = 0; $json = "";
      foreach ((array)$var as $i=>$v) {
+        echo "-->\n". print_r($var,true);
         $json .= ($empty++ ? ",$_nl" : "")    // comma separators
                . $_tab . ($obj ? ( dd_json_encode($i, $options & ~JSON_NUMERIC_CHECK, $_tab) . ":$_space") : "")   // assoc prefix
                . ( dd_json_encode($v, $options, $_tab));    // value
