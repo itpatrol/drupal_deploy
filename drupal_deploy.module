@@ -199,7 +199,7 @@ function dd_json_encode($var, $options=0, $_indent="") {
 }
 
 function drupal_deploy_export_save($items, $filename = ''){
-  $data = dd_json_encode($items, JSON_PRETTY_PRINT);
+  $data = json_encode($items, JSON_PRETTY_PRINT);
   if(file_put_contents($filename, $data)){
     drush_log(dt('Exported to file !filename', array('!filename' => $filename)),'ok');
   }
