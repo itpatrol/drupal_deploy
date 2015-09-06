@@ -101,7 +101,7 @@ function drupal_deploy_export_nodes_fetch_data($node_type, $filename){
     unset($db_item->uid);
     unset($db_item->translate);
     unset($db_item->tnid);
-
+    print_r($db_item);
     $items['nodes'][] = $db_item;
     drush_log(dt('Node !title exported', array('!title' => $db_item->title)));
   }
