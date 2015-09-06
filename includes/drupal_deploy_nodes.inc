@@ -256,8 +256,9 @@ function dde_nodes_replace_and_clean_vars($object){
       switch($key){
         case 'fid':
           if(!empty($val)){
-            echo $key;
-            dde_nodes_files_to_export('export', $val);
+            if(0 == strcmp($key, 'fid')){
+              dde_nodes_files_to_export('export', $val);
+            }
           }
         case 'nid':
         case 'vid':
