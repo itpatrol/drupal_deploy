@@ -463,6 +463,15 @@ function ddi_prepare_node_save(&$node){
   if($node->path){
     $node->pathauto_perform_alias = FALSE;
   }
+  
+  $module = $node->type;
+  if(module_exists($module)) {
+    $function = $module . '_node_deploy';
+    if(function_exists($function)){
+      $function('import', $node);
+    }
+  }
+  
 }
 
 function ddi_set_term($terms, $parent_term_name, $vid, $revision){
