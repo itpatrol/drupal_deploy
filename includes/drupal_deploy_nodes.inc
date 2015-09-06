@@ -43,7 +43,14 @@ function drupal_deploy_import_nodes_items($data){
     $item = (object) $item;
     $item->uid = ddi_get_user_id($item->user);
     if($node_saved = ddi_check_node($item)){
-      drush_log(dt('Node !title imported already. Skip it.', array('!title' => $item->title)),'notice');
+      drush_log(dt('Node !title imported already. Update it.', array('!title' => $item->title)),'notice');
+      foreach($item as $key => $val){
+        if(is_array($val)){
+          $item->$key = ddi_nodes_prepare_vars($val);
+        }
+      }
+      ddi_node_update($item, $node_saved);
+      drush_log(dt('Node !title imported.', array('!title' => $item->title)),'notice');
     }else{
       foreach($item as $key => $val){
         if(is_array($val)){
@@ -404,29 +411,7 @@ function ddi_node_save($node){
     drupal_write_record('node_revisions', $revision);
     $node->vid = $revision->vid;
     if(!empty($revision->taxonomy)){
-      foreach($revision->taxonomy as $vocabulary => $terms){
-        $vocab_results = db_query("SELECT * FROM {vocabulary} v LEFT JOIN {vocabulary_node_types} vnt ON vnt.vid = v.vid WHERE v.name='%s' AND vnt.type='%s'", $vocabulary, $node->type);
-        $vocabularies = array();
-        while($stored_vocabulary = db_fetch_object($vocab_results)){
-          $vocabularies[] = $stored_vocabulary->vid;
-        }
-        if(empty($vocabularies)){
-          continue;
-        }
-        if(count($vocabularies) == 1){
-          $vid = $vocabularies[0];
-        }
-        if(count($vocabularies) > 1){
-          $term = key($terms);
-          foreach($vocabularies as $vid){
-            if($stored_term = db_fetch_object(db_query("SELECT * FROM {term_data} WHERE name='%s' AND vid=%d",$term, $vid))){
-              break;
-            }
-          }
-        }
-        reset($terms);
-        ddi_set_term($terms, '', $vid, $revision);
-      }
+      ddi_save_taxonomy($revision, $node->type);
     }
   }
   drupal_write_record('node', $node, 'nid');
@@ -441,6 +426,96 @@ function ddi_node_save($node){
   }
   
   _comment_update_node_statistics($node->nid);
+}
+
+function ddi_node_update($node, $node_saved){
+  $node->nid = $node_saved->nid;
+  $node->vid = $node_saved->vid;
+  
+  $rev_count = count($node->revisions);
+  $revision = $node->revisions[$rev_count - 1];
+  $revision->nid = $node->nid;
+  $revision->vid = $node->vid;
+  $revision->uid = ddi_get_user_id($revision->user);
+  
+  $revision->format = ddi_get_format_id($revision->format);
+  
+  drupal_write_record('node_revisions', $revision, 'vid');
+  
+  
+  db_query('DELETE FROM {term_node} WHERE nid=%d AND vid=%d', $node->nid, $node->vid);
+  db_query('DELETE FROM {forum} WHERE nid=%d AND vid=%d', $node->nid, $node->vid);
+  
+  if(!empty($revision->taxonomy)){
+    ddi_save_taxonomy($revision, $node->type);
+  }
+  
+  unset($node->revisions);
+  unset($node->user);
+  
+  drupal_write_record('node', $node, 'nid');
+  
+  unset($revision['log']);
+  unset($revision['timestamp']);
+  unset($revision['user']);
+  unset($revision['forum_term']);
+  unset($revision['taxonomy']);
+
+  foreach($revision as $field => $value){
+    $node->$field = $value;
+  }
+  
+  if($node->path){
+    $node->pathauto_perform_alias = FALSE;
+  }
+  
+  $module = $node->type;
+  if(module_exists($module)) {
+    $function = $module . '_node_deploy';
+    if(function_exists($function)){
+      $function('import', $node);
+    }
+  }
+
+  node_invoke($node, 'update');
+  node_invoke_nodeapi($node, 'update');
+  
+  if(!empty($node->comments)){
+    foreach($node->comments as $comment){
+      $comment = (object) $comment;
+      ddi_comment_save($comment, $node->nid);
+    }
+  }
+  
+  _comment_update_node_statistics($node->nid);  
+  
+}
+
+function ddi_save_taxonomy($revision, $nodetype){
+    
+  foreach($revision->taxonomy as $vocabulary => $terms){
+    $vocab_results = db_query("SELECT * FROM {vocabulary} v LEFT JOIN {vocabulary_node_types} vnt ON vnt.vid = v.vid WHERE v.name='%s' AND vnt.type='%s'", $vocabulary, $nodetype);
+    $vocabularies = array();
+    while($stored_vocabulary = db_fetch_object($vocab_results)){
+      $vocabularies[] = $stored_vocabulary->vid;
+    }
+    if(empty($vocabularies)){
+      continue;
+    }
+    if(count($vocabularies) == 1){
+      $vid = $vocabularies[0];
+    }
+    if(count($vocabularies) > 1){
+      $term = key($terms);
+      foreach($vocabularies as $vid){
+        if($stored_term = db_fetch_object(db_query("SELECT * FROM {term_data} WHERE name='%s' AND vid=%d",$term, $vid))){
+          break;
+        }
+      }
+    }
+    reset($terms);
+    ddi_set_term($terms, '', $vid, $revision);
+  }
 }
 
 function ddi_prepare_node_save(&$node){
@@ -525,12 +600,16 @@ function ddi_comment_save($comment, $nid, $pid = 0){
   $comment->pid = $pid;
   $comment->status = ddi_get_comment_status_id($comment->status);
   
-
-  drupal_write_record('comments', $comment);
-  if(!empty($comment->comments)){
-    foreach($comment->comments as $sub_comment){
-      ddi_comment_save((object)$sub_comment, $nid, $comment->cid);
-
+  //check if comment already exists.
+  if($comment_saved = db_fetch_object(db_query("SELECT * FROM {comments} WHERE nid=%d AND uid=%d AND timestamp=%d AND comment='%s'",$comment->nid, $comment->uid, $comment->timestamp, $comment->comment))){
+    drush_log(dt('Comment !comment already saved. Skip it.', array('!comment' => $comment->comment)));
+  }else{
+    drupal_write_record('comments', $comment);
+    if(!empty($comment->comments)){
+      foreach($comment->comments as $sub_comment){
+        ddi_comment_save((object)$sub_comment, $nid, $comment->cid);
+  
+      }
     }
   }
 }
