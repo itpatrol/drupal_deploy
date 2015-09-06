@@ -300,9 +300,6 @@ function drupal_deploy_import_nodes_items($data){
         }
       }
       ddi_node_save($item);
-      print_r($item);
-      cache_clear_all();
-      return;
     }
   }
   cache_clear_all();
