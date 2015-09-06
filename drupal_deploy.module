@@ -122,14 +122,13 @@ if (!defined("JSON_UNESCAPED_SLASHES")) {
 function dd_json_encode($var, $options=0, $_indent="") {
   global ${'.json_last_error'};
   ${'.json_last_error'} = JSON_ERROR_NONE;
-        
+      echo "-->$var\n";        
   #-- prepare JSON string
   $obj = ($options & JSON_FORCE_OBJECT);
   list($_space, $_tab, $_nl) = ($options & JSON_PRETTY_PRINT) ? array(" ", "    $_indent", "\n") : array("", "", "");
   $json = "$_indent";
   
   if ($options & JSON_NUMERIC_CHECK and is_string($var) and is_numeric($var)) {
-      echo "-->$var\n";
       $var = (strpos($var, ".") || strpos($var, "e")) ? floatval($var) : intval($var);
   }
   
