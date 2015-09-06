@@ -205,21 +205,25 @@ function dde_node_clean(&$item){
       $stored_vocabulary = db_fetch_object(db_query("SELECT * FROM {vocabulary} WHERE vid=%d", $term->vid));
       $tree = explode("\n",dde_get_term_tree($term));
       print_r($tree);
-      $res=array();
-      foreach($tree as $term){
-        if(empty($res)){
-          $res = array($term);
-        }else{
-          $res = array( $term => $res);
+      if(count($tree) == 1){
+        $terms[$stored_vocabulary->name][] = $tree[0];
+      }else{
+        $res=array();
+        foreach($tree as $subterm){
+          if(empty($res)){
+            $res = array($subterm);
+          }else{
+            $res = array( $term => $res);
+          }
         }
-      }
-      print_r($res);
-      list($key,$value) = each($res);
-      if(isset($terms[$stored_vocabulary->name][$key])){
-        $terms[$stored_vocabulary->name][$key] = array_merge_recursive($terms[$stored_vocabulary->name][$key],$value);
-      }
-      else {
-        $terms[$stored_vocabulary->name][$key] = $value;
+        print_r($res);
+        list($key,$value) = each($res);
+        if(isset($terms[$stored_vocabulary->name][$key])){
+          $terms[$stored_vocabulary->name][$key] = array_merge_recursive($terms[$stored_vocabulary->name][$key],$value);
+        }
+        else {
+          $terms[$stored_vocabulary->name][$key] = $value;
+        }
       }
     }
     print_r($terms);
