@@ -416,8 +416,6 @@ function ddi_node_save($node){
             }
           }
         }
-       
-        echo "VID" . $vid;
         reset($terms);
         ddi_set_term($terms, '', $vid, $revision);
       }
@@ -464,7 +462,6 @@ function ddi_set_term($terms, $parent_term_name, $vid, $revision){
     if(is_array($sub_terms)){
       ddi_set_term($sub_terms, $sub_parent_term_name, $vid, $revision);
     }else{
-      echo "STORING " . $sub_terms . "\n";
       $stored_term = FALSE;
       $stored_parent_term_results = db_query("SELECT * FROM {term_data} WHERE name='%s' AND vid=%d",$parent_term_name, $vid);
       $parent_terms = array();
