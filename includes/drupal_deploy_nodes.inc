@@ -34,6 +34,26 @@ function drupal_deploy_import_nodes($filename = ''){
   drupal_deploy_import_nodes_items($data['nodes']);
 }
 
+function drupal_deploy_import_nodes_items($data){
+  global $user;
+  $user = user_load(1);
+  
+  foreach($data as $item){
+    $item = (object) $item;
+    $item->uid = _get_user_id($item->user);
+    if($node_saved = ddi_check_node($item)){
+      drush_log(dt('Node !title imported already. Skip it.', array('!title' => $item->title)));
+    }else{
+      foreach($item as $key => $val){
+        if(is_array($val)){
+          $item->$key = ddi_nodes_prepare_vars($val);
+        }
+      }
+      ddi_node_save($item);
+    }
+  }
+  db_query("TRUNCATE {".content_cache_tablename()."}");
+}
 
 function drupal_deploy_export_nodes_fetch_data($node_type, $filename){
   global $user;
@@ -284,26 +304,6 @@ function drupal_deploy_export_node_load(&$node){
 }
 
 
-function drupal_deploy_import_nodes_items($data){
-  global $user;
-  $user = user_load(1);
-  
-  foreach($data as $item){
-    $item = (object) $item;
-    $item->uid = _get_user_id($item->user);
-    if($node_saved = ddi_check_node($item)){
-      drush_log(dt('Node !title imported already. Skip it.', array('!title' => $item->title)));
-    }else{
-      foreach($item as $key => $val){
-        if(is_array($val)){
-          $item->$key = ddi_nodes_prepare_vars($val);
-        }
-      }
-      ddi_node_save($item);
-    }
-  }
-  db_query("TRUNCATE {".content_cache_tablename()."}");
-}
 
 function ddi_nodes_prepare_vars($object){
   $is_object = TRUE;
