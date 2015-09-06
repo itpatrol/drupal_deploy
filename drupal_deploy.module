@@ -129,6 +129,7 @@ function dd_json_encode($var, $options=0, $_indent="") {
   $json = "$_indent";
   
   if ($options & JSON_NUMERIC_CHECK and is_string($var) and is_numeric($var)) {
+      echo "-->$var\n";
       $var = (strpos($var, ".") || strpos($var, "e")) ? floatval($var) : intval($var);
   }
   
@@ -156,11 +157,11 @@ function dd_json_encode($var, $options=0, $_indent="") {
   #-- strings need some care
   elseif (is_string($var)) {
 
-/*     if (!utf8_decode($var)) {
+     if (!utf8_decode($var)) {
        echo "[[$var]]\n";
         trigger_error("json_encode: invalid UTF-8 encoding in string, cannot proceed.", E_USER_WARNING);
         $var = NULL;
-     }*/
+     }
      $rewrite = array(
          "\\" => "\\\\",
          "\"" => "\\\"",
@@ -176,7 +177,6 @@ function dd_json_encode($var, $options=0, $_indent="") {
          "\"" => $options & JSON_HEX_QUOT ? "\\u0022" : "\"",
          "&"  => $options & JSON_HEX_AMP  ? "\\u0026" : "&",
      );
-     
      $var = strtr($var, $rewrite);
      //@COMPAT control chars should probably be stripped beforehand, not escaped as here
      if (function_exists("iconv") && ($options & JSON_UNESCAPED_UNICODE) == 0) {
