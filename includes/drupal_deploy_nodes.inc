@@ -51,7 +51,7 @@ function drupal_deploy_import_nodes_items($data){
         }
       }
       ddi_node_save($item);
-      drush_log(dt('Node !title imported.', array('!title' => $item->title)),'ok');
+      drush_log(dt('Node !title imported.', array('!title' => $item->title)),'notice');
     }
   }
   db_query("TRUNCATE {".content_cache_tablename()."}");
@@ -102,7 +102,7 @@ function drupal_deploy_export_nodes_fetch_data($node_type, $filename){
     unset($db_item->translate);
     unset($db_item->tnid);
     $items['nodes'][] = $db_item;
-    drush_log(dt('Node !title exported', array('!title' => $db_item->title)),'ok');
+    drush_log(dt('Node !title exported', array('!title' => $db_item->title)),'notice');
   }
   
   $files = dde_nodes_files_to_export('get');
@@ -132,7 +132,7 @@ function drupal_deploy_export_nodes_fetch_data($node_type, $filename){
         copy($file->filepath, $store_filepath);
         $file->stored_filepath = $store_filepath;
         $items['files'][] = $file;
-        drush_log(dt('!filename exported', array('!filename' => $file->filename)),'ok');
+        drush_log(dt('!filename exported', array('!filename' => $file->filename)),'notice');
       }else{
         drush_log(dt('!filename does not exists', array('!filename' => $file->filename)), 'warning');
       }
@@ -570,7 +570,7 @@ function ddi_node_files($files, $filename){
   foreach($files as $file){
     $file['uid'] = ddi_get_user_id($file['username']);
     if($stored_file = db_fetch_array(db_query("SELECT * FROM {files} WHERE filepath='%s'", $file['filepath']))){
-      drush_log(dt('!filename already stored. No changes', array('!filename' => $stored_file['filename'])), 'ok');
+      drush_log(dt('!filename already stored. No changes', array('!filename' => $stored_file['filename'])));
       dde_nodes_files_imported('set', $stored_file);
     }else{
       $info = pathinfo($file['filepath']);
@@ -582,7 +582,7 @@ function ddi_node_files($files, $filename){
       drupal_write_record('files', $file);
       dde_nodes_files_imported('set', $file);
       
-      drush_log(dt('!filename imported.', array('!filename' => $file['filename'])), 'ok');
+      drush_log(dt('!filename imported.', array('!filename' => $file['filename'])), 'notice');
     }
   }
 }
