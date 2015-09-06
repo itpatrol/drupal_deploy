@@ -50,6 +50,7 @@ function drupal_deploy_import_nodes_items($data){
         }
       }
       ddi_node_save($item);
+      drush_log(dt('Node !title imported.', array('!title' => $item->title)));
     }
   }
   db_query("TRUNCATE {".content_cache_tablename()."}");
