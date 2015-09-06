@@ -205,18 +205,18 @@ function dde_node_clean(&$item){
       $res=array();
       foreach($tree as $term){
         if(empty($res)){
-          $res = array($term);
+          $res = array("$term");
         }else{
-          $res = array( $term => $res);
+          $res = array( "$term" => "$res");
         }
       }
       
       list($key,$value) = each($res);
       if(isset($terms[$stored_vocabulary->name][$key])){
-        $terms[$stored_vocabulary->name][$key] = array_merge_recursive($terms[$stored_vocabulary->name][$key],$value);
+        $terms["".$stored_vocabulary->name]["$key"] = array_merge_recursive($terms[$stored_vocabulary->name][$key],$value);
       }
       else {
-        $terms[$stored_vocabulary->name][$key] = $value;
+        $terms["".$stored_vocabulary->name]["$key"] = $value;
       }
     }
     $item->taxonomy = $terms;
