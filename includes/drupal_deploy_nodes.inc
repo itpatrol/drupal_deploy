@@ -259,7 +259,8 @@ function dde_nodes_replace_and_clean_vars($object){
         $object[$key] = dde_nodes_replace_and_clean_vars($val);
       }
     }else{
-      if($key == 0){
+      if($key === 0){
+        
         continue;
       }
       switch($key){
