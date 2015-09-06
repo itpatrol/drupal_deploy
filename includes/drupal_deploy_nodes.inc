@@ -21,12 +21,12 @@ function drupal_deploy_import_nodes($filename = ''){
     $filename = 'nodes.export';
   }
   if(!is_file($filename)){
-    drupal_set_message(t('File !filename does not exists', array('!filename' => $filename)), 'error');
+    drush_log(dt('File !filename does not exists', array('!filename' => $filename)), 'error');
     return FALSE;
   }
   $data = file_get_contents($filename);
   if(!$data = json_decode($data, TRUE)){
-    drupal_set_message(t('Json decode error!'), 'error');
+    drush_log(dt('Json decode error!'), 'error');
   }
   if(!empty($data['files'])){
     ddi_node_files($data['files'], $filename);
@@ -101,6 +101,7 @@ function drupal_deploy_export_nodes_fetch_data($node_type, $filename){
     unset($db_item->tnid);
 
     $items['nodes'][] = $db_item;
+    drush_log(dt('Node !title exported', array('!title' => $db_item->title)));
   }
 
   $export_folder = $filename . '.files';
@@ -113,6 +114,9 @@ function drupal_deploy_export_nodes_fetch_data($node_type, $filename){
       copy($file->filepath, $store_filepath);
       $file->stored_filepath = $store_filepath;
       $items['files'][] = $file;
+      drush_log(dt('!filename exported', array('!filename' => $file->filename)));
+    }else{
+      drush_log(dt('!filename does not exists', array('!filename' => $file->filename)), 'warning');
     }
   }
   return $items;
