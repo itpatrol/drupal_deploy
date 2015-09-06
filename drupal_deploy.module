@@ -176,7 +176,7 @@ function dd_json_encode($var, $options=0, $_indent="") {
          "\"" => $options & JSON_HEX_QUOT ? "\\u0022" : "\"",
          "&"  => $options & JSON_HEX_AMP  ? "\\u0026" : "&",
      );
-     $var = strtr($var, $rewrite);
+     $var = mb_strtr($var, $rewrite);
      //@COMPAT control chars should probably be stripped beforehand, not escaped as here
      if (function_exists("iconv") && ($options & JSON_UNESCAPED_UNICODE) == 0) {
         $var = preg_replace("/[^\\x{0020}-\\x{007F}]/ue", "'\\u'.current(unpack('H*', iconv('UTF-8', 'UCS-2BE', '$0')))", $var);
