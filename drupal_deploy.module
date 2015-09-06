@@ -134,7 +134,7 @@ function dd_json_encode($var, $options=0, $_indent="") {
   
   #-- add array entries
   if (is_array($var) || ($obj=is_object($var))) {
-     echo "DEBUG->".$var;
+     echo "DEBUG->".print_r($var,true);
      #-- check if array is associative
      if (!$obj) {
         $keys = array_keys((array)$var);
