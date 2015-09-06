@@ -210,11 +210,11 @@ function dde_node_clean(&$item){
         $terms[$stored_vocabulary->name][] = $tree[0];
       }else{
         $res=array();
-        foreach($tree as $subterm){
+        foreach($tree as $term){
           if(empty($res)){
-            $res = array($subterm);
+            $res = array($term);
           }else{
-//            $res = array( $term => $res);
+            $res = array( $term => $res);
           }
         }
         list($key,$value) = each($res);
