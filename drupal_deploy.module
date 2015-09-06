@@ -106,6 +106,6 @@ function drupal_deploy_export_save($items, $filename = ''){
   $data = json_encode($items);
   $data = drupal_deploy_export_pretty_json($data);
   if(file_put_contents($filename, $data)){
-    drupal_set_message(t('Exported to file !filename', array('!filename' => $filename)));
+    drush_log(dt('Exported to file !filename', array('!filename' => $filename)),'ok');
   }
 }
