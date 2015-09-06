@@ -266,6 +266,7 @@ function dde_nodes_replace_and_clean_vars($object){
         $object[$key] = dde_nodes_replace_and_clean_vars($val);
       }
     }else{
+      echo "key:" . $key."\n";
       switch($key){
         case 'fid':
           if(!empty($val)){
@@ -280,6 +281,7 @@ function dde_nodes_replace_and_clean_vars($object){
           }else{
             unset($object[$key]);
           }
+          echo "fid,nid,vid\n";
           break;
         case 'uid':
           if($is_object){
@@ -289,6 +291,7 @@ function dde_nodes_replace_and_clean_vars($object){
             $object['username'] = dde_get_user_name($val);
             unset($object[$key]);
           }
+          echo "uid\n";          
           break;          
       }
     }
