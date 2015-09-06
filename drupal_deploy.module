@@ -138,6 +138,8 @@ function dd_json_encode($var, $options=0, $_indent="") {
      #-- check if array is associative
      if (!$obj) {
         $keys = array_keys((array)$var);
+        print_r($keys);
+        print_r(array_keys($keys));
         $obj = !($keys == array_keys($keys));   // keys must be in 0,1,2,3, ordering, but PHP treats integers==strings otherwise
      }
 
