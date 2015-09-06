@@ -142,7 +142,9 @@ function dd_json_encode($var, $options=0, $_indent="") {
   elseif (is_string($var)) {
 
      if (!utf8_decode($var)) {
-        //$var = NULL;
+       echo "[[$var]]\n";
+        trigger_error("json_encode: invalid UTF-8 encoding in string, cannot proceed.", E_USER_WARNING);
+        $var = NULL;
      }
      $rewrite = array(
          "\\" => "\\\\",
@@ -198,8 +200,55 @@ function dd_json_encode($var, $options=0, $_indent="") {
   return($json);
 }
 
+function _format_json($json, $html = false) {
+		$tabcount = 0; 
+		$result = ''; 
+		$inquote = false; 
+		$ignorenext = false; 
+		if ($html) { 
+		    $tab = "&nbsp;&nbsp;&nbsp;"; 
+		    $newline = "<br/>"; 
+		} else { 
+		    $tab = "\t"; 
+		    $newline = "\n"; 
+		} 
+		for($i = 0; $i < strlen($json); $i++) { 
+		    $char = $json[$i]; 
+		    if ($ignorenext) { 
+		        $result .= $char; 
+		        $ignorenext = false; 
+		    } else { 
+		        switch($char) { 
+		            case '{': 
+		                $tabcount++; 
+		                $result .= $char . $newline . str_repeat($tab, $tabcount); 
+		                break; 
+		            case '}': 
+		                $tabcount--; 
+		                $result = trim($result) . $newline . str_repeat($tab, $tabcount) . $char; 
+		                break; 
+		            case ',': 
+		                $result .= $char . $newline . str_repeat($tab, $tabcount); 
+		                break; 
+		            case '"': 
+		                $inquote = !$inquote; 
+		                $result .= $char; 
+		                break; 
+		            case '\\': 
+		                if ($inquote) $ignorenext = true; 
+		                $result .= $char; 
+		                break; 
+		            default: 
+		                $result .= $char; 
+		        } 
+		    } 
+		} 
+		return $result; 
+	}
+
 function drupal_deploy_export_save($items, $filename = ''){
-  $data = json_encode($items, JSON_PRETTY_PRINT);
+  $data = dd_json_encode($items, JSON_PRETTY_PRINT);
+  $data = _format_json($data);
   if(file_put_contents($filename, $data)){
     drush_log(dt('Exported to file !filename', array('!filename' => $filename)),'ok');
   }
