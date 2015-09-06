@@ -553,7 +553,9 @@ function ddi_node_files($files, $filename){
   foreach($files as $file){
     $file['uid'] = ddi_get_user_id($file['username']);
     if($stored_file = db_fetch_array(db_query("SELECT * FROM {files} WHERE filepath='%s'", $file['filepath']))){
-      drush_log(dt('!filename already stored. No changes', array('!filename' => $stored_file['filename'])));
+      echo "Already";
+      print_r($stored_file);
+      drush_log(dt('!filename already stored. No changes', array('!filename' => $stored_file['filename'])), 'ok');
       dde_nodes_files_imported('set', $stored_file);
     }else{
       drupal_write_record('files', $file);
