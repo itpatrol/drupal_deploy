@@ -540,8 +540,6 @@ function drupal_deploy_import_files($files, $filename){
       drupal_write_record('files', $file);
       dde_nodes_files_imported('set', $file);
       copy($dir . '/' .$file['stored_filepath'], $file['filepath']);
-      echo $dir;
-      print_r($file);
       drush_log(dt('!filename imported.', array('!filename' => $file['filename'])), 'ok');
     }
   }
