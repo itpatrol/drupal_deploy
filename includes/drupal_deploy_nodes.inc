@@ -118,6 +118,7 @@ function drupal_deploy_export_nodes_fetch_data($node_type, $filename){
       drush_log(dt('!filename exported', array('!filename' => $file->filename)));
     }else{
       drush_log(dt('!filename does not exists', array('!filename' => $file->filename)), 'warning');
+      print_r($file);
     }
   }
   return $items;
