@@ -61,12 +61,12 @@ function drupal_deploy_export_nodes_fetch_data($node_type, $filename){
   $items = array();
   
   if($nids = drush_get_option('nid', FALSE)){
-    $result = db_query("SELECT * FROM {node} WHERE nid in (%s) ORDER BY title LIMIT 10", $nids);
+    $result = db_query("SELECT * FROM {node} WHERE nid in (%s) ORDER BY title", $nids);
   }else{
     if($node_type){
-      $result = db_query("SELECT * FROM {node} WHERE type='%s' ORDER BY title LIMIT 10",$node_type);
+      $result = db_query("SELECT * FROM {node} WHERE type='%s' ORDER BY title",$node_type);
     }else{
-      $result = db_query("SELECT * FROM {node} ORDER BY title LIMIT 10");
+      $result = db_query("SELECT * FROM {node} ORDER BY title");
     }
   }
 
