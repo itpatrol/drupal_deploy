@@ -141,34 +141,50 @@ function dd_json_encode_pretty_utf8($var, $options=0, $_indent="") {
 
   #-- strings need some care
   elseif (is_string($var)) {
-     $json = '"' . $var . '"';
+    $rewrite = array(
+         "\\" => "\\\\",
+         "\"" => "\\\"",
+       "\010" => "\\b",
+         "\f" => "\\f",
+         "\n" => "\\n",
+         "\r" => "\\r", 
+         "\t" => "\\t",
+         "/"  => $options & JSON_UNESCAPED_SLASHES ? "/" : "\\/",
+         "<"  => $options & JSON_HEX_TAG  ? "\\u003C" : "<",
+         ">"  => $options & JSON_HEX_TAG  ? "\\u003E" : ">",
+         "'"  => $options & JSON_HEX_APOS ? "\\u0027" : "'",
+         "\"" => $options & JSON_HEX_QUOT ? "\\u0022" : "\"",
+         "&"  => $options & JSON_HEX_AMP  ? "\\u0026" : "&",
+     );
+    $var = strtr($var, $rewrite);
+    $json = '"' . $var . '"';
   }
 
   #-- basic types
   elseif (is_bool($var)) {
-     $json = $var ? "true" : "false";
+    $json = $var ? "true" : "false";
   }
   elseif ($var === NULL) {
-     $json = "null";
+    $json = "null";
   }
   elseif (is_int($var)) {
-     $json = "$var";
+    $json = "$var";
   }
   elseif (is_float($var)) {
-     if (is_nan($var) || is_infinite($var)) {
-        ${'.json_last_error'} = JSON_ERROR_INF_OR_NAN;
-        return;
-     }
-     else {
-        $json = "$var";
-     }
+    if (is_nan($var) || is_infinite($var)) {
+      ${'.json_last_error'} = JSON_ERROR_INF_OR_NAN;
+      return;
+    }
+    else {
+      $json = "$var";
+    }
   }
 
   #-- something went wrong
   else {
-     trigger_error("json_encode: don't know what a '" .gettype($var). "' is.", E_USER_WARNING);
-     ${'.json_last_error'} = JSON_ERROR_UNSUPPORTED_TYPE;
-     return;
+    trigger_error("json_encode: don't know what a '" .gettype($var). "' is.", E_USER_WARNING);
+    ${'.json_last_error'} = JSON_ERROR_UNSUPPORTED_TYPE;
+    return;
   }
   
   #-- done
