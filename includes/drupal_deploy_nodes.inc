@@ -455,11 +455,11 @@ function ddi_node_update($node, $node_saved){
   
   drupal_write_record('node', $node, 'nid');
   
-  unset($revision['log']);
-  unset($revision['timestamp']);
-  unset($revision['user']);
-  unset($revision['forum_term']);
-  unset($revision['taxonomy']);
+  unset($revision->log);
+  unset($revision->timestamp);
+  unset($revision->user);
+  unset($revision->forum_term);
+  unset($revision->taxonomy);
 
   foreach($revision as $field => $value){
     $node->$field = $value;
