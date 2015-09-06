@@ -267,6 +267,10 @@ function dde_nodes_replace_and_clean_vars($object){
       }
     }else{
       echo "key:" . $key."\n";
+      if($key == 0){
+        echo "KEy == 0. skip";
+        continue;
+      }
       switch($key){
         case 'fid':
           if(!empty($val)){
