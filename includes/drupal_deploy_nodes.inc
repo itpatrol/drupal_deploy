@@ -43,16 +43,15 @@ function drupal_deploy_import_nodes_items($data){
     $item = (object) $item;
     $item->uid = ddi_get_user_id($item->user);
     if($node_saved = ddi_check_node($item)){
-      drush_log(dt('Node !title imported already. Skip it.', array('!title' => $item->title)));
+      drush_log(dt('Node !title imported already. Skip it.', array('!title' => $item->title)),'notice');
     }else{
       foreach($item as $key => $val){
         if(is_array($val)){
           $item->$key = ddi_nodes_prepare_vars($val);
         }
       }
-      print_r($item);
       ddi_node_save($item);
-      drush_log(dt('Node !title imported.', array('!title' => $item->title)));
+      drush_log(dt('Node !title imported.', array('!title' => $item->title)),'ok');
     }
   }
   db_query("TRUNCATE {".content_cache_tablename()."}");
@@ -103,7 +102,7 @@ function drupal_deploy_export_nodes_fetch_data($node_type, $filename){
     unset($db_item->translate);
     unset($db_item->tnid);
     $items['nodes'][] = $db_item;
-    drush_log(dt('Node !title exported', array('!title' => $db_item->title)));
+    drush_log(dt('Node !title exported', array('!title' => $db_item->title)),'ok');
   }
   
   $files = dde_nodes_files_to_export('get');
@@ -133,7 +132,7 @@ function drupal_deploy_export_nodes_fetch_data($node_type, $filename){
         copy($file->filepath, $store_filepath);
         $file->stored_filepath = $store_filepath;
         $items['files'][] = $file;
-        drush_log(dt('!filename exported', array('!filename' => $file->filename)));
+        drush_log(dt('!filename exported', array('!filename' => $file->filename)),'ok');
       }else{
         drush_log(dt('!filename does not exists', array('!filename' => $file->filename)), 'warning');
       }
@@ -568,7 +567,7 @@ function ddi_node_files($files, $filename){
   $info = pathinfo($filename);
   $dir = $info['dirname'];
   if(!is_dir($dir)){
-    drush_log(dt('File folder !folder does not exists', array('!folder' => $dir)));
+    drush_log(dt('File folder !folder does not exists', array('!folder' => $dir)),'error');
     return FALSE;
   }
   foreach($files as $file){
