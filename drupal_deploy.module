@@ -102,30 +102,17 @@ function drupal_deploy_export_pretty_json($json) {
   return $result;
 }
 
-define("JSON_PRETTY_PRINT", 128);      // 5.4.0
-if (!defined("JSON_UNESCAPED_SLASHES")) {
-   define("JSON_HEX_TAG", 1);
-   define("JSON_HEX_AMP", 2);
-   define("JSON_HEX_APOS", 4);
-   define("JSON_HEX_QUOT", 8);
-   define("JSON_FORCE_OBJECT", 16);
-}
+
 if (!defined("JSON_NUMERIC_CHECK")) {
-   define("JSON_NUMERIC_CHECK", 32);      // 5.3.3
- }
-if (!defined("JSON_UNESCAPED_SLASHES")) {
-   define("JSON_UNESCAPED_SLASHES", 64);  // 5.4.0
-   define("JSON_PRETTY_PRINT", 128);      // 5.4.0
-   define("JSON_UNESCAPED_UNICODE", 256); // 5.4.0
+  define("JSON_NUMERIC_CHECK", 32);      // 5.3.3
 }
 
-function dd_json_encode($var, $options=0, $_indent="") {
+function dd_json_encode_pretty_utf8($var, $options=0, $_indent="") {
   global ${'.json_last_error'};
   ${'.json_last_error'} = JSON_ERROR_NONE;
         
   #-- prepare JSON string
-  $obj = ($options & JSON_FORCE_OBJECT);
-  list($_space, $_tab, $_nl) = ($options & JSON_PRETTY_PRINT) ? array(" ", "    $_indent", "\n") : array("", "", "");
+  list($_space, $_tab, $_nl) = array(" ", "    $_indent", "\n");
   $json = "$_indent";
   
   if ($options & JSON_NUMERIC_CHECK and is_string($var) and is_numeric($var)) {
@@ -143,7 +130,6 @@ function dd_json_encode($var, $options=0, $_indent="") {
      #-- concat individual entries
      $empty = 0; $json = "";
      foreach ((array)$var as $i=>$v) {
-        echo "i=$i\n obj=".($obj ? "true" : "false")."\n";
         $json .= ($empty++ ? ",$_nl" : "")    // comma separators
                . $_tab . ($obj ? ( dd_json_encode($i, $options & ~JSON_NUMERIC_CHECK, $_tab) . ":$_space") : "")   // assoc prefix
                . ( dd_json_encode($v, $options, $_tab));    // value
@@ -155,26 +141,6 @@ function dd_json_encode($var, $options=0, $_indent="") {
 
   #-- strings need some care
   elseif (is_string($var)) {
-     $rewrite = array(
-         "\\" => "\\\\",
-         "\"" => "\\\"",
-       "\010" => "\\b",
-         "\f" => "\\f",
-         "\n" => "\\n",
-         "\r" => "\\r", 
-         "\t" => "\\t",
-         "/"  => $options & JSON_UNESCAPED_SLASHES ? "/" : "\\/",
-         "<"  => $options & JSON_HEX_TAG  ? "\\u003C" : "<",
-         ">"  => $options & JSON_HEX_TAG  ? "\\u003E" : ">",
-         "'"  => $options & JSON_HEX_APOS ? "\\u0027" : "'",
-         "\"" => $options & JSON_HEX_QUOT ? "\\u0022" : "\"",
-         "&"  => $options & JSON_HEX_AMP  ? "\\u0026" : "&",
-     );
-    /* $var = strtr($var, $rewrite);
-     //@COMPAT control chars should probably be stripped beforehand, not escaped as here
-     if (function_exists("iconv") && ($options & JSON_UNESCAPED_UNICODE) == 0) {
-        $var = preg_replace("/[^\\x{0020}-\\x{007F}]/ue", "'\\u'.current(unpack('H*', iconv('UTF-8', 'UCS-2BE', '$0')))", $var);
-     }*/
      $json = '"' . $var . '"';
   }
 
@@ -209,57 +175,8 @@ function dd_json_encode($var, $options=0, $_indent="") {
   return($json);
 }
 
-function _format_json($json, $html = false) {
-		$tabcount = 0; 
-		$result = ''; 
-		$inquote = false; 
-		$ignorenext = false; 
-		if ($html) { 
-		    $tab = "&nbsp;&nbsp;&nbsp;"; 
-		    $newline = "<br/>"; 
-		} else { 
-		    $tab = "\t"; 
-		    $newline = "\n"; 
-		} 
-		for($i = 0; $i < strlen($json); $i++) { 
-		    $char = $json[$i]; 
-		    if ($ignorenext) { 
-		        $result .= $char; 
-		        $ignorenext = false; 
-		    } else { 
-		        switch($char) { 
-		            case '{': 
-		                $tabcount++; 
-		                $result .= $char . $newline . str_repeat($tab, $tabcount); 
-		                break; 
-		            case '}': 
-		                $tabcount--; 
-		                $result = trim($result) . $newline . str_repeat($tab, $tabcount) . $char; 
-		                break; 
-		            case ',': 
-		                $result .= $char . $newline . str_repeat($tab, $tabcount); 
-		                break; 
-		            case '"': 
-		                $inquote = !$inquote; 
-		                $result .= $char; 
-		                break; 
-		            case '\\': 
-		                if ($inquote) $ignorenext = true; 
-		                $result .= $char; 
-		                break; 
-		            default: 
-		                $result .= $char; 
-		        } 
-		    } 
-		} 
-		return $result; 
-	}
-
 function drupal_deploy_export_save($items, $filename = ''){
-  print_r($items);
-  $data = dd_json_encode($items, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
-//  $data = drupal_deploy_export_pretty_json($data);
-//  $data = _format_json($data);
+  $data = dd_json_encode_pretty_utf8($items);
   if(file_put_contents($filename, $data)){
     drush_log(dt('Exported to file !filename', array('!filename' => $filename)),'ok');
   }
