@@ -258,6 +258,7 @@ function dde_nodes_replace_and_clean_vars($object){
           if(!empty($val)){
             dde_nodes_files_to_export('export', $val);
           }else{
+            echo $key;
             print_r($object);
           }
         case 'nid':
