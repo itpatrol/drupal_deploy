@@ -258,7 +258,7 @@ function dde_node_clean(&$item){
   if(module_exists($module)) {
     $function = $module . '_node_deploy';
     if(function_exists($function)){
-      $item = $function('export', $item);
+      $function('export', $item);
     }
   }
   unset($item->tags);
