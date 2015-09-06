@@ -213,7 +213,7 @@ function dde_node_clean(&$item){
           $res = array( $term => $res);
         }
       }
-      
+      print_r($res);
       list($key,$value) = each($res);
       if(isset($terms[$stored_vocabulary->name][$key])){
         $terms[$stored_vocabulary->name][$key] = array_merge_recursive($terms[$stored_vocabulary->name][$key],$value);
