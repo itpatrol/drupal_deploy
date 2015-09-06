@@ -289,6 +289,7 @@ function dde_nodes_replace_and_clean_vars($object){
       }
     }
   }
+  print_r($object);
   return $object;
 }
 
