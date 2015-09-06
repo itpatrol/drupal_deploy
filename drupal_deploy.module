@@ -144,7 +144,7 @@ function dd_json_encode($var, $options=0, $_indent="") {
      #-- concat individual entries
      $empty = 0; $json = "";
      foreach ((array)$var as $i=>$v) {
-        echo "i=$i\n obj=".$obj."\n";
+        echo "i=$i\n obj=".($obj ? "true" : "false")."\n";
         $json .= ($empty++ ? ",$_nl" : "")    // comma separators
                . $_tab . ($obj ? ( dd_json_encode($i, $options & ~JSON_NUMERIC_CHECK, $_tab) . ":$_space") : "")   // assoc prefix
                . ( dd_json_encode($v, $options, $_tab));    // value
