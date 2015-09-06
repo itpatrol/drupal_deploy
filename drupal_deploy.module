@@ -142,7 +142,7 @@ function dd_json_encode($var, $options=0, $_indent="") {
   elseif (is_string($var)) {
 
      if (!utf8_decode($var)) {
-        $var = NULL;
+        //$var = NULL;
      }
      $rewrite = array(
          "\\" => "\\\\",
