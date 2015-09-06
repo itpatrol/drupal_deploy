@@ -168,9 +168,6 @@ function dd_json_encode_pretty_utf8($var, $options=0, $_indent="") {
        "\x0c" => "\\b",
      );
     $var = strtr($var, $rewrite);
-    if (function_exists("iconv")) {
-      $var = preg_replace("/[^\\x{0020}-\\x{007F}]/ue", "'\\u'.current(unpack('H*', iconv('UTF-8', 'UCS-2BE', '$0')))", $var);
-    }
     $json = '"' . $var . '"';
   }
 
