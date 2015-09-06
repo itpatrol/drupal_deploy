@@ -107,6 +107,14 @@ if (!defined("JSON_NUMERIC_CHECK")) {
   define("JSON_NUMERIC_CHECK", 32);      // 5.3.3
 }
 
+if (!defined("JSON_UNESCAPED_SLASHES")) {
+  define("JSON_UNESCAPED_SLASHES", 64);
+  define("JSON_HEX_TAG", 1);
+  define("JSON_HEX_AMP", 2);
+  define("JSON_HEX_APOS", 4);
+  define("JSON_HEX_QUOT", 8);
+}
+
 function dd_json_encode_pretty_utf8($var, $options=0, $_indent="") {
   global ${'.json_last_error'};
   ${'.json_last_error'} = JSON_ERROR_NONE;
