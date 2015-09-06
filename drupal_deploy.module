@@ -169,7 +169,7 @@ function dd_json_encode_pretty_utf8($var, $options=0, $_indent="") {
      );
     $var = strtr($var, $rewrite);
     if (function_exists("iconv")) {
-      $var = preg_replace("/[\x00-\x1F\x7F]/ue", "'\\u'.current(unpack('H*', iconv('UTF-8', 'UCS-2BE', '$0')))", $var);
+      $var = preg_replace("/[\\x00-\\x1F\\x7F]/ue", "'\\u'.current(unpack('H*', iconv('UTF-8', 'UCS-2BE', '$0')))", $var);
     }
     $json = '"' . $var . '"';
   }
