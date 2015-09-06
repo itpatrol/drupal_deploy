@@ -204,6 +204,7 @@ function dde_node_clean(&$item){
     foreach($item->taxonomy as $term){
       $stored_vocabulary = db_fetch_object(db_query("SELECT * FROM {vocabulary} WHERE vid=%d", $term->vid));
       $tree = explode("\n",dde_get_term_tree($term));
+      print_r($tree);
       $res=array();
       foreach($tree as $term){
         if(empty($res)){
