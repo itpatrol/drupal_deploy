@@ -51,15 +51,29 @@ function drupal_deploy_import_cck_items($data)
 
   
   foreach($data['fields'] as $item){  
-    $existing_item = db_fetch_array(db_query("SELECT * FROM {" . content_field_tablename() . "} WHERE field_name = '%s'", $item['field_name']));
+    
+    $existing_item = db_fetch_array(db_query("SELECT * FROM {" . content_field_tablename() . "} nf LEFT JOIN {".content_instance_tablename()."} nfi ON nfi.field_name = nf.field_name WHERE field_name = '%s'", $item['field_name']));
+    
     $item['columns'] = $item['db_columns'];
     
     if($existing_item)
     {
-      $existing_item['columns'] = unserialize($existing_item['db_columns']);
+      foreach (array('widget_settings', 'display_settings', 'global_settings', 'db_columns') as $key) {
+        $existing_item[$key] = (!empty($existing_item[$key])) ? (array) unserialize($existing_item[$key]) : array();
+      }
+      // 'columns' is a reserved word in MySQL4, so our column is named 'db_columns'.
+      $existing_item['columns'] = $existing_item['db_columns'];
+      unset($existing_item['db_columns']);
+  
+      // Unfold 'global_settings'.
+      foreach ($existing_item['global_settings'] as $key => $value) {
+        $existing_item[$key] = $value;
+      }
+      unset($existing_item['global_settings']);
+      
       if(drupal_write_record(content_field_tablename(), $item, 'field_name'))
       {
-        $item['type_name'] = $existing_item['type_name'] = ddi_cck_get_instance_type_name($item['field_name'], $data['instance']);
+        ddi_cck_get_instance_type_name($item, $data['instance']);
         print_r($item);
         content_alter_schema((array)$existing_item, (array)$item);
         drush_log(dt('Field !field_name updated.', array('!field_name' => $item['field_name'])), 'ok');
@@ -69,7 +83,7 @@ function drupal_deploy_import_cck_items($data)
     {
       if(drupal_write_record(content_field_tablename(), $item))
       {
-        $item['type_name'] = ddi_cck_get_instance_type_name($item['field_name'], $data['instance']);
+        ddi_cck_get_instance_type_name($item, $data['instance']);
         print_r($item);
         content_alter_schema(array(), (array)$item);
         drush_log(dt('Field !field_name created.', array('!field_name' => $item['field_name'])), 'ok');
@@ -82,13 +96,14 @@ function drupal_deploy_import_cck_items($data)
   menu_rebuild();
 }
 
-function ddi_cck_get_instance_type_name($field_name, $instances){
+function ddi_cck_get_instance_type_name(&$field, $instances){
   foreach($instances as $instance){
-    if($instance['field_name'] == $field_name){
-      return $instance['type_name'];
+    if($instance['field_name'] == $field['field_name']){
+      foreach($instance as $key => $val){
+        $field[$key] = $val;
+      }
     }
   }
-  return FALSE;
 }
 
 function drupal_deploy_export_cck_fetch_data()
