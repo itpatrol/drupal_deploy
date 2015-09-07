@@ -60,6 +60,7 @@ function drupal_deploy_import_cck_items($data)
       if(drupal_write_record(content_field_tablename(), $item, 'field_name'))
       {
         $item['type_name'] = $existing_item['type_name'] = ddi_cck_get_instance_type_name($item['field_name'], $data['instance']);
+        print_r($item);
         content_alter_schema((array)$existing_item, (array)$item);
         drush_log(dt('Field !field_name updated.', array('!field_name' => $item['field_name'])), 'ok');
       }
@@ -69,6 +70,7 @@ function drupal_deploy_import_cck_items($data)
       if(drupal_write_record(content_field_tablename(), $item))
       {
         $item['type_name'] = ddi_cck_get_instance_type_name($item['field_name'], $data['instance']);
+        print_r($item);
         content_alter_schema(array(), (array)$item);
         drush_log(dt('Field !field_name created.', array('!field_name' => $item['field_name'])), 'ok');
       }
