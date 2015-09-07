@@ -1,11 +1,13 @@
 <?php
   
 function drupal_deploy_export_users($filename = ''){
-  $items = drupal_deploy_export_users_fetch_data($filename);
   
   if(empty($filename)){
     $filename = 'users.export';
   }
+
+  $items = drupal_deploy_export_users_fetch_data($filename);
+
   drupal_deploy_export_save($items, $filename);
 }
 
