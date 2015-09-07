@@ -216,6 +216,7 @@ function drupal_deploy_import($type = '', $option = '') {
       include_once(drupal_get_path('module', 'drupal_deploy') .'/includes/drupal_deploy_node_types.inc');
       include_once(drupal_get_path('module', 'node') .'/content_types.inc');
       drupal_deploy_import_node_types($filename);
+      break;
     case 'taxonomy':
       include_once(drupal_get_path('module', 'drupal_deploy') .'/includes/drupal_deploy_taxonomy.inc');
       drupal_deploy_import_taxonomy($filename);
