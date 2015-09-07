@@ -26,6 +26,9 @@ function drupal_deploy_import_nodes($filename = ''){
   }
   
   $data = file_get_contents($filename);
+  
+  ini_set('memory_limit', '1G');
+  
   if(!$data = json_decode($data, TRUE)){
     drush_log(dt('Json decode error!'), 'error');
   }
