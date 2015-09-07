@@ -357,5 +357,4 @@ function dde_save_avatar($avatarfile, $export_filename){
     mkdir($export_folder);
   }
   copy($avatarfile, $export_folder);
-  }
 }
