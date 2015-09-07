@@ -48,7 +48,7 @@ function drupal_deploy_import_roles_items($data)
       if(drupal_write_record('role', $role))
       {
         $role_perms = array(
-          'rid' => $role->rid,
+          'rid' => $role['rid'],
           'perm' => implode(", ", $item['permissions']),
         );
         if(drupal_write_record('permission', $role_perms))
