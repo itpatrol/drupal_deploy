@@ -24,12 +24,12 @@ function drupal_deploy_import_taxonomy($filename = ''){
     }
   }
   if(!is_file($filename)){
-    drupal_set_message(t('File !filename does not exists', array('!filename' => $filename)), 'error');
+    drush_log(dt('File !filename does not exists', array('!filename' => $filename)), 'error');
     return FALSE;
   }
   $data = file_get_contents($filename);
   if(!$data = json_decode($data, TRUE)){
-    drupal_set_message(t('Json decode error!'), 'error');
+    drush_log(dt('Json decode error!'), 'error');
   }
   drupal_deploy_import_taxonomy_items($data, $vocabulary_name);
 }
@@ -62,15 +62,19 @@ function drupal_deploy_import_taxonomy_items($data, $vocabulary_name = ''){
     $status = taxonomy_save_vocabulary($item);
     if($status == SAVED_UPDATED || $status == SAVED_NEW)
     {
-      drupal_set_message(t('Vocabulary !name imported',array('!name' => $item['name'])));
-      foreach($terms as $term)
-      {
-        $term['vid'] = $item['vid'];
-        $status = drupal_deploy_save_term($term, $item['vid']);
-        if($status == SAVED_UPDATED || $status == SAVED_NEW){
-          drupal_set_message(t('Term !name imported',array('!name' => $term['name'])));
+      drush_log(dt('Vocabulary !name imported',array('!name' => $item['name'])), 'ok');
+      if(is_array($terms)){
+        foreach($terms as $term)
+        {
+          $term['vid'] = $item['vid'];
+          $status = drupal_deploy_save_term($term, $item['vid']);
+          if($status == SAVED_UPDATED || $status == SAVED_NEW){
+            drush_log(dt('Term !name imported',array('!name' => $term['name'])), 'ok');
+          }
         }
-      }  
+      }else{
+        drush_log(dt('Vocabulary !name does not have terms',array('!name' => $term['name'])), 'warning');
+      }
     }
     
   }
@@ -96,7 +100,7 @@ function drupal_deploy_save_term($term, $vid, $parent = 0){
     {
       $status = drupal_deploy_save_term($sub_term, $vid, $term['tid']);
       if($status == SAVED_UPDATED || $status == SAVED_NEW){
-        drupal_set_message(t('Term !name imported',array('!name' => $sub_term['name'])));
+        drush_log(dt('Term !name imported',array('!name' => $sub_term['name'])), 'ok');
       }
     }  
   }
