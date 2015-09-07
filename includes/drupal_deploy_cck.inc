@@ -52,7 +52,7 @@ function drupal_deploy_import_cck_items($data)
   
   foreach($data['fields'] as $item){  
     
-    $existing_item = db_fetch_array(db_query("SELECT * FROM {" . content_field_tablename() . "} nf LEFT JOIN {".content_instance_tablename()."} nfi ON nfi.field_name = nf.field_name WHERE field_name = '%s'", $item['field_name']));
+    $existing_item = db_fetch_array(db_query("SELECT * FROM {" . content_field_tablename() . "} nf LEFT JOIN {".content_instance_tablename()."} nfi ON nfi.field_name = nf.field_name WHERE nfi.field_name = '%s'", $item['field_name']));
     
     $item['columns'] = $item['db_columns'];
     
