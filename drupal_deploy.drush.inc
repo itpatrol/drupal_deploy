@@ -28,6 +28,7 @@ function drupal_deploy_drush_command() {
       'drush dde variables --name=superfish_%' => dt('Export superfish variables settings.'),
       'drush dde variables --name=comment_notify_%,node_notify_%' => dt('Export comment_notify variable settings.'),            
       'drush dde variables --name=pathauto_%' => dt('Export pathauto variable settings.'),            
+      'drush dde aggregator' => dt('Export aggregator feed only.'),            
     ),
     'aliases' => array('dde'),
     'arguments' => array(
@@ -64,7 +65,8 @@ function drupal_deploy_drush_command() {
       'drush ddi comment_notify' => dt('Export comment_notify settings.'),
       'drush ddi variables --name=superfish_%' => dt('Import superfish variables settings.'),      
       'drush ddi variables --name=comment_notify_%,node_notify_%' => dt('Import comment_notify variable settings.'),
-      'drush ddi variables --name=pathauto_%' => dt('Import pathauto variable settings.'),                  
+      'drush ddi variables --name=pathauto_%' => dt('Import pathauto variable settings.'),  
+      'drush ddi aggregator' => dt('Import aggregator feed only.'),
     ),
     'aliases' => array('ddi'),
     'arguments' => array(
@@ -184,6 +186,10 @@ function drupal_deploy_export($type = '') {
       include_once(drupal_get_path('module', 'drupal_deploy') .'/includes/drupal_deploy_variables.inc');
       drupal_deploy_export_variables($filename);
       break;
+    case 'aggregator':
+      include_once(drupal_get_path('module', 'drupal_deploy') .'/includes/drupal_deploy_aggregator.inc');
+      drupal_deploy_export_aggregator($filename);
+      break;
   }
 }
 
@@ -249,6 +255,10 @@ function drupal_deploy_import($type = '', $option = '') {
     case 'variables':
       include_once(drupal_get_path('module', 'drupal_deploy') .'/includes/drupal_deploy_variables.inc');
       drupal_deploy_import_variables($filename);
+      break;
+    case 'aggregator':
+      include_once(drupal_get_path('module', 'drupal_deploy') .'/includes/drupal_deploy_aggregator.inc');
+      drupal_deploy_import_aggregator($filename);
       break;
   }
 }
