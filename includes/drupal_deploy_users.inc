@@ -1,7 +1,7 @@
 <?php
   
 function drupal_deploy_export_users($filename = ''){
-  $items = drupal_deploy_export_users_fetch_data();
+  $items = drupal_deploy_export_users_fetch_data($filename);
   
   if(empty($filename)){
     $filename = 'users.export';
@@ -21,16 +21,18 @@ function drupal_deploy_import_users($filename){
   if(!$data = json_decode($data, TRUE)){
     drupal_set_message(t('Json decode error!'), 'error');
   }
-  drupal_deploy_import_users_items($data);
+  drupal_deploy_import_users_items($data, $filename);
 }
 
-function drupal_deploy_import_users_items($data)
+function drupal_deploy_import_users_items($data, $import_filename)
 {
   global $user;
   if ($user->uid != 1) {
     drush_log('Switching to uid=1 now', 'notice');
     $user = user_load(1);
   }
+  
+  $import_folder = $import_filename . '.files';
   
   foreach($data as $item){
     $existing_item = db_fetch_object(db_query("SELECT * FROM {users} WHERE name = '%s'", $item['name']));
@@ -62,7 +64,7 @@ function drupal_deploy_import_users_items($data)
       }
     }
     if(!empty($item['picture'])){
-      $filename = $item['picture'];
+      
       $info = pathinfo($item['picture']);
       
       $directory = file_directory_path() . '/' . variable_get('user_picture_path', 'pictures');
@@ -72,7 +74,9 @@ function drupal_deploy_import_users_items($data)
         file_delete($destination);
       }
       file_check_directory($directory, FILE_CREATE_DIRECTORY);
-      file_put_contents($destination, base64_decode($item['picture_data']));
+      $stored_avatar = $import_folder .'/' . basename($item['picture']);
+      
+      copy($import_folder .'/'. $avatar_filebasename, $destination);
       $item['picture'] = $destination;
       drupal_write_record('users', $item, 'uid');
     }
@@ -103,7 +107,7 @@ function drupal_deploy_import_form_hook_send($module, $edit){
   }
 }
 
-function drupal_deploy_export_users_fetch_data()
+function drupal_deploy_export_users_fetch_data($filename)
 {
   
   global $user;
@@ -122,9 +126,8 @@ function drupal_deploy_export_users_fetch_data()
     while ($role_item = db_fetch_object($result_roles)) {
       $roles[] = $role_item->name;
     }
-    $pic = '';
     if(is_file($db_item->picture)){
-      $pic = base64_encode(file_get_contents($db_item->picture));
+      dde_save_avatar($db_item->picture, $filename);
     }
     $item = array(
       'name' => $db_item->name,
@@ -142,7 +145,6 @@ function drupal_deploy_export_users_fetch_data()
       'timezone' => $db_item->timezone,
       'language' => $db_item->language,
       'picture' => $db_item->picture,
-      'picture_data' => $pic,
       'init' => $db_item->init,
       'roles' => $roles,
       'modules' => $data,
@@ -346,5 +348,14 @@ function _process_form_variable($array)
         }
         return $return;
     }
+  }
+}
+
+function dde_save_avatar($avatarfile, $export_filename){
+  $export_folder = $export_filename . '.files';
+  if(!is_dir($export_folder)){
+    mkdir($export_folder);
+  }
+  copy($avatarfile, $export_folder);
   }
 }
