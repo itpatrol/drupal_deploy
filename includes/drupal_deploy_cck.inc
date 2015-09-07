@@ -32,24 +32,19 @@ function drupal_deploy_import_cck_items($data)
   $content_instances = array();
   
   foreach($data['instance'] as $item){
-
-    if($field = ddi_cck_get_field($item['field_name'], $data['fields'])){
-      $existing_item = db_fetch_object(db_query("SELECT * FROM {" . content_instance_tablename() . "} WHERE field_name = '%s' AND type_name='%s'", $item['field_name'], $item['type_name']));
-      if($existing_item)
+    $existing_item = db_fetch_object(db_query("SELECT * FROM {" . content_instance_tablename() . "} WHERE field_name = '%s' AND type_name='%s'", $item['field_name'], $item['type_name']));
+    if($existing_item)
+    {
+      if(drupal_write_record(content_instance_tablename(), $item, array('field_name','type_name')))
       {
-        if(drupal_write_record(content_instance_tablename(), $item, array('field_name','type_name')))
-        {
-          content_alter_schema((array)$existing_item, (array)$item);
-          drush_log(dt('Field instance !field_name !type_name updated.', array('!field_name' => $item['field_name'], '!type_name' => $item['type_name'])));
-        }
+        drush_log(dt('Field instance !field_name !type_name updated.', array('!field_name' => $item['field_name'], '!type_name' => $item['type_name'])), 'ok');
       }
-      else
+    }
+    else
+    {
+      if(drupal_write_record(content_instance_tablename(), $item))
       {
-        if(drupal_write_record(content_instance_tablename(), $item))
-        {
-          content_alter_schema(array(), (array)$item);
-          drush_log(dt('Field instance !field_name !type_name created.', array('!field_name' => $item['field_name'], '!type_name' => $item['type_name'])));
-        }
+        drush_log(dt('Field instance !field_name !type_name created.', array('!field_name' => $item['field_name'], '!type_name' => $item['type_name'])), 'ok');
       }
     }
   }
@@ -64,14 +59,22 @@ function drupal_deploy_import_cck_items($data)
       $existing_item['columns'] = unserialize($existing_item['db_columns']);
       if(drupal_write_record(content_field_tablename(), $item, 'field_name'))
       {
-        drush_log(dt('Field !field_name updated.', array('!field_name' => $item['field_name'])));
+        if($item['db_storage'] != CONTENT_DB_STORAGE_PER_FIELD){
+          $item['type_name'] = $existing_item['type_name'] = ddi_cck_get_instance_type_name($item['field_name'], $data['instance']);
+        }
+        content_alter_schema((array)$existing_item, (array)$item);
+        drush_log(dt('Field !field_name updated.', array('!field_name' => $item['field_name'])), 'ok');
       }
     }
     else
     {
       if(drupal_write_record(content_field_tablename(), $item))
       {
-        drush_log(dt('Field !field_name created.', array('!field_name' => $item['field_name'])));
+        if($item['db_storage'] != CONTENT_DB_STORAGE_PER_FIELD){
+          $item['type_name'] = ddi_cck_get_instance_type_name($item['field_name'], $data['instance']);
+        }
+        content_alter_schema(array(), (array)$item);
+        drush_log(dt('Field !field_name created.', array('!field_name' => $item['field_name'])), 'ok');
       }
     }
   }
@@ -81,10 +84,10 @@ function drupal_deploy_import_cck_items($data)
   menu_rebuild();
 }
 
-function ddi_cck_get_field($field_name, $fields){
-  foreach($fields as $field){
-    if($field['field_name'] == $field_name){
-      return $field;
+function ddi_cck_get_instance_type_name($field_name, $instances){
+  foreach($instances as $instance){
+    if($instance['field_name'] == $field_name){
+      return $instance['type_name'];
     }
   }
   return FALSE;
