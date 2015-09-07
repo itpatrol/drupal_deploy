@@ -10,7 +10,7 @@ function drupal_deploy_export_language($filename = ''){
     $filename = $group . '.' .$language . '.language.po';  
   }
   if(file_put_contents($filename, $data)){
-    drupal_set_message(t('Exported to file !filename', array('!filename' => $filename)));
+    drush_log(dt('Exported to file !filename', array('!filename' => $filename)), 'ok');
   }
 }
 
@@ -32,7 +32,7 @@ function drupal_deploy_import_language($filename = ''){
   }
 
   if(!is_file($filename)){
-    drupal_set_message(t('File !filename does not exists', array('!filename' => $filename)), 'error');
+    drush_log(dt('File !filename does not exists', array('!filename' => $filename)), 'error');
     return FALSE;
   }
   
@@ -40,21 +40,23 @@ function drupal_deploy_import_language($filename = ''){
   if (!isset($languages[$language])) {
     $predefined = _locale_get_predefined_list();
     locale_add_language($language);
-    drupal_set_message(t('The language %language has been created.', array('%language' => t($predefined[$language][0]))));
+    drush_log(dt('The language %language has been created.', array('%language' => t($predefined[$language][0]))));
   }
   $file->filename = $filename;
   $file->filepath = $filename;  
   if ($ret = _locale_import_po($file, $language, $mode, $group) == FALSE) {
     $variables = array('%filename' => $filename);
-    drupal_set_message(t('The translation import of %filename failed.', $variables), 'error');
+    drush_log(dt('The translation import of %filename failed.', $variables), 'error');
   }else{
-    drupal_set_message(t('Translation imported !lancode.', array('!lancode' => $language)), 'success');
+    drush_log(dt('Translation imported !lancode.', array('!lancode' => $language)), 'success');
   }
   
   if($set_default){
+    $language = drush_get_option('name', 'en');
+    $languages = language_list('language', TRUE);
     variable_set('language_default', $languages[$language]);
     cache_clear_all('*', 'cache_page', TRUE);
-    drupal_set_message(t('Set default language !lancode.', array('!lancode' => $language)), 'success');
+    drush_log(dt('Set default language !lancode.', array('!lancode' => $language)), 'success');
   }
 }
 
