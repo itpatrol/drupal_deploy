@@ -14,12 +14,12 @@ function drupal_deploy_import_cck($filename){
       $filename = 'cck.export';
   }
   if(!is_file($filename)){
-    drupal_set_message(t('File !filename does not exists', array('!filename' => $filename)), 'error');
+    drush_log(dt('File !filename does not exists', array('!filename' => $filename)), 'error');
     return FALSE;
   }
   $data = file_get_contents($filename);
   if(!$data = json_decode($data, TRUE)){
-    drupal_set_message(t('Json decode error!'), 'error');
+    drush_log(dt('Json decode error!'), 'error');
   }
   drupal_deploy_import_cck_items($data);
 }
@@ -40,7 +40,7 @@ function drupal_deploy_import_cck_items($data)
         if(drupal_write_record(content_instance_tablename(), $item, array('field_name','type_name')))
         {
           content_alter_schema((array)$existing_item, (array)$item);
-          drupal_set_message(t('Field instance !field_name !type_name updated.', array('!field_name' => $item['field_name'], '!type_name' => $item['type_name'])));
+          drush_log(dt('Field instance !field_name !type_name updated.', array('!field_name' => $item['field_name'], '!type_name' => $item['type_name'])));
         }
       }
       else
@@ -48,7 +48,7 @@ function drupal_deploy_import_cck_items($data)
         if(drupal_write_record(content_instance_tablename(), $item))
         {
           content_alter_schema(array(), (array)$item);
-          drupal_set_message(t('Field instance !field_name !type_name created.', array('!field_name' => $item['field_name'], '!type_name' => $item['type_name'])));
+          drush_log(dt('Field instance !field_name !type_name created.', array('!field_name' => $item['field_name'], '!type_name' => $item['type_name'])));
         }
       }
     }
@@ -64,14 +64,14 @@ function drupal_deploy_import_cck_items($data)
       $existing_item['columns'] = unserialize($existing_item['db_columns']);
       if(drupal_write_record(content_field_tablename(), $item, 'field_name'))
       {
-        drupal_set_message(t('Field !field_name updated.', array('!field_name' => $item['field_name'])));
+        drush_log(dt('Field !field_name updated.', array('!field_name' => $item['field_name'])));
       }
     }
     else
     {
       if(drupal_write_record(content_field_tablename(), $item))
       {
-        drupal_set_message(t('Field !field_name created.', array('!field_name' => $item['field_name'])));
+        drush_log(dt('Field !field_name created.', array('!field_name' => $item['field_name'])));
       }
     }
   }
