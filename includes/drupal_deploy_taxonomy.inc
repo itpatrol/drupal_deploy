@@ -73,7 +73,7 @@ function drupal_deploy_import_taxonomy_items($data, $vocabulary_name = ''){
           }
         }
       }else{
-        drush_log(dt('Vocabulary !name does not have terms',array('!name' => $term['name'])), 'warning');
+        drush_log(dt('Vocabulary !name does not have terms',array('!name' => $item['name'])), 'warning');
       }
     }
     
