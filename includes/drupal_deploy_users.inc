@@ -78,7 +78,7 @@ function drupal_deploy_import_users_items($data, $import_filename)
       file_check_directory($directory, FILE_CREATE_DIRECTORY);
       $stored_avatar = $import_folder .'/' . basename($item['picture']);
       
-      copy($import_folder .'/'. basename($item['picture'], $destination);
+      copy($import_folder .'/'. basename($item['picture']), $destination);
       $item['picture'] = $destination;
       drupal_write_record('users', $item, 'uid');
     }
