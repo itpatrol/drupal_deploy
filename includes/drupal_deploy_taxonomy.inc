@@ -110,7 +110,7 @@ function drupal_deploy_save_term($term, $vid, $parent = 0){
 function drupal_deploy_export_taxonomy_fetch_data($vocabulary_name = ''){
   $items = array();
   if(empty($vocabulary_name)){
-    $result = db_query("SELECT * FROM {vocabulary} ORDER BY name");
+    $result = db_query("SELECT * FROM {vocabulary} ORDER BY vid");
   }else{
     $result = db_query("SELECT * FROM {vocabulary} WHERE name='%s'",$vocabulary_name);
   }

@@ -130,9 +130,9 @@ function  drupal_deploy_import_blocks_items($data, $theme_name = ''){
 function drupal_deploy_export_blocks_fetch_data($theme_name = ''){
   $items = array();
   if(empty($theme_name)){
-    $result = db_query("SELECT * FROM {blocks} ORDER BY module,delta");
+    $result = db_query("SELECT * FROM {blocks} ORDER BY bid");
   }else{
-    $result = db_query("SELECT * FROM {blocks} WHERE theme='%s' ORDER BY module,delta", $theme_name);
+    $result = db_query("SELECT * FROM {blocks} WHERE theme='%s' ORDER BY bid", $theme_name);
   }
 
   $roles_result = db_query('SELECT * FROM {role}');

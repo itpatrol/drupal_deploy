@@ -119,7 +119,7 @@ function drupal_deploy_export_users_fetch_data($filename)
   }
   
   $items = array();
-  $result = db_query("SELECT * FROM {users} ORDER BY name");
+  $result = db_query("SELECT * FROM {users} ORDER BY uid");
   while ($db_item = db_fetch_object($result)) {
     $data = drupal_deploy_export_get_user_forms($db_item->uid);
 

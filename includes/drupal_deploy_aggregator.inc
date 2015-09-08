@@ -46,7 +46,7 @@ function drupal_deploy_import_aggregator_feed($data){
 function drupal_deploy_export_aggregator_fetch_data($aggregator_name = ''){
   $items = array();
 
-  $result = db_query("SELECT * FROM {aggregator_feed} ORDER BY title");
+  $result = db_query("SELECT * FROM {aggregator_feed} ORDER BY fid");
 
   while ($db_item = db_fetch_object($result)) {
     

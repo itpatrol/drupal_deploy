@@ -78,7 +78,7 @@ function drupal_deploy_export_nodes_fetch_data($node_type, $filename){
     if($node_type){
       $result = db_query("SELECT * FROM {node} WHERE type='%s' ORDER BY title",$node_type);
     }else{
-      $result = db_query("SELECT * FROM {node} ORDER BY title");
+      $result = db_query("SELECT * FROM {node} ORDER BY nid");
     }
   }
 
