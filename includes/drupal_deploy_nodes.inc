@@ -491,6 +491,8 @@ function ddi_node_update($node, $node_saved){
     }
   }
   
+  drupal_write_record('node', $node, 'nid');
+  
   _comment_update_node_statistics($node->nid);  
   
 }
