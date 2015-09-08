@@ -417,6 +417,7 @@ function ddi_node_save($node){
       ddi_save_taxonomy($revision, $node->type);
     }
   }
+  $changed = $node->changed;
   drupal_write_record('node', $node, 'nid');
   ddi_prepare_node_save($node);
   node_invoke($node, 'insert');
@@ -427,7 +428,8 @@ function ddi_node_save($node){
       ddi_comment_save($comment, $node->nid);
     }
   }
-  
+  $node->changed = $changed;
+  drupal_write_record('node', $node, 'nid');
   _comment_update_node_statistics($node->nid);
 }
 
