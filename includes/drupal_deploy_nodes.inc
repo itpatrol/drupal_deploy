@@ -404,6 +404,7 @@ function ddi_check_node($node){
 }
 
 function ddi_node_save($node){
+  print_r($node);
   drupal_write_record('node', $node);
   foreach($node->revisions as $revision){
     $revision = (object) $revision;
@@ -417,7 +418,7 @@ function ddi_node_save($node){
       ddi_save_taxonomy($revision, $node->type);
     }
   }
-  $changed = $node->changed;
+  print_r($node);
   drupal_write_record('node', $node, 'nid');
   ddi_prepare_node_save($node);
   node_invoke($node, 'insert');
@@ -428,8 +429,9 @@ function ddi_node_save($node){
       ddi_comment_save($comment, $node->nid);
     }
   }
-  $node->changed = $changed;
+  print_r($node);
   drupal_write_record('node', $node, 'nid');
+  print_r($node);
   _comment_update_node_statistics($node->nid);
 }
 
