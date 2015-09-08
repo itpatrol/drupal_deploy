@@ -89,7 +89,7 @@ function drupal_deploy_export_menu_fetch_data($menu_name = ''){
   if(empty($menu_name)){
     $result = db_query("SELECT * FROM {menu_links} WHERE customized=%d ORDER BY mlid", 1);
   }else{
-    $result = db_query("SELECT * FROM {menu_links} WHERE menu_name='%s' and customized=%d ORDER BY mlid", $menu_name, 1);
+    $result = db_query("SELECT * FROM {menu_links} WHERE menu_name='%s' ORDER BY mlid", $menu_name);
   }
   while ($db_item = db_fetch_object($result)) {
     $item = array(
