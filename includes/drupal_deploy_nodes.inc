@@ -397,7 +397,7 @@ function ddi_nodes_prepare_vars($object){
 }
 
 function ddi_check_node($node){
-  if($node_saved = db_fetch_object(db_query("SELECT * FROM {node} WHERE title='%s' AND type='%s' AND uid=%d",$node->title, $node->type, $node->uid))){  
+  if($node_saved = db_fetch_object(db_query("SELECT * FROM {node} WHERE title='%s' AND type='%s' AND created='%s' AND uid=%d",$node->title, $node->type, $node->created, $node->uid))){  
     return $node_saved;
   }
   return FALSE;
