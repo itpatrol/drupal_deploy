@@ -74,7 +74,25 @@ function dde_data_prepare($data){
   $data = unserialize($data);
   foreach($data['#actions'] as $key => $action){
     if($action['#name'] == 'rules_action_mail_to_users_of_role'){
-      print_r($action);
+      $roles = array();
+      foreach($action['#settings']['recipients'] as $rid){
+        $roles[] = dde_role_name($rid);
+      }
+      $action['#settings']['recipients'] = $roles;
     }
   }
+}
+
+function dde_role_name($rid){
+  if($role = db_fetch_object(db_query("SELECT * FROM {role} WHERE rid = %d", $rid))){
+    return $role->name;
+  }
+  return FALSE;
+}
+
+function ddi_role_id($name){
+  if($role = db_fetch_object(db_query("SELECT * FROM {role} WHERE WHERE name = '%s'", $name))){
+    return $role->rid;
+  }
+  return FALSE;
 }
