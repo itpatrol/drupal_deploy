@@ -76,7 +76,7 @@ function ddi_data_prepare($data){
     if($action['#name'] == 'rules_action_mail_to_users_of_role'){
       $roles = array();
       foreach($action['#settings']['recipients'] as $name){
-        $roles[] = dde_role_id($name);
+        $roles[] = ddi_role_id($name);
       }
       $data['#actions'][$key]['#settings']['recipients'] = $roles;
     }
