@@ -106,7 +106,7 @@ function dde_role_name($rid){
 }
 
 function ddi_role_id($name){
-  if($role = db_fetch_object(db_query("SELECT * FROM {role} WHERE WHERE name = '%s'", $name))){
+  if($role = db_fetch_object(db_query("SELECT * FROM {role} WHERE name = '%s'", $name))){
     return $role->rid;
   }
   return FALSE;
