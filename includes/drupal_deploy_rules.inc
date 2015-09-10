@@ -46,7 +46,7 @@ function drupal_deploy_import_rules_items($data)
     }
     else
     {
-      drupal_write_record('rules_sets', $item);
+      drupal_write_record('rules_rules', $item);
       drush_log(dt('Rules !name created', array('!name' => $item['name'])), 'ok');
     }
   }
