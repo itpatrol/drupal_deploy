@@ -615,10 +615,16 @@ function ddi_set_term($terms, $parent_term_name, $vid, $revision){
 
 function ddi_comment_save($comment, $nid, $pid = 0){
   $comment->nid = $nid;
-  $comment->uid = ddi_get_user_id($comment->username);
-  $comment->format = ddi_get_format_id($comment->format);
+  if(!isset($comment->uid)){
+    $comment->uid = ddi_get_user_id($comment->username);
+  }
+  if(is_string($comment->format)){
+    $comment->format = ddi_get_format_id($comment->format);
+  }
   $comment->pid = $pid;
-  $comment->status = ddi_get_comment_status_id($comment->status);
+  if(is_string($comment->status)){
+    $comment->status = ddi_get_comment_status_id($comment->status);
+  }
   
   //check if comment already exists.
   if($comment_saved = db_fetch_object(db_query("SELECT * FROM {comments} WHERE nid=%d AND uid=%d AND timestamp=%d AND comment='%s'",$comment->nid, $comment->uid, $comment->timestamp, $comment->comment))){
