@@ -11,7 +11,7 @@ function drupal_deploy_export_filters($filename = ''){
 
 function drupal_deploy_import_filters($filename){
   if(empty($filename)){
-      $filename = 'blocks.export';
+      $filename = 'filters.export';
   }
   if(!is_file($filename)){
     drupal_set_message(t('File !filename does not exists', array('!filename' => $filename)), 'error');
