@@ -78,9 +78,10 @@ function dde_data_prepare($data){
       foreach($action['#settings']['recipients'] as $rid){
         $roles[] = dde_role_name($rid);
       }
-      $action['#settings']['recipients'] = $roles;
+      $data['#actions'][$key]['#settings']['recipients'] = $roles;
     }
   }
+  return $data;
 }
 
 function dde_role_name($rid){
