@@ -39,6 +39,7 @@ function drupal_deploy_import_rules_items($data)
     }
   }
   foreach($data['rules'] as $item){
+    $item['data'] = ddi_data_prepare($item['data']);    
     if($existing_item = db_fetch_array(db_query("SELECT * FROM {rules_rules} WHERE name='%s'",$item['name'])))
     {
       drupal_write_record('rules_rules', $item, 'name');
@@ -68,6 +69,19 @@ function drupal_deploy_export_rules_fetch_data()
     $items['rules'][] = $db_item;
   }
   return $items;
+}
+
+function ddi_data_prepare($data){
+  foreach($data['#actions'] as $key => $action){
+    if($action['#name'] == 'rules_action_mail_to_users_of_role'){
+      $roles = array();
+      foreach($action['#settings']['recipients'] as $name){
+        $roles[] = dde_role_id($name);
+      }
+      $data['#actions'][$key]['#settings']['recipients'] = $roles;
+    }
+  }
+  return $data;
 }
 
 function dde_data_prepare($data){
