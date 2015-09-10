@@ -561,40 +561,54 @@ function ddi_set_term($terms, $parent_term_name, $vid, $revision){
       ddi_set_term($sub_terms, $sub_parent_term_name, $vid, $revision);
     }else{
       $stored_term = FALSE;
-      $stored_parent_term_results = db_query("SELECT * FROM {term_data} WHERE name='%s' AND vid=%d",$parent_term_name, $vid);
-      $parent_terms = array();
-      while($stored_parent_term = db_fetch_object($stored_parent_term_results)){
-        $parent_terms[] = $stored_parent_term->tid;
-      }
-      if(empty($parent_terms)){
-        continue;
-      }
-      if(count($parent_terms) == 1){
-        $ptid = $parent_terms[0];
-        $stored_term = db_fetch_object(db_query("SELECT * FROM {term_data} td LEFT JOIN {term_hierarchy} th ON th.tid = td.tid WHERE name='%s' AND vid=%d AND parent=%d",$sub_terms, $vid, $ptid));
-      }
-      if(count($parent_terms) > 1){
-        foreach($parent_terms as $ptid){
-          if($stored_term = db_fetch_object(db_query("SELECT * FROM {term_data} td LEFT JOIN {term_hierarchy} th ON th.tid = td.tid WHERE name='%s' AND vid=%d AND parent=%d",$sub_terms, $vid, $ptid))){
-            break;
+      if(empty($parent_term_name)){
+        if($stored_term = db_fetch_object(db_query("SELECT * FROM {term_data} WHERE name='%s' AND vid=%d",$sub_terms, $vid))){
+          $term_node = array(
+            'nid' => $revision->nid,
+            'vid' => $revision->vid,
+            'tid' => $stored_term->tid,
+          );
+          drupal_write_record('term_node', $term_node);
+          if(isset($revision->forum_term)){
+            if($revision->forum_term == $stored_term->name){
+              drupal_write_record('forum', $term_node);
+            }
+          }
+        }
+      }else{
+        $stored_parent_term_results = db_query("SELECT * FROM {term_data} WHERE name='%s' AND vid=%d",$parent_term_name, $vid);
+        $parent_terms = array();
+        while($stored_parent_term = db_fetch_object($stored_parent_term_results)){
+          $parent_terms[] = $stored_parent_term->tid;
+        }
+        if(empty($parent_terms)){
+          continue;
+        }
+        if(count($parent_terms) == 1){
+          $ptid = $parent_terms[0];
+          $stored_term = db_fetch_object(db_query("SELECT * FROM {term_data} td LEFT JOIN {term_hierarchy} th ON th.tid = td.tid WHERE name='%s' AND vid=%d AND parent=%d",$sub_terms, $vid, $ptid));
+        }
+        if(count($parent_terms) > 1){
+          foreach($parent_terms as $ptid){
+            if($stored_term = db_fetch_object(db_query("SELECT * FROM {term_data} td LEFT JOIN {term_hierarchy} th ON th.tid = td.tid WHERE name='%s' AND vid=%d AND parent=%d",$sub_terms, $vid, $ptid))){
+              break;
+            }
+          }
+        }
+        if($stored_term){
+          $term_node = array(
+            'nid' => $revision->nid,
+            'vid' => $revision->vid,
+            'tid' => $stored_term->tid,
+          );
+          drupal_write_record('term_node', $term_node);
+          if(isset($revision->forum_term)){
+            if($revision->forum_term == $stored_term->name){
+              drupal_write_record('forum', $term_node);
+            }
           }
         }
       }
-      if($stored_term){
-        $term_node = array(
-          'nid' => $revision->nid,
-          'vid' => $revision->vid,
-          'tid' => $stored_term->tid,
-        );
-        drupal_write_record('term_node', $term_node);
-        if(isset($revision->forum_term)){
-          if($revision->forum_term == $stored_term->name){
-            drupal_write_record('forum', $term_node);
-          }
-        }
-
-      }
-        
     }
   }
 }
