@@ -63,8 +63,18 @@ function drupal_deploy_export_rules_fetch_data()
 
   $result = db_query("SELECT * FROM {rules_rules} ORDER BY name");
   while ($db_item = db_fetch_object($result)) {
-    $db_item->data = unserialize($db_item->data);
+    $db_item->data = dde_data_prepare($db_item->data);
+    
     $items['rules'][] = $db_item;
   }
   return $items;
+}
+
+function dde_data_prepare($data){
+  $data = unserialize($data);
+  foreach($data['#actions'] as $key => $action){
+    if($action['#name'] == 'rules_action_mail_to_users_of_role'){
+      print_r($action);
+    }
+  }
 }
