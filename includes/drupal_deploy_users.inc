@@ -126,7 +126,7 @@ function drupal_deploy_export_users_fetch_data($filename)
     $result = db_query("SELECT ur.uid FROM {users_roles} ur LEFT JOIN {role} r ON r.rid = ur.rid WHERE r.rid in (%s) GROUP BY ur.uid ORDER BY ur.uid", $rids);
     $uids = array();
     while ($uid = db_fetch_object($result)) {
-      $uids[] = $uid;
+      $uids[] = $uid->uid;
     }
     $uids = implode(",", $uids);
     drush_log(dt('Exporting users uids: !uids', array('!uids' => $uids)));
