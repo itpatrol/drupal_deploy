@@ -64,7 +64,9 @@ function drupal_deploy_import_nodes_items($data){
       drush_log(dt('Node !title imported.', array('!title' => $item->title)),'notice');
     }
   }
-  db_query("TRUNCATE {".content_cache_tablename()."}");
+  if(module_exists('content')) {
+    db_query("TRUNCATE {".content_cache_tablename()."}");
+  }
 }
 
 function drupal_deploy_export_nodes_fetch_data($node_type, $filename){
