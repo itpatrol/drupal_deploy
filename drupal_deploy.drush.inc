@@ -43,6 +43,8 @@ function drupal_deploy_drush_command() {
       'theme' => 'Theme name',
       'type' => 'Node type',
       'nid' => 'Node id or ids',
+      'uid' => 'User id or ids',
+      'rid' => 'Role id or ids',
       'group' => 'Translation group name',
     ),
   );
