@@ -424,7 +424,9 @@ function ddi_node_update($node, $node_saved){
   
   
   db_query('DELETE FROM {term_node} WHERE nid=%d AND vid=%d', $node->nid, $node->vid);
-  db_query('DELETE FROM {forum} WHERE nid=%d AND vid=%d', $node->nid, $node->vid);
+  if(module_exists('forum')) {
+    db_query('DELETE FROM {forum} WHERE nid=%d AND vid=%d', $node->nid, $node->vid);
+  }
   
   if(!empty($revision->taxonomy)){
     ddi_save_taxonomy($revision, $node->type);
