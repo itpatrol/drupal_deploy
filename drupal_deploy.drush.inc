@@ -19,6 +19,8 @@ function drupal_deploy_drush_command() {
       'drush dde forum' => dt('Export forum container links to taxonomy tid.'),
       'drush dde cck' => dt('Export cck fields.'),
       'drush dde users' => dt('Export users.'),
+      'drush dde users --uid=1,2,3' => dt('Export users with uid=1,2,3.'),
+      'drush dde users --rid=1,2,3' => dt('Export users roles rid=1,2,3.'),      
       'drush dde imagecache' => dt('Export imagecache presets.'),
       'drush dde nodes --nid=1,2,3' => dt('Export nodes 1,2,3 with comments and revisions.'),
       'drush dde nodes --type=forum' => dt('Export forum nodes with comments and revisions.'),

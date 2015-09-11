@@ -119,7 +119,21 @@ function drupal_deploy_export_users_fetch_data($filename)
   }
   
   $items = array();
-  $result = db_query("SELECT * FROM {users} ORDER BY uid");
+  
+  if($uids = drush_get_option('uid', FALSE)){
+    $result = db_query("SELECT * FROM {users} WHERE uid in (%s) ORDER BY uid", $uids);
+  }elseif($rids = drush_get_option('rid', FALSE)){
+    $result = db_query("SELECT ur.uid FROM {users_roles} ur LEFT JOIN {role} r ON r.rid = ur.rid WHERE r.rid in (%s) ORDER BY ur.uid GROUP BY ur.uid", $rids);
+    $uids = array();
+    while ($uid = db_fetch_object($result)) {
+      $uids[] = $uid;
+    }
+    $uids = implode(",", $uids);
+    drush_log(dt('Exporting users uids: !uids', array('!uids' => $uids)));
+    $result = db_query("SELECT * FROM {users} WHERE uid in (%s) ORDER BY uid", $uids);
+  }else{
+    $result = db_query("SELECT * FROM {users} ORDER BY uid");
+  }
   while ($db_item = db_fetch_object($result)) {
     $data = drupal_deploy_export_get_user_forms($db_item->uid);
 
