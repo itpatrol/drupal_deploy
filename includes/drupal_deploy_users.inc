@@ -123,7 +123,7 @@ function drupal_deploy_export_users_fetch_data($filename)
   if($uids = drush_get_option('uid', FALSE)){
     $result = db_query("SELECT * FROM {users} WHERE uid in (%s) ORDER BY uid", $uids);
   }elseif($rids = drush_get_option('rid', FALSE)){
-    $result = db_query("SELECT ur.uid FROM {users_roles} ur LEFT JOIN {role} r ON r.rid = ur.rid WHERE r.rid in (%s) ORDER BY ur.uid GROUP BY ur.uid", $rids);
+    $result = db_query("SELECT ur.uid FROM {users_roles} ur LEFT JOIN {role} r ON r.rid = ur.rid WHERE r.rid in (%s) GROUP BY ur.uid ORDER BY ur.uid", $rids);
     $uids = array();
     while ($uid = db_fetch_object($result)) {
       $uids[] = $uid;
