@@ -190,32 +190,6 @@ function dde_get_sub_comments($comment){
   return $result;
 }
 
-function dde_get_user_name($uid){
-  $user = db_fetch_object(db_query("SELECT * FROM {users} WHERE uid=%d", $uid));
-  return $user->name;
-}
-
-function ddi_get_user_id($name){
-  if($user = db_fetch_object(db_query("SELECT * FROM {users} WHERE name='%s'", $name))){
-    return $user->uid;
-  }
-  return 0;
-}
-
-
-function dde_get_format_name($format){
-  $format = db_fetch_object(db_query("SELECT * FROM {filter_formats} WHERE format=%d", $format));
-  return $format->name;
-}
-
-function ddi_get_format_id($format){
-  if($format = db_fetch_object(db_query("SELECT * FROM {filter_formats} WHERE name='%s'", $format))){
-    return $format->format;
-  }else{
-    return FILTER_FORMAT_DEFAULT;
-  }
-}
-
 function dde_node_clean(&$item){
   $item->user = dde_get_user_name($item->uid);
   unset($item->nid);
