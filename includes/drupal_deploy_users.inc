@@ -153,7 +153,7 @@ function drupal_deploy_export_users_fetch_data($filename)
       'sort' => $db_item->sort,
       'theme' => $db_item->theme,
       'signature' =>  $db_item->signature,
-      'signature_format' =>  $db_item->signature,
+      'signature_format' =>  $db_item->signature_format,
       'created' => $db_item->created,
       'access' => $db_item->access,
       'login' => $db_item->login,
