@@ -37,6 +37,7 @@ function drupal_deploy_import_users_items($data, $import_filename)
   $import_folder = $import_filename . '.files';
   
   foreach($data as $item){
+    $item['signature_format'] = ddi_get_format_id($item['signature_format']);
     $existing_item = db_fetch_object(db_query("SELECT * FROM {users} WHERE name = '%s'", $item['name']));
     if($existing_item)
     {
@@ -153,7 +154,7 @@ function drupal_deploy_export_users_fetch_data($filename)
       'sort' => $db_item->sort,
       'theme' => $db_item->theme,
       'signature' =>  $db_item->signature,
-      'signature_format' =>  $db_item->signature_format,
+      'signature_format' =>  dde_get_format_name($db_item->signature_format),
       'created' => $db_item->created,
       'access' => $db_item->access,
       'login' => $db_item->login,
