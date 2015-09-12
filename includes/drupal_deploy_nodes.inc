@@ -96,8 +96,7 @@ function drupal_deploy_export_nodes_fetch_data($node_type, $filename){
       $db_rev_item->type = $db_item->type;
       dde_node_load($db_rev_item);
       if($book){
-        $book = $db_rev_item->book;
-        print_r($book);
+        $book = (object) $db_rev_item->book;
         unset($db_rev_item->book);
       }
       dde_node_clean($db_rev_item);
