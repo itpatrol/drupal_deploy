@@ -130,32 +130,34 @@ function drupal_deploy_export_nodes_fetch_data($node_type, $filename){
     drush_log(dt('Node !title exported', array('!title' => $db_item->title)),'notice');
   }
   
-  if($books){
+  if($book){
     $result_books = array();
     $bids_links = array();
-    foreach($books as $bid => $book){
-      $book = (object) $book;
+    foreach($all_books as $bid => $books){
       if(!isset($bids_links[$bid])){
         $bids_links[$bid] = dde_menu_alias('node/' . $bid);
       }
-      $link_path = dde_menu_alias($book->link_path);
-      $result_books[$link_path] = array(
-        'link_title' => $book->link_title,
-        'weight' =>  $book->weight,
-        'link_path' => $link_path,
-        'hidden' =>  $book->hidden,
-        'has_children' =>  $book->has_children,
-        'expanded' =>  $book->expanded,
-        'options' =>  $book->options,
-        'module' =>  $book->module,
-        'customized' =>  $book->customized,
-        'updated' =>  $book->updated,
-        'book_link' => $bids_links[$bid],
-      );
-      if($book->plid != 0){
-        $parent_item = db_fetch_object(db_query("SELECT * FROM {menu_links} WHERE mlid=%d", $book->plid));
-        $result_books[$link_path]['parent_link_path'] = dde_menu_alias($parent_item->link_path);
-      } 
+      foreach($books as $book){
+        $book = (object) $book;
+        $link_path = dde_menu_alias($book->link_path);
+        $result_books[$link_path] = array(
+          'link_title' => $book->link_title,
+          'weight' =>  $book->weight,
+          'link_path' => $link_path,
+          'hidden' =>  $book->hidden,
+          'has_children' =>  $book->has_children,
+          'expanded' =>  $book->expanded,
+          'options' =>  $book->options,
+          'module' =>  $book->module,
+          'customized' =>  $book->customized,
+          'updated' =>  $book->updated,
+          'book_link' => $bids_links[$bid],
+        );
+        if($book->plid != 0){
+          $parent_item = db_fetch_object(db_query("SELECT * FROM {menu_links} WHERE mlid=%d", $book->plid));
+          $result_books[$link_path]['parent_link_path'] = dde_menu_alias($parent_item->link_path);
+        } 
+      }
     }
     $item['books'] = $result_books;
   }
