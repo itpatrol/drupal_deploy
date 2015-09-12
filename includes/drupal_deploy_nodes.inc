@@ -75,10 +75,10 @@ function drupal_deploy_export_nodes_fetch_data($node_type, $filename){
   $items = array();
   
   if($nids = drush_get_option('nid', FALSE)){
-    $result = db_query("SELECT * FROM {node} WHERE nid in (%s) ORDER BY title", $nids);
+    $result = db_query("SELECT * FROM {node} WHERE nid in (%s) ORDER BY nid", $nids);
   }else{
     if($node_type){
-      $result = db_query("SELECT * FROM {node} WHERE type='%s' ORDER BY title",$node_type);
+      $result = db_query("SELECT * FROM {node} WHERE type='%s' ORDER BY nid",$node_type);
     }else{
       $result = db_query("SELECT * FROM {node} ORDER BY nid");
     }
@@ -86,12 +86,25 @@ function drupal_deploy_export_nodes_fetch_data($node_type, $filename){
 
   while ($db_item = db_fetch_object($result)) {
     
+    $book = FALSE;
+    $all_books = FALSE;
+    if(module_exists('book')){
+      $book = TRUE;
+    }
     $revisions_result = db_query("SELECT * FROM {node_revisions} WHERE nid=%d ORDER BY vid", $db_item->nid);
     while ($db_rev_item = db_fetch_object($revisions_result)) {
       $db_rev_item->type = $db_item->type;
       dde_node_load($db_rev_item);
+      if($book){
+        $book = $db_item->book;
+        unset($db_item->book);
+      }
       dde_node_clean($db_rev_item);
       $db_item->revisions[] =  $db_rev_item;
+    }
+    
+    if($book){
+      $all_books[$book->bid][] = $book;
     }
     
     $db_item->user = dde_get_user_name($db_item->uid);
@@ -115,6 +128,12 @@ function drupal_deploy_export_nodes_fetch_data($node_type, $filename){
     unset($db_item->tnid);
     $items['nodes'][] = $db_item;
     drush_log(dt('Node !title exported', array('!title' => $db_item->title)),'notice');
+  }
+  
+  if($books){
+    foreach($books as $bid => $book){
+      
+    }
   }
   
   $files = dde_nodes_files_to_export('get');
