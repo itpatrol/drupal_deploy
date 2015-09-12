@@ -37,11 +37,15 @@ function drupal_deploy_import_nodes($filename = ''){
   }
   drupal_deploy_import_nodes_items($data['nodes']);
   
-  drupal_deploy_import_book_items($data['books']);
+  drupal_deploy_import_book_items($data['book_outlines'], $data['books']);
 }
 
-function drupal_deploy_import_book_items($books){
-  print_r($books);
+function drupal_deploy_import_book_items($outlines, $books){
+
+  foreach($outlines as $outline){
+    print_r($books[$outline]);
+    echo ddi_menu_alias_origin($outline);
+  }
   foreach($books as $link => $book){
     $book['link_path'] = ddi_menu_alias_origin($book['link_path']);
   }
