@@ -91,6 +91,7 @@ function drupal_deploy_export_nodes_fetch_data($node_type, $filename){
     if(module_exists('book')){
       $book = TRUE;
     }
+    
     print_r($db_item);
     $revisions_result = db_query("SELECT * FROM {node_revisions} WHERE nid=%d ORDER BY vid", $db_item->nid);
     while ($db_rev_item = db_fetch_object($revisions_result)) {
@@ -104,7 +105,7 @@ function drupal_deploy_export_nodes_fetch_data($node_type, $filename){
       $db_item->revisions[] =  $db_rev_item;
     }
     
-    if(!is_object($book)){
+    if(is_object($book)){
       print_r($book);
       $all_books[$book->bid][] = $book;
     }
