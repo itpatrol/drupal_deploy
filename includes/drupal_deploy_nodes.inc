@@ -462,8 +462,7 @@ function ddi_node_save($node){
     }
   }
   
-  drupal_write_record('node', $node, 'nid');
-  print_r($node);  
+  drupal_write_record('node', $node, 'nid');  
   ddi_prepare_node_save($node);
   node_invoke($node, 'insert');
   node_invoke_nodeapi($node, 'insert');
