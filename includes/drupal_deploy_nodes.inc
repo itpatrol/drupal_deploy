@@ -131,7 +131,7 @@ function drupal_deploy_export_nodes_fetch_data($node_type, $filename){
     drush_log(dt('Node !title exported', array('!title' => $db_item->title)),'notice');
   }
   
-  if($book){
+  if($all_books){
     $result_books = array();
     $bids_links = array();
     foreach($all_books as $bid => $books){
