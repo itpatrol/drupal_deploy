@@ -140,8 +140,8 @@ function drupal_deploy_export_nodes_fetch_data($node_type, $filename){
       if(!isset($bids_links[$bid])){
         $bids_links[$bid] = dde_menu_alias('node/' . $bid);
       }
+      print_r($books);
       foreach($books as $book){
-        $book = (object) $book;
         $link_path = dde_menu_alias($book->link_path);
         $result_books[$link_path] = array(
           'link_title' => $book->link_title,
