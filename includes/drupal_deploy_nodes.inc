@@ -91,14 +91,14 @@ function drupal_deploy_export_nodes_fetch_data($node_type, $filename){
     if(module_exists('book')){
       $book = TRUE;
     }
-    echo "BOOK" . $book;
     $revisions_result = db_query("SELECT * FROM {node_revisions} WHERE nid=%d ORDER BY vid", $db_item->nid);
     while ($db_rev_item = db_fetch_object($revisions_result)) {
       $db_rev_item->type = $db_item->type;
       dde_node_load($db_rev_item);
       if($book){
-        $book = $db_item->book;
-        unset($db_item->book);
+        $book = $db_rev_item->book;
+        print_r($book);
+        unset($db_rev_item->book);
       }
       dde_node_clean($db_rev_item);
       $db_item->revisions[] =  $db_rev_item;
