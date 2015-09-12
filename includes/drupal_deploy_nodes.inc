@@ -171,7 +171,9 @@ function drupal_deploy_export_nodes_fetch_data($node_type, $filename){
       }
     }
     $items['books'] = $result_books;
-    $items['book_outlines'] = $bids_links;
+    foreach($bids_links as $b_link){
+      $items['book_outlines'][] = $b_link;
+    }
   }
   
   $files = dde_nodes_files_to_export('get');
