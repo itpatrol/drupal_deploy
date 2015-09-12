@@ -70,19 +70,6 @@ function drupal_deploy_import_menu_links($data, $menu_name = ''){
     }
   }
 }
-function dde_menu_alias($path){
-  if($alias = db_fetch_object(db_query("SELECT * FROM {url_alias} WHERE src = '%s'", $path))){
-    return $alias->dst;
-  }
-  return $path;
-}
-
-function ddi_menu_alias_origin($path){
-  if($alias = db_fetch_object(db_query("SELECT * FROM {url_alias} WHERE dst = '%s'", $path))){
-    return $alias->src;
-  }
-  return $path;   
-}
 
 function drupal_deploy_export_menu_fetch_data($menu_name = ''){
   $items = array();

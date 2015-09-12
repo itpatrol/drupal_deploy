@@ -242,3 +242,17 @@ function ddi_get_format_id($format){
     return FILTER_FORMAT_DEFAULT;
   }
 }
+
+function dde_menu_alias($path){
+  if($alias = db_fetch_object(db_query("SELECT * FROM {url_alias} WHERE src = '%s'", $path))){
+    return $alias->dst;
+  }
+  return $path;
+}
+
+function ddi_menu_alias_origin($path){
+  if($alias = db_fetch_object(db_query("SELECT * FROM {url_alias} WHERE dst = '%s'", $path))){
+    return $alias->src;
+  }
+  return $path;   
+}
