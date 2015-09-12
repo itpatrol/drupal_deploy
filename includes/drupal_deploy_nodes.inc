@@ -159,10 +159,9 @@ function drupal_deploy_export_nodes_fetch_data($node_type, $filename){
           $parent_item = db_fetch_object(db_query("SELECT * FROM {menu_links} WHERE mlid=%d", $book->plid));
           $result_books[$link_path]['parent_link_path'] = dde_menu_alias($parent_item->link_path);
         }
-        print_r($result_books);
       }
     }
-    $item['books'] = $result_books;
+    $items['books'] = $result_books;
   }
   
   $files = dde_nodes_files_to_export('get');
