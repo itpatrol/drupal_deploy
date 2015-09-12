@@ -79,6 +79,7 @@ function drupal_deploy_import_nodes_items($data){
           $item->$key = ddi_nodes_prepare_vars($val);
         }
       }
+      print_r($item);
       ddi_node_save($item);
       drush_log(dt('Node !title imported.', array('!title' => $item->title)),'notice');
     }
@@ -461,6 +462,7 @@ function ddi_node_save($node){
       ddi_save_taxonomy($revision, $node->type);
     }
   }
+  
   drupal_write_record('node', $node, 'nid');
   ddi_prepare_node_save($node);
   node_invoke($node, 'insert');
