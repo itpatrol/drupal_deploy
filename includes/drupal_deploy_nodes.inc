@@ -71,6 +71,7 @@ function drupal_deploy_import_nodes_items($data){
           $item->$key = ddi_nodes_prepare_vars($val);
         }
       }
+      print_r($item);
       ddi_node_update($item, $node_saved);
       drush_log(dt('Node !title imported.', array('!title' => $item->title)),'notice');
     }else{
@@ -538,7 +539,7 @@ function ddi_node_update($node, $node_saved){
       ddi_comment_save($comment, $node->nid);
     }
   }
-  
+
   drupal_write_record('node', $node, 'nid');
   
   _comment_update_node_statistics($node->nid);  
