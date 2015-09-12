@@ -42,7 +42,7 @@ function drupal_deploy_import_nodes($filename = ''){
 
 function drupal_deploy_import_book_items($books){
   print_r($books);
-  foreach($books as $link $book){
+  foreach($books as $link => $book){
     $book['link_path'] = ddi_menu_alias_origin($book['link_path']);
   }
   
@@ -142,7 +142,6 @@ function drupal_deploy_export_nodes_fetch_data($node_type, $filename){
     $items['nodes'][] = $db_item;
     drush_log(dt('Node !title exported', array('!title' => $db_item->title)),'notice');
   }
-  print_r($all_books);
   if($all_books){
     $result_books = array();
     $bids_links = array();
