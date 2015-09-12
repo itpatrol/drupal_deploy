@@ -92,16 +92,16 @@ function drupal_deploy_import_book_items($outlines, $books){
         
         $stored_menu_item = db_fetch_object(db_query("SELECT * FROM {menu_links} WHERE link_path = '%s'", $book['link_path']));
         if($stored_menu_item){
-          $menu_item['mlid'] = $stored_menu_item->mlid;
+          $book['mlid'] = $stored_menu_item->mlid;
         }
         
-        if(menu_link_save($menu_item))
+        if(menu_link_save($book))
         {
-          if(!$origin_book_item = db_fetch_object(db_query("SELECT * FROM {book} WHERE nid = %d AND bid = %d and mlid = %d", $node_link[1], $book_link[1], $menu_item['mlid']))){
+          if(!$origin_book_item = db_fetch_object(db_query("SELECT * FROM {book} WHERE nid = %d AND bid = %d and mlid = %d", $node_link[1], $book_link[1], $book['mlid']))){
             $outline = array(
               'nid' => $node_link[1],
               'bid' => $book_link[1],
-              'mlid' => $menu_item['mlid'],
+              'mlid' => $book['mlid'],
             );
             drupal_write_record('book', $outline);
             drush_log(dt('Create outline page !mlid', array('!mlid' => $outline['mlid'])));
