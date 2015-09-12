@@ -71,7 +71,6 @@ function drupal_deploy_import_nodes_items($data){
           $item->$key = ddi_nodes_prepare_vars($val);
         }
       }
-      print_r($item);
       ddi_node_update($item, $node_saved);
       drush_log(dt('Node !title imported.', array('!title' => $item->title)),'notice');
     }else{
@@ -506,6 +505,7 @@ function ddi_node_update($node, $node_saved){
   unset($node->revisions);
   unset($node->user);
   
+
   drupal_write_record('node', $node, 'nid');
   
   unset($revision->log);
@@ -515,7 +515,9 @@ function ddi_node_update($node, $node_saved){
   unset($revision->taxonomy);
 
   foreach($revision as $field => $value){
-    $node->$field = $value;
+    if($field != 'uid'){
+      $node->$field = $value;
+    }
   }
   
   if($node->path){
