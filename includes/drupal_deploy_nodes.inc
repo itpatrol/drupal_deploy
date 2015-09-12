@@ -104,6 +104,7 @@ function drupal_deploy_export_nodes_fetch_data($node_type, $filename){
     }
     
     if($book){
+      print_r($book);
       $all_books[$book->bid][] = $book;
     }
     
