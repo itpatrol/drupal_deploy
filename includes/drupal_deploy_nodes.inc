@@ -441,7 +441,6 @@ function ddi_nodes_prepare_vars($object){
 }
 
 function ddi_check_node($node){
-  echo "Checking " . $node->title. $node->type. $node->created. $node->uid ."\n";
   if($node_saved = db_fetch_object(db_query("SELECT * FROM {node} WHERE title='%s' AND type='%s' AND created='%s' AND uid=%d",$node->title, $node->type, $node->created, $node->uid))){  
     return $node_saved;
   }
@@ -482,6 +481,8 @@ function ddi_node_update($node, $node_saved){
   $node->nid = $node_saved->nid;
   $node->vid = $node_saved->vid;
   
+  
+  //Save new revisions if available
   $rev_count = count($node->revisions);
   $revision = (object)$node->revisions[$rev_count - 1];
   $revision->nid = $node->nid;
