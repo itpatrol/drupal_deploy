@@ -36,6 +36,13 @@ function drupal_deploy_import_nodes($filename = ''){
     ddi_node_files($data['files'], $filename);
   }
   drupal_deploy_import_nodes_items($data['nodes']);
+  
+  drupal_deploy_import_book_items($data['books']);
+}
+
+function drupal_deploy_import_book_items($books){
+  print_r($books);
+  
 }
 
 function drupal_deploy_import_nodes_items($data){
