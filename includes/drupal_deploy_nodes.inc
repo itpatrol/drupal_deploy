@@ -44,7 +44,12 @@ function drupal_deploy_import_book_items($outlines, $books){
 
   foreach($outlines as $outline){
     print_r($books[$outline]);
-    echo ddi_menu_alias_origin($outline);
+    $origin = ddi_menu_alias_origin($outline);
+    $origin = explode('/', $origin);
+    if($origin[0] == 'node' && is_numeric($origin[1])){
+      $node = node_load($origin[1]);
+      print_r($node);
+    }
   }
   foreach($books as $link => $book){
     $book['link_path'] = ddi_menu_alias_origin($book['link_path']);
