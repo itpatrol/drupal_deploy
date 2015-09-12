@@ -45,16 +45,71 @@ function drupal_deploy_import_book_items($outlines, $books){
   foreach($outlines as $outline){
     print_r($books[$outline]);
     $origin = ddi_menu_alias_origin($outline);
+    if($origin == $outline){
+      drush_log(dt('Path !outline is not created yet.',array('!outline' => $outline )),'error');
+      continue;
+    }
     $origin = explode('/', $origin);
     if($origin[0] == 'node' && is_numeric($origin[1])){
-      $node = node_load($origin[1]);
-      print_r($node);
+      $menu_name = 'book-toc-'.$origin[1];
+      
+      $stored_outline = db_fetch_object(db_query("SELECT * FROM {book} WHERE bid = %d AND nid = %d", $origin[1], $origin[1]));
+      if(!$stored_outline){
+        
+        $menu_item = $books[$outline];
+        unset($books[$outline]);
+        
+        $menu_item['menu_name'] = $menu_name;
+        $menu_item['link_path'] = ddi_menu_alias_origin($menu_item['link_path']);
+        if(menu_link_save($menu_item))
+        {
+          $outline = array(
+            'nid' => $origin[1],
+            'bid' => $origin[1],
+            'mlid' => $menu_item['mlid'],
+          );
+          drupal_write_record('book', $outline);
+        }
+        
+        drush_log(dt('Create outline !bid', array('!bid' => $origin[1])));
+      }
     }
   }
   foreach($books as $link => $book){
-    $book['link_path'] = ddi_menu_alias_origin($book['link_path']);
-  }
+    $book_link = ddi_menu_alias_origin($book['book_link']);
+    if($book['book_link'] == $book_link){
+      drush_log(dt('Path !outline is not created yet.',array('!outline' => $book_link )),'error');
+      continue;
+    }
+    $book_link = explode('/', $book_link);
+    if($book_link[0] == 'node' && is_numeric($book_link[1])){
+      $menu_name = 'book-toc-'.$book_link[1];
+      $book['menu_name'] = $menu_name;
+      $book['link_path'] = ddi_menu_alias_origin($book['link_path']);
   
+      $node_link = explode('/', $book['link_path']);
+      if($node_link[0] == 'node' && is_numeric($node_link[1])){
+        
+        $stored_menu_item = db_fetch_object(db_query("SELECT * FROM {menu_links} WHERE link_path = '%s'", $book['link_path']));
+        if($stored_menu_item){
+          $menu_item['mlid'] = $stored_menu_item->mlid;
+        }
+        
+        if(menu_link_save($menu_item))
+        {
+          if(!$origin_book_item = db_fetch_object(db_query("SELECT * FROM {book} WHERE nid = %d AND bid = %d and mlid = %d", $node_link[1], $book_link[1], $menu_item['mlid']))){
+            $outline = array(
+              'nid' => $node_link[1],
+              'bid' => $book_link[1],
+              'mlid' => $menu_item['mlid'],
+            );
+            drupal_write_record('book', $outline);
+            drush_log(dt('Create outline page !mlid', array('!mlid' => $outline['mlid'])));
+          }
+        }
+      }
+    }
+  }
 }
 
 function drupal_deploy_import_nodes_items($data){
