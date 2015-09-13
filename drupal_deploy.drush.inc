@@ -201,6 +201,10 @@ function drupal_deploy_export($type = '') {
       include_once(drupal_get_path('module', 'drupal_deploy') .'/includes/drupal_deploy_rules.inc');
       drupal_deploy_export_rules($filename);
       break;
+    case 'book':
+      include_once(drupal_get_path('module', 'drupal_deploy') .'/includes/drupal_deploy_book.inc');
+      drupal_deploy_export_book($filename);
+      break;
   }
 }
 
@@ -274,7 +278,11 @@ function drupal_deploy_import($type = '', $option = '') {
     case 'rules':
       include_once(drupal_get_path('module', 'drupal_deploy') .'/includes/drupal_deploy_rules.inc');
       drupal_deploy_import_rules($filename);
-      break;      
+      break;  
+    case 'book':
+      include_once(drupal_get_path('module', 'drupal_deploy') .'/includes/drupal_deploy_book.inc');
+      drupal_deploy_import_book($filename);
+      break;          
   }
 }
 
