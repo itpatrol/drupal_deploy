@@ -31,48 +31,83 @@ function drupal_deploy_import_book($filename = ''){
   if(!$data = json_decode($data, TRUE)){
     drupal_set_message(t('Json decode error!'), 'error');
   }
-  drupal_deploy_import_book_links($data, $book_name);
+  drupal_deploy_import_book_links($data);
 }
 
-function drupal_deploy_import_book_links($data, $book_name = ''){
-  foreach($data as $item){
-    $item['link_path'] = ddi_menu_alias_origin($item['link_path']);
-    if(!empty($book_name))
-    {
-      if($item['book_name'] != $book_name)
-      {
+function drupal_deploy_import_book_links($data){
+  
+  ddi_book_import_children($data, 0, 0);
+  
+}
+
+function ddi_book_import_children($children, $plid, $bid){
+  foreach($children as $item){
+    if($bid == 0){
+      if(!$bid = ddi_get_outline($item['link_path'])){
         continue;
       }
     }
-
-    if(isset($item['parent_link_path']))
-    {
-      $item['parent_link_path'] = ddi_menu_alias_origin($item['parent_link_path']);
-      
-      $parent = db_fetch_object(db_query("SELECT * FROM {book_links} WHERE link_path = '%s'", $item['parent_link_path']));
-      
-      if($parent->mlid)
-      {
-        $item['plid'] = $parent->mlid;
+    $item['menu_name'] = 'book-toc-' . $bid;
+    $item['plid'] = $plid;
+    if(ddi_book_menu_link_save($item)){
+      if(!$origin_book_item = db_fetch_object(db_query("SELECT * FROM {book} WHERE nid = %d AND bid = %d and mlid = %d", $item['nid'], $bid, $item['mlid']))){
+        $outline = array(
+          'nid' => $item['nid'],
+          'bid' => $bid,
+          'mlid' => $item['mlid'],
+        );
+        drupal_write_record('book', $outline);
+        drush_log(dt('Create outline page !mlid', array('!mlid' => $outline['mlid'])));
       }
     }
     
-    $existing_item = db_fetch_object(db_query("SELECT * FROM {book_links} WHERE link_path = '%s' and book_name='%s'", $item['link_path'], $item['book_name']));
-    
-    if($existing_item->mlid)
-    {
-      $item['mlid'] = $existing_item->mlid;
-    }
-    
-    if(book_link_save($item))
-    {
-      drupal_set_message(t('book !link_title  imported', array('!link_title' => $item['link_title'])));
-    }
-    else
-    {
-      drupal_set_message(t('book !link_title NOT imported', array('!link_title' => $item['link_title'])), 'error');
+    if($item['children']){
+      ddi_book_import_children($item['children'], $item['mlid'], $bid);
     }
   }
+}
+
+function ddi_book_menu_link_save(&$item){
+          
+  $item['link_path'] = ddi_menu_alias_origin($item['link_path']);
+  
+  $node_link = explode('/', $item['link_path']);
+  if($node_link[0] == 'node' && is_numeric($node_link[1])){
+    $item['nid'] = $node_link[1];
+  }
+    
+  $existing_item = db_fetch_object(db_query("SELECT * FROM {menu_links} WHERE link_path = '%s' and menu_name='%s'", $item['link_path'], $item['menu_name']));
+  
+  if($existing_item->mlid)
+  {
+    $item['mlid'] = $existing_item->mlid;
+  }
+  if(menu_link_save($item))
+  {
+    drush_log(dt('Menu !link_title  imported', array('!link_title' => $item['link_title'])));
+    return TRUE;
+  }
+  else
+  {
+    drush_log(dt('Menu !link_title NOT imported', array('!link_title' => $item['link_title'])), 'error');
+    return FALSE;
+  }
+}
+
+function ddi_get_outline($outline_link_origin){
+  
+  $outline_link = ddi_menu_alias_origin($outline_link_origin);
+  if($outline_link == $outline_link_origin){
+    drush_log(dt('Path !outline is not created yet.',array('!outline' => $outline_link_origin )),'error');
+    return FALSE;
+  }
+  
+  $outline_link = explode('/', $outline_link);
+  $nid = $outline_link[1];
+  if(is_numeric($nid)){
+    return $nid;
+  }
+  return FALSE;
 }
 
 function drupal_deploy_export_book_fetch_data($nid){
@@ -100,8 +135,8 @@ function dde_book_menu_items($menu_name, $plid){
       'customized' => 1,
       'updated' => $db_item->updated,
     );
-    if($childred = dde_book_menu_items($menu_name, $db_item->mlid)){
-      $item['childred'] = $childred;
+    if($children = dde_book_menu_items($menu_name, $db_item->mlid)){
+      $item['children'] = $children;
     }
     
     $items[] = $item;
