@@ -132,7 +132,7 @@ function dde_book_menu_items($menu_name, $plid){
       'expanded' => $db_item->expanded,
       'options' => unserialize($db_item->options),
       'module' => $db_item->module,
-      'customized' => 1,
+      'customized' => $db_item->customized,
       'updated' => $db_item->updated,
     );
     if($children = dde_book_menu_items($menu_name, $db_item->mlid)){
