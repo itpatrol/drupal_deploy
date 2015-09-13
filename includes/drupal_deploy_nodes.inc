@@ -114,7 +114,7 @@ function ddi_get_outline($outline_link_origin){
   return FALSE;
 }
 
-function ddi_book_menu_link($item){
+function ddi_book_menu_link(&$item){
   
   print_r($item);
           
