@@ -36,10 +36,8 @@ function drupal_deploy_import_nodes($filename = ''){
   if(!empty($data['files'])){
     ddi_node_files($data['files'], $filename);
   }
-  drupal_deploy_import_nodes_items($data['nodes']);
-  
+  drupal_deploy_import_nodes_items($data['nodes']); 
 }
-
 
 function drupal_deploy_import_nodes_items($data){
   global $user;
