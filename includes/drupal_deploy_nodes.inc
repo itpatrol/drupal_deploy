@@ -114,6 +114,8 @@ function ddi_get_outline($outline_link_origin){
 }
 
 function ddi_book_menu_link($item){
+  
+  print_r($item);
           
   $item['link_path'] = ddi_menu_alias_origin($item['link_path']);
   
@@ -140,7 +142,8 @@ function ddi_book_menu_link($item){
   {
     $item['mlid'] = $existing_item->mlid;
   }
-  
+
+  print_r($item);
   if(menu_link_save($item))
   {
     drush_log(dt('Menu !link_title  imported', array('!link_title' => $item['link_title'])));
