@@ -124,7 +124,7 @@ function ddi_book_menu_link(&$item){
           
   $item['link_path'] = ddi_menu_alias_origin($item['link_path']);
   
-  $node_link = explode('/', $book['link_path']);
+  $node_link = explode('/', $item['link_path']);
   if($node_link[0] == 'node' && is_numeric($node_link[1])){
     $item['nid'] = $node_link[1];
   }
