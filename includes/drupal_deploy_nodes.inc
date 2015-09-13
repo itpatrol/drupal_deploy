@@ -38,69 +38,8 @@ function drupal_deploy_import_nodes($filename = ''){
   }
   drupal_deploy_import_nodes_items($data['nodes']);
   
-  drupal_deploy_import_book_items($data['book_outlines'], $data['books']);
 }
 
-function drupal_deploy_import_book_items($outlines, $books){
-
-  foreach($outlines as $outline){
-
-    $origin = ddi_menu_alias_origin($outline);
-    if($origin == $outline){
-      drush_log(dt('Path !outline is not created yet.',array('!outline' => $outline )),'error');
-      continue;
-    }
-
-    $origin = explode('/', $origin);
-    if($origin[0] == 'node' && is_numeric($origin[1])){
-      $menu_name = 'book-toc-'.$origin[1];
-      
-      $stored_outline = db_fetch_object(db_query("SELECT * FROM {book} WHERE bid = %d AND nid = %d", $origin[1], $origin[1]));
-      if(!$stored_outline){
-        
-        $menu_item = $books[$outline];
-        $menu_item['menu_name'] = $menu_name;
-        unset($books[$outline]);
-
-        if(ddi_book_menu_link($menu_item))
-        {
-          $outline = array(
-            'nid' => $origin[1],
-            'bid' => $origin[1],
-            'mlid' => $menu_item['mlid'],
-          );
-          drupal_write_record('book', $outline);
-        }
-        
-        drush_log(dt('Create outline !bid', array('!bid' => $origin[1])));
-      }
-    }
-  }
-
-  foreach($books as $link => $book){
-
-    if($outline_nid = ddi_get_outline($book['book_link'])){
-      
-      $book['menu_name'] = 'book-toc-'.$outline_nid;
-      
-      if(ddi_book_menu_link($book))
-      {
-        print_r($book);
-        if(!$origin_book_item = db_fetch_object(db_query("SELECT * FROM {book} WHERE nid = %d AND bid = %d and mlid = %d", $book['nid'], $outline_nid, $book['mlid']))){
-          $outline = array(
-            'nid' => $book['nid'],
-            'bid' => $outline_nid,
-            'mlid' => $book['mlid'],
-          );
-          drupal_write_record('book', $outline);
-          drush_log(dt('Create outline page !mlid', array('!mlid' => $outline['mlid'])));
-        }
-      }
-    }else{
-      echo "no outline(";
-    }
-  }
-}
 
 function drupal_deploy_import_nodes_items($data){
   global $user;
@@ -152,33 +91,17 @@ function drupal_deploy_export_nodes_fetch_data($node_type, $filename){
       $result = db_query("SELECT * FROM {node} ORDER BY nid");
     }
   }
-  $all_books = FALSE;
-  
   while ($db_item = db_fetch_object($result)) {
     
-    $book = FALSE;
-    if(module_exists('book')){
-      $book = TRUE;
-    }
     
     $revisions_result = db_query("SELECT * FROM {node_revisions} WHERE nid=%d ORDER BY vid", $db_item->nid);
     while ($db_rev_item = db_fetch_object($revisions_result)) {
       $db_rev_item->type = $db_item->type;
       dde_node_load($db_rev_item);
-      if($book){
-        if(isset($db_rev_item->book)){
-          $book = (object) $db_rev_item->book;
-          unset($db_rev_item->book);
-        }
-      }
       dde_node_clean($db_rev_item);
       $db_item->revisions[] =  $db_rev_item;
     }
-    
-    if(is_object($book)){
-      $all_books[$book->bid][] = $book;
-    }
-    
+        
     $db_item->user = dde_get_user_name($db_item->uid);
 
     $db_item->comments = NULL;
@@ -200,39 +123,6 @@ function drupal_deploy_export_nodes_fetch_data($node_type, $filename){
     unset($db_item->tnid);
     $items['nodes'][] = $db_item;
     drush_log(dt('Node !title exported', array('!title' => $db_item->title)),'notice');
-  }
-  if($all_books){
-    $result_books = array();
-    $bids_links = array();
-    foreach($all_books as $bid => $books){
-      if(!isset($bids_links[$bid])){
-        $bids_links[$bid] = dde_menu_alias('node/' . $bid);
-      }
-      foreach($books as $book){
-        $link_path = dde_menu_alias($book->link_path);
-        $result_books[$link_path] = array(
-          'link_title' => $book->link_title,
-          'weight' =>  $book->weight,
-          'link_path' => $link_path,
-          'hidden' =>  $book->hidden,
-          'has_children' =>  $book->has_children,
-          'expanded' =>  $book->expanded,
-          'options' =>  $book->options,
-          'module' =>  $book->module,
-          'customized' =>  $book->customized,
-          'updated' =>  $book->updated,
-          'book_link' => $bids_links[$bid],
-        );
-        if($book->plid != 0){
-          $parent_item = db_fetch_object(db_query("SELECT * FROM {menu_links} WHERE mlid=%d", $book->plid));
-          $result_books[$link_path]['parent_link_path'] = dde_menu_alias($parent_item->link_path);
-        }
-      }
-    }
-    $items['books'] = $result_books;
-    foreach($bids_links as $b_link){
-      $items['book_outlines'][] = $b_link;
-    }
   }
   
   $files = dde_nodes_files_to_export('get');
