@@ -74,9 +74,9 @@ function drupal_deploy_import_menu_links($data, $menu_name = ''){
 function drupal_deploy_export_menu_fetch_data($menu_name = ''){
   $items = array();
   if(empty($menu_name)){
-    $result = db_query("SELECT * FROM {menu_links} WHERE customized=%d ORDER BY mlid", 1);
+    $result = db_query("SELECT * FROM {menu_links} WHERE plid = %d ORDER BY mlid", 0);
   }else{
-    $result = db_query("SELECT * FROM {menu_links} WHERE menu_name='%s' ORDER BY mlid", $menu_name);
+    $result = db_query("SELECT * FROM {menu_links} WHERE menu_name='%s' AND plid = %d ORDER BY mlid", $menu_name, 0);
   }
   while ($db_item = db_fetch_object($result)) {
     $item = array(
@@ -89,12 +89,36 @@ function drupal_deploy_export_menu_fetch_data($menu_name = ''){
       'expanded' => $db_item->expanded,
       'options' => unserialize($db_item->options),
       'module' => $db_item->module,
-      'customized' => 1,
+      'customized' => $db_item->customized,
       'updated' => $db_item->updated,
     );
-    if($db_item->plid != 0){
-      $parent_item = db_fetch_object(db_query("SELECT * FROM {menu_links} WHERE mlid=%d", $db_item->plid));
-      $item['parent_link_path'] = dde_menu_alias($parent_item->link_path);
+    if($children = dde_menu_items($db_item->mlid)){
+      $item['children'] = $children;
+    }    
+    
+    $items[] = $item;
+  }
+  return $items;
+}
+
+function dde_menu_items($plid){
+  $result = db_query("SELECT * FROM {menu_links} WHERE menu_name='%s' and plid = %d ORDER BY mlid", $menu_name, $plid);
+  while ($db_item = db_fetch_object($result)) {
+    $item = array(
+      'menu_name' => $db_item->menu_name,
+      'weight' => $db_item->weight,
+      'link_title' => $db_item->link_title,
+      'link_path' => dde_menu_alias($db_item->link_path),
+      'hidden' => $db_item->hidden,
+      'has_children' => $db_item->has_children,
+      'expanded' => $db_item->expanded,
+      'options' => unserialize($db_item->options),
+      'module' => $db_item->module,
+      'customized' => $db_item->customized,
+      'updated' => $db_item->updated,
+    );
+    if($children = dde_menu_items($db_item->mlid)){
+      $item['children'] = $children;
     }
     
     $items[] = $item;
