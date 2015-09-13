@@ -24,6 +24,7 @@ function drupal_deploy_drush_command() {
       'drush dde imagecache' => dt('Export imagecache presets.'),
       'drush dde nodes --nid=1,2,3' => dt('Export nodes 1,2,3 with comments and revisions.'),
       'drush dde nodes --type=forum' => dt('Export forum nodes with comments and revisions.'),
+      'drush dde nodes --type=forum,book,page' => dt('Export forum,book,page nodes with comments and revisions.'),
       'drush dde language --name=ru --group=default' => dt('Export RU language translation.'),
       'drush dde comment_notify' => dt('Export comment_notify settings.'),
       'drush dde variables --name=superfish_%' => dt('Export superfish variables settings.'),
