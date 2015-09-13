@@ -6,7 +6,8 @@ function drupal_deploy_export_nodes($filename = ''){
   if(empty($filename)){
     $filename = 'nodes.export';
     if($node_type){
-      $filename = $node_type . '.nodes.export';  
+      $name = str_replace(",", ".", $node_type);
+      $filename = $name . '.nodes.export';  
     }
   }
   
@@ -200,7 +201,12 @@ function drupal_deploy_export_nodes_fetch_data($node_type, $filename){
     $result = db_query("SELECT * FROM {node} WHERE nid in (%s) ORDER BY nid", $nids);
   }else{
     if($node_type){
-      $result = db_query("SELECT * FROM {node} WHERE type='%s' ORDER BY nid",$node_type);
+      if(strpos($node_type, ',')){
+        $types = explode(",", $node_type);
+        $result = db_query("SELECT * FROM {node} WHERE type in (" .  db_placeholders($types, 'varchar') . ") ORDER BY nid", $types);
+      }else{
+        $result = db_query("SELECT * FROM {node} WHERE type='%s' ORDER BY nid",$node_type);
+      }
     }else{
       $result = db_query("SELECT * FROM {node} ORDER BY nid");
     }
