@@ -204,6 +204,7 @@ function dde_node_clean(&$item){
   unset($item->vid);
   unset($item->tid);
   unset($item->uid);
+  unset($item->book);
   
   $item->format = dde_get_format_name($item->format);
   
