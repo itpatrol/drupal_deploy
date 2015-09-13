@@ -77,14 +77,14 @@ function drupal_deploy_import_book_items($outlines, $books){
   }
 
   foreach($books as $link => $book){
-    
-    print_r($book);
+
     if($outline_nid = ddi_get_outline($book['book_link'])){
       
       $book['menu_name'] = 'book-toc-'.$outline_nid;
       
       if(ddi_book_menu_link($book))
       {
+        print_r($book);
         if(!$origin_book_item = db_fetch_object(db_query("SELECT * FROM {book} WHERE nid = %d AND bid = %d and mlid = %d", $book['nid'], $outline_nid, $book['mlid']))){
           $outline = array(
             'nid' => $book['nid'],
@@ -109,7 +109,7 @@ function ddi_get_outline($outline_link_origin){
     return FALSE;
   }
   
-  $outline_link = explode('/', $book_link);
+  $outline_link = explode('/', $outline_link);
   $nid = $outline_link[1];
   if(is_numeric($nid)){
     return $nid;
