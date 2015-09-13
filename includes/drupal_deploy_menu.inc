@@ -114,7 +114,7 @@ function drupal_deploy_export_menu_fetch_data($menu_name = ''){
 }
 
 function dde_menu_items($plid){
-  $result = db_query("SELECT * FROM {menu_links} WHERE menu_name='%s' and plid = %d ORDER BY mlid", $menu_name, $plid);
+  $result = db_query("SELECT * FROM {menu_links} WHERE plid = %d ORDER BY mlid", $menu_name, $plid);
   while ($db_item = db_fetch_object($result)) {
     $item = array(
       'menu_name' => $db_item->menu_name,
