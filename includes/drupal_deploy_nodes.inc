@@ -58,6 +58,7 @@ function drupal_deploy_import_book_items($outlines, $books){
       if(!$stored_outline){
         
         $menu_item = $books[$outline];
+        $menu_item['menu_name'] = $menu_name;
         unset($books[$outline]);
 
         if(ddi_book_menu_link($menu_item))
