@@ -32,6 +32,7 @@ function drupal_deploy_drush_command() {
       'drush dde variables --name=pathauto_%' => dt('Export pathauto variable settings.'),            
       'drush dde aggregator' => dt('Export aggregator feed only.'),
       'drush dde rules' => dt('Export all rules.'),
+      'drush dde book --nid=10' => dt('Export book with root node 10 menu.'),      
     ),
     'aliases' => array('dde'),
     'arguments' => array(
@@ -71,7 +72,8 @@ function drupal_deploy_drush_command() {
       'drush ddi variables --name=comment_notify_%,node_notify_%' => dt('Import comment_notify variable settings.'),
       'drush ddi variables --name=pathauto_%' => dt('Import pathauto variable settings.'),  
       'drush ddi aggregator' => dt('Import aggregator feed only.'),
-      'drush ddi rules' => dt('Import all rules.'),
+      'drush ddi rules' => dt('Import rules from file.'),
+      'drush ddi book' => dt('Import book.'),
     ),
     'aliases' => array('ddi'),
     'arguments' => array(
