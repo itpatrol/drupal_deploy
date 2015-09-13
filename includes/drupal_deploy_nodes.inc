@@ -78,6 +78,7 @@ function drupal_deploy_import_book_items($outlines, $books){
 
   foreach($books as $link => $book){
     
+    print_r($book);
     if($outline_nid = ddi_get_outline($book['book_link'])){
       
       $book['menu_name'] = 'book-toc-'.$outline_nid;
@@ -94,6 +95,8 @@ function drupal_deploy_import_book_items($outlines, $books){
           drush_log(dt('Create outline page !mlid', array('!mlid' => $outline['mlid'])));
         }
       }
+    }else{
+      echo "no outline(";
     }
   }
 }
