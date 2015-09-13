@@ -32,7 +32,6 @@ function drupal_deploy_import_menu($filename = '', $menu_name = ''){
 
 function drupal_deploy_import_menu_links($data, $menu_name = ''){
   foreach($data as $item){
-    $item['link_path'] = ddi_menu_alias_origin($item['link_path']);
     if(!empty($menu_name))
     {
       if($item['menu_name'] != $menu_name)
@@ -41,35 +40,48 @@ function drupal_deploy_import_menu_links($data, $menu_name = ''){
       }
     }
 
-    if(isset($item['parent_link_path']))
-    {
-      $item['parent_link_path'] = ddi_menu_alias_origin($item['parent_link_path']);
-      
-      $parent = db_fetch_object(db_query("SELECT * FROM {menu_links} WHERE link_path = '%s'", $item['parent_link_path']));
-      
-      if($parent->mlid)
-      {
-        $item['plid'] = $parent->mlid;
+    if(ddi_menu_link_save($item)){
+      if($item['children']){
+        ddi_menu_import_children($item['children'], $item['mlid']);
       }
     }
-    
-    $existing_item = db_fetch_object(db_query("SELECT * FROM {menu_links} WHERE link_path = '%s' and menu_name='%s'", $item['link_path'], $item['menu_name']));
-    
-    if($existing_item->mlid)
-    {
-      $item['mlid'] = $existing_item->mlid;
-    }
-    
-    if(menu_link_save($item))
-    {
-      drupal_set_message(t('Menu !link_title  imported', array('!link_title' => $item['link_title'])));
-    }
-    else
-    {
-      drupal_set_message(t('Menu !link_title NOT imported', array('!link_title' => $item['link_title'])), 'error');
+        
+  }
+}
+
+function ddi_menu_import_children($children, $plid){
+  foreach($children as $item){
+    $item['plid'] = $plid;
+    if(ddi_menu_link_save($item)){
+      if($item['children']){
+        ddi_book_import_children($item['children'], $item['mlid'], $bid);
+      }
     }
   }
 }
+
+function ddi_menu_link_save(&$item){
+          
+  $item['link_path'] = ddi_menu_alias_origin($item['link_path']);
+      
+  $existing_item = db_fetch_object(db_query("SELECT * FROM {menu_links} WHERE link_path = '%s' and menu_name='%s'", $item['link_path'], $item['menu_name']));
+  
+  if($existing_item->mlid)
+  {
+    $item['mlid'] = $existing_item->mlid;
+  }
+  if(menu_link_save($item))
+  {
+    drush_log(dt('Menu !link_title  imported', array('!link_title' => $item['link_title'])));
+    return TRUE;
+  }
+  else
+  {
+    drush_log(dt('Menu !link_title NOT imported', array('!link_title' => $item['link_title'])), 'error');
+    return FALSE;
+  }
+}
+
 
 function drupal_deploy_export_menu_fetch_data($menu_name = ''){
   $items = array();
