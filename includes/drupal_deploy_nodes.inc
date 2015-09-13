@@ -102,65 +102,6 @@ function drupal_deploy_import_book_items($outlines, $books){
   }
 }
 
-function ddi_get_outline($outline_link_origin){
-  
-  $outline_link = ddi_menu_alias_origin($outline_link_origin);
-  if($outline_link == $outline_link_origin){
-    drush_log(dt('Path !outline is not created yet.',array('!outline' => $outline_link_origin )),'error');
-    return FALSE;
-  }
-  
-  $outline_link = explode('/', $outline_link);
-  $nid = $outline_link[1];
-  if(is_numeric($nid)){
-    return $nid;
-  }
-  return FALSE;
-}
-
-function ddi_book_menu_link(&$item){
-  
-  print_r($item);
-          
-  $item['link_path'] = ddi_menu_alias_origin($item['link_path']);
-  
-  $node_link = explode('/', $item['link_path']);
-  if($node_link[0] == 'node' && is_numeric($node_link[1])){
-    $item['nid'] = $node_link[1];
-  }
-  
-  if(isset($item['parent_link_path']))
-  {
-    $item['parent_link_path'] = ddi_menu_alias_origin($item['parent_link_path']);
-    
-    $parent = db_fetch_object(db_query("SELECT * FROM {menu_links} WHERE link_path = '%s'", $item['parent_link_path']));
-    
-    if($parent->mlid)
-    {
-      $item['plid'] = $parent->mlid;
-    }
-  }
-  
-  $existing_item = db_fetch_object(db_query("SELECT * FROM {menu_links} WHERE link_path = '%s' and menu_name='%s'", $item['link_path'], $item['menu_name']));
-  
-  if($existing_item->mlid)
-  {
-    $item['mlid'] = $existing_item->mlid;
-  }
-
-  print_r($item);
-  if(menu_link_save($item))
-  {
-    drush_log(dt('Menu !link_title  imported', array('!link_title' => $item['link_title'])));
-    return TRUE;
-  }
-  else
-  {
-    drush_log(dt('Menu !link_title NOT imported', array('!link_title' => $item['link_title'])), 'error');
-    return FALSE;
-  }
-}
-
 function drupal_deploy_import_nodes_items($data){
   global $user;
   $user = user_load(1);
