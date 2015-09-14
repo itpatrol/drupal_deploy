@@ -54,7 +54,7 @@ function ddi_menu_import_children($children, $plid){
     $item['plid'] = $plid;
     if(ddi_menu_link_save($item)){
       if($item['children']){
-        ddi_book_import_children($item['children'], $item['mlid'], $bid);
+        ddi_menu_import_children($item['children'], $item['mlid']);
       }
     }
   }
