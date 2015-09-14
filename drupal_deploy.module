@@ -247,6 +247,17 @@ function dde_menu_alias($path){
   if($alias = db_fetch_object(db_query("SELECT * FROM {url_alias} WHERE src = '%s'", $path))){
     return $alias->dst;
   }
+  
+  $node_link = explode('/', $path);
+  if($node_link[0] == 'node' && is_numeric($node_link[1])){
+    $node = db_fetch_object(db_query("SELECT * FROM {node} WHERE nid=%d", $node_link[1]));
+    return array(
+      'title' => $node->title,
+      'type' => $node->type,
+      'created' => $node->created,
+      'username' => dde_get_user_name($node->uid),
+    );
+  }
   return $path;
 }
 
