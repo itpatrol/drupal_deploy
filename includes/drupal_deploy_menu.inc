@@ -129,6 +129,7 @@ function dde_menu_items($plid){
       'customized' => $db_item->customized,
       'updated' => $db_item->updated,
     );
+    drush_log(dt('Menu !title exported', array('!title' =>  $db_item->link_title)));
     if($children = dde_menu_items($db_item->mlid)){
       $item['children'] = $children;
     }
