@@ -123,11 +123,7 @@ function dd_json_encode_pretty_utf8($var, $options=0, $_indent="") {
   list($_space, $_tab, $_nl) = array(" ", "    $_indent", "\n");
   $json = "$_indent";
 
-  if ($options & JSON_NUMERIC_CHECK){
-    echo "Checking numeric\n";
-  }  
   if ($options & JSON_NUMERIC_CHECK and is_string($var) and is_numeric($var)) {
-    echo "HERE!";
     $var = (strpos($var, ".") || strpos($var, "e")) ? floatval($var) : intval($var);
   }
   

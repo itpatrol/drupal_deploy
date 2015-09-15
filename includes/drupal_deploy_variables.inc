@@ -25,7 +25,7 @@ function drupal_deploy_export_variables($filename = ''){
       $filename = $name_for_file . '.variables.export';
     }
   }
-
+  var_dump($items);
   drupal_deploy_export_save($items, $filename);
 }
 
