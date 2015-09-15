@@ -402,6 +402,7 @@ function ddi_node_save($node){
   
   drupal_write_record('node', $node, 'nid');  
   ddi_prepare_node_save($node);
+  $node->ddi = TRUE;
   node_invoke($node, 'insert');
   node_invoke_nodeapi($node, 'insert');
   if(!empty($node->comments)){
@@ -410,6 +411,7 @@ function ddi_node_save($node){
       ddi_comment_save($comment, $node->nid);
     }
   }
+  unset($node->ddi);
   drupal_write_record('node', $node, 'nid');
 
   _comment_update_node_statistics($node->nid);
@@ -471,9 +473,10 @@ function ddi_node_update($node, $node_saved){
     }
   }
 
+  $node->ddi = TRUE;
   node_invoke($node, 'update');
   node_invoke_nodeapi($node, 'update');
-  
+  unset($node->ddi);
   if(!empty($node->comments)){
     foreach($node->comments as $comment){
       $comment = (object) $comment;
