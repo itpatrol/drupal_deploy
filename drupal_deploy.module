@@ -125,7 +125,6 @@ function dd_json_encode_pretty_utf8($var, $options=0, $_indent="") {
 
   if ($options & JSON_NUMERIC_CHECK and is_string($var) and is_numeric($var)) {
     $var = (strpos($var, ".") || strpos($var, "e")) ? floatval($var) : intval($var);
-    echo "HERE $var";
   }
   
   #-- add array entries
@@ -184,7 +183,11 @@ function dd_json_encode_pretty_utf8($var, $options=0, $_indent="") {
     $json = "null";
   }
   elseif (is_int($var)) {
-    $json = '"' . $var . '"';
+    if($options & JSON_NUMERIC_CHECK){
+      $json = "$var";
+    }else{
+      $json = '"' . $var . '"';
+    }
   }
   elseif (is_float($var)) {
     if (is_nan($var) || is_infinite($var)) {
