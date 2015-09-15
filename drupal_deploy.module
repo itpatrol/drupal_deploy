@@ -123,7 +123,7 @@ function dd_json_encode_pretty_utf8($var, $options=0, $_indent="", $key = TRUE) 
   list($_space, $_tab, $_nl) = array(" ", "    $_indent", "\n");
   $json = "$_indent";
 
-  if ($options & JSON_NUMERIC_CHECK and is_string($var) and is_numeric($var)) {
+  if (is_string($var) and is_numeric($var)) {
     $var = (strpos($var, ".") || strpos($var, "e")) ? floatval($var) : intval($var);
   }
   
@@ -140,7 +140,7 @@ function dd_json_encode_pretty_utf8($var, $options=0, $_indent="", $key = TRUE) 
      foreach ((array)$var as $i=>$v) {
         $json .= ($empty++ ? ",$_nl" : "")    // comma separators
                . $_tab . ($obj ? ( dd_json_encode_pretty_utf8($i, $options , $_tab) . ":$_space") : "")   // assoc prefix
-               . ( dd_json_encode_pretty_utf8($v, $options | JSON_NUMERIC_CHECK, $_tab, FALSE));    // value
+               . ( dd_json_encode_pretty_utf8($v, $options, $_tab, FALSE));    // value
      }
 
      #-- enclose into braces or brackets
@@ -184,7 +184,6 @@ function dd_json_encode_pretty_utf8($var, $options=0, $_indent="", $key = TRUE) 
   }
   elseif (is_int($var)) {
     if(!$key){
-      echo "OPTIONS:" . $options;
       $json = "$var";
     }else{
       $json = '"' . $var . '"';
