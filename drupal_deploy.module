@@ -115,7 +115,7 @@ if (!defined("JSON_UNESCAPED_SLASHES")) {
   define("JSON_HEX_QUOT", 8);
 }
 
-function dd_json_encode_pretty_utf8($var, $options=0, $_indent="") {
+function dd_json_encode_pretty_utf8($var, $options=0, $_indent="", $key = TRUE) {
   global ${'.json_last_error'};
   ${'.json_last_error'} = JSON_ERROR_NONE;
         
@@ -140,7 +140,7 @@ function dd_json_encode_pretty_utf8($var, $options=0, $_indent="") {
      foreach ((array)$var as $i=>$v) {
         $json .= ($empty++ ? ",$_nl" : "")    // comma separators
                . $_tab . ($obj ? ( dd_json_encode_pretty_utf8($i, $options , $_tab) . ":$_space") : "")   // assoc prefix
-               . ( dd_json_encode_pretty_utf8($v, $options | JSON_NUMERIC_CHECK, $_tab));    // value
+               . ( dd_json_encode_pretty_utf8($v, $options | JSON_NUMERIC_CHECK, $_tab, FALSE));    // value
      }
 
      #-- enclose into braces or brackets
@@ -183,7 +183,7 @@ function dd_json_encode_pretty_utf8($var, $options=0, $_indent="") {
     $json = "null";
   }
   elseif (is_int($var)) {
-    if($options & JSON_NUMERIC_CHECK){
+    if(!$key){
       echo "OPTIONS:" . $options;
       $json = "$var";
     }else{
