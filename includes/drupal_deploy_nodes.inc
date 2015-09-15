@@ -317,7 +317,7 @@ function dde_get_term_tree($term){
 }
 
 function dde_node_load(&$node){
-
+  $node->dde = TRUE;
   if ($extra = node_invoke($node, 'load')) {
     foreach ($extra as $key => $value) {
       if(!empty($value)){
@@ -333,6 +333,7 @@ function dde_node_load(&$node){
       }
     }
   }
+  unset($node->dde);
 }
 
 
