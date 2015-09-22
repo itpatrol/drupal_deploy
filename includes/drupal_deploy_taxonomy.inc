@@ -152,7 +152,6 @@ function drupal_deploy_export_taxonomy_fetch_data($vocabulary_name = ''){
           'name' => $term['name'],
           'description' => $term['description'],
           'weight' => $term['weight'],
-          'url_alias' => 
         );
         if($alias = db_fetch_object(db_query("SELECT * FROM {url_alias} WHERE src = '%s'", 'taxonomy/term/' . $term['tid']))){
           $store_term['path_alias'] = $alias->dst;
