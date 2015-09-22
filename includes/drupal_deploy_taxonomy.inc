@@ -152,7 +152,11 @@ function drupal_deploy_export_taxonomy_fetch_data($vocabulary_name = ''){
           'name' => $term['name'],
           'description' => $term['description'],
           'weight' => $term['weight'],
+          'url_alias' => 
         );
+        if($alias = db_fetch_object(db_query("SELECT * FROM {url_alias} WHERE src = '%s'", 'taxonomy/term/' . $term['tid']))){
+          $store_term['path_alias'] = $alias->dst;
+        }
         if(!empty($term['synonyms'])){
           $store_term['synonyms'] = $term['synonyms'];
         }
@@ -179,6 +183,10 @@ function _get_term_children($parent_term, $terms){
         'description' => $term['description'],
         'weight' => $term['weight'],
       );
+      if($alias = db_fetch_object(db_query("SELECT * FROM {url_alias} WHERE src = '%s'", 'taxonomy/term/' . $term['tid']))){
+        $store_term['path_alias'] = $alias->dst;
+      }
+      
       if(!empty($term['synonyms'])){
           $store_term['synonyms'] = $term['synonyms'];
         }
