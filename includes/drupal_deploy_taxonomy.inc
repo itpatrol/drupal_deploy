@@ -92,6 +92,10 @@ function drupal_deploy_save_term($term, $vid, $parent = 0){
     $term['tid'] = $stored_term->tid;
   }
   
+  if(isset($term['path_alias'])){
+    $term['pathauto_perform_alias'] = FALSE;
+  }
+  
   $status = taxonomy_save_term($term);
   if($status == SAVED_UPDATED || $status == SAVED_NEW)
   {
@@ -102,7 +106,10 @@ function drupal_deploy_save_term($term, $vid, $parent = 0){
       if($status == SAVED_UPDATED || $status == SAVED_NEW){
         drush_log(dt('Term !name imported',array('!name' => $sub_term['name'])), 'ok');
       }
-    }  
+    }
+    if(isset($term['path_alias'])){
+      path_set_alias($term['path_alias'], 'taxonomy/term/' . $term['tid']);
+    }
   }
   return $status;
 }
