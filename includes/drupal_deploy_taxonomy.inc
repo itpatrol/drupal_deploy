@@ -108,7 +108,7 @@ function drupal_deploy_save_term($term, $vid, $parent = 0){
       }
     }
     if(isset($term['path_alias'])){
-      path_set_alias($term['path_alias'], 'taxonomy/term/' . $term['tid']);
+      path_set_alias('taxonomy/term/' . $term['tid'], $term['path_alias']);
     }
   }
   return $status;
