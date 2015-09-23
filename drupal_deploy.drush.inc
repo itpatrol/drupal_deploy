@@ -398,6 +398,7 @@ function ddi_import_files($files, $filename){
     drush_log(dt('File folder !folder does not exists', array('!folder' => $dir)),'error');
     return FALSE;
   }
+  print_r($files);
   foreach($files as $file){
     $file['uid'] = ddi_get_user_id($file['username']);
     if($stored_file = db_fetch_array(db_query("SELECT * FROM {files} WHERE filepath='%s'", $file['filepath']))){
