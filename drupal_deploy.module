@@ -271,3 +271,19 @@ function ddi_menu_alias_origin($path){
   }
   return $path;   
 }
+
+function dde_files_to_export($op, $fid = NULL){
+  static $files;
+  if($op == 'export' && !empty($fid)){
+    if(!isset($files[$fid])){
+      $file = db_fetch_object(db_query("SELECT * FROM {files} WHERE fid=%d", $fid));
+      $file->username = dde_get_user_name($file->uid);
+      unset($file->uid);
+      unset($file->fid);      
+      $files[$fid] = $file; 
+    }
+  }
+  if($op == 'get'){
+    return $files;
+  }
+}
