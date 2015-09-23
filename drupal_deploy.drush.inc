@@ -322,7 +322,6 @@ function drupal_deploy_import($type = '', $option = '') {
             drush_log(dt('Json decode error!'), 'error');
             return FALSE;
           }
-          print_r($data);
           if(isset($data['data']) && isset($data['files'])){
             ddi_import_files($data['files'], $filename);
             $data = $data['data'];
@@ -402,7 +401,6 @@ function ddi_import_files($files, $filename){
 
   foreach($files as $file){
     $file['uid'] = ddi_get_user_id($file['username']);
-    print_r($file);
     if($stored_file = db_fetch_array(db_query("SELECT * FROM {files} WHERE filepath='%s'", $file['filepath']))){
       print_r($stored_file);
       drush_log(dt('!filename already stored. No changes', array('!filename' => $stored_file['filename'])));
