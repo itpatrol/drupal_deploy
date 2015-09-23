@@ -288,3 +288,15 @@ function dde_files_to_export($op, $fid = NULL){
     return $files;
   }
 }
+
+function dde_files_imported($op, $file){
+  static $files;
+  if($op == 'set'){
+    if(!isset($files[$file['filepath']])){
+      $files[$file['filepath']] = $file;
+    }
+  }
+  if($op == 'get'){
+    return $files[$file['filepath']];
+  }
+}

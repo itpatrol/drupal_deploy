@@ -229,44 +229,6 @@ function drupal_deploy_export($type = '') {
   }
 }
 
-function dde_export_files($filename){
-  $items = array();
-  $files = dde_files_to_export('get');
-  if(!empty($files)){
-    $export_folder = $filename . '.files';
-    if(!is_dir($export_folder)){
-      mkdir($export_folder);
-    }
-    
-    $file_directory_path = variable_get('file_directory_path', conf_path() . '/files');
-    $file_directory_path_len = strlen($file_directory_path);
-    
-    foreach($files as $file){
-      if(is_file($file->filepath)){
-        
-        if(0 == strcmp($file_directory_path, substr($file->filepath, 0,$file_directory_path_len))){
-          $store_filepath = $export_folder . '/' . substr($file->filepath, $file_directory_path_len + 1);
-        }else{
-          $store_filepath = $export_folder . '/' . basename($file->filepath);
-        }
-        
-        $info = pathinfo($store_filepath);
-        if(!is_dir($info['dirname'])){
-          mkdir($info['dirname'], 0750, TRUE); 
-        }
-        
-        copy($file->filepath, $store_filepath);
-        $file->stored_filepath = $store_filepath;
-        $items['files'][] = $file;
-        drush_log(dt('!filename exported', array('!filename' => $file->filename)),'notice');
-      }else{
-        drush_log(dt('!filename does not exists', array('!filename' => $file->filename)), 'warning');
-      }
-    }
-  }
-  return $items;
-}
-
 /**
  * Drush callback to perform import.
  */
@@ -360,6 +322,10 @@ function drupal_deploy_import($type = '', $option = '') {
             drush_log(dt('Json decode error!'), 'error');
             return FALSE;
           }
+          if(isset($data['data']) && isset($data['files'])){
+            ddi_import_files($data['files'], $filename);
+            $data = $data['data'];
+          }
           $func_name($data);
         }
       }
@@ -379,3 +345,76 @@ function drupal_deploy_sync() {
 function drupal_deploy_revert() {
   $args = func_get_args();
 }
+
+
+/**
+ * Export files to folder, if provided.
+ */
+function dde_export_files($filename){
+  $items = array();
+  $files = dde_files_to_export('get');
+  if(!empty($files)){
+    $export_folder = $filename . '.files';
+    if(!is_dir($export_folder)){
+      mkdir($export_folder);
+    }
+    
+    $file_directory_path = variable_get('file_directory_path', conf_path() . '/files');
+    $file_directory_path_len = strlen($file_directory_path);
+    
+    foreach($files as $file){
+      if(is_file($file->filepath)){
+        
+        if(0 == strcmp($file_directory_path, substr($file->filepath, 0,$file_directory_path_len))){
+          $store_filepath = $export_folder . '/' . substr($file->filepath, $file_directory_path_len + 1);
+        }else{
+          $store_filepath = $export_folder . '/' . basename($file->filepath);
+        }
+        
+        $info = pathinfo($store_filepath);
+        if(!is_dir($info['dirname'])){
+          mkdir($info['dirname'], 0750, TRUE); 
+        }
+        
+        copy($file->filepath, $store_filepath);
+        $file->stored_filepath = $store_filepath;
+        $items['files'][] = $file;
+        drush_log(dt('!filename exported', array('!filename' => $file->filename)),'notice');
+      }else{
+        drush_log(dt('!filename does not exists', array('!filename' => $file->filename)), 'warning');
+      }
+    }
+  }
+  return $items;
+}
+
+/**
+ * Import files to database, if provided.
+ */
+function ddi_import_files($files, $filename){
+  $info = pathinfo($filename);
+  $dir = $info['dirname'];
+  if(!is_dir($dir)){
+    drush_log(dt('File folder !folder does not exists', array('!folder' => $dir)),'error');
+    return FALSE;
+  }
+  foreach($files as $file){
+    $file['uid'] = ddi_get_user_id($file['username']);
+    if($stored_file = db_fetch_array(db_query("SELECT * FROM {files} WHERE filepath='%s'", $file['filepath']))){
+      drush_log(dt('!filename already stored. No changes', array('!filename' => $stored_file['filename'])));
+      dde_files_imported('set', $stored_file);
+    }else{
+      $info = pathinfo($file['filepath']);
+      if(!is_dir($info['dirname'])){
+        mkdir($info['dirname'], 0751, TRUE); 
+      }
+      copy($dir . '/' .$file['stored_filepath'], $file['filepath']);
+      
+      drupal_write_record('files', $file);
+      dde_files_imported('set', $file);
+      
+      drush_log(dt('!filename imported.', array('!filename' => $file['filename'])), 'notice');
+    }
+  }
+}
+
