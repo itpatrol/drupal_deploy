@@ -281,6 +281,7 @@ function dde_files_to_export($op, $fid = NULL){
       unset($file->uid);
       unset($file->fid);      
       $files[$fid] = $file; 
+      return $file;
     }
   }
   if($op == 'get'){
