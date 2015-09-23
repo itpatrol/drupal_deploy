@@ -322,6 +322,7 @@ function drupal_deploy_import($type = '', $option = '') {
             drush_log(dt('Json decode error!'), 'error');
             return FALSE;
           }
+          print_r($data);
           if(isset($data['data']) && isset($data['files'])){
             ddi_import_files($data['files'], $filename);
             $data = $data['data'];
