@@ -379,7 +379,7 @@ function dde_export_files($filename){
         
         copy($file->filepath, $store_filepath);
         $file->stored_filepath = $store_filepath;
-        $items['files'][] = $file;
+        $items[] = $file;
         drush_log(dt('!filename exported', array('!filename' => $file->filename)),'notice');
       }else{
         drush_log(dt('!filename does not exists', array('!filename' => $file->filename)), 'warning');
