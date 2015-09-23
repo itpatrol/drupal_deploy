@@ -211,12 +211,60 @@ function drupal_deploy_export($type = '') {
         include_once($fileinc);
         $func_name = $type . '_dde_fetch_data';
         if(function_exists($func_name)){
-          $items = $func_name();
+          $type_items = $func_name();
+          
           $filename = $type . '.export';
+          if($files = dde_export_files($filename)){
+            $items = array(
+              'data' => $type_items,
+              'files' => $files,
+            );
+          }else{
+            $items = $type_items;
+          }
+
           drupal_deploy_export_save($items, $filename);
         }
       }
   }
+}
+
+function dde_export_files($filename){
+  $items = array();
+  $files = dde_files_to_export('get');
+  if(!empty($files)){
+    $export_folder = $filename . '.files';
+    if(!is_dir($export_folder)){
+      mkdir($export_folder);
+    }
+    
+    $file_directory_path = variable_get('file_directory_path', conf_path() . '/files');
+    $file_directory_path_len = strlen($file_directory_path);
+    
+    foreach($files as $file){
+      if(is_file($file->filepath)){
+        
+        if(0 == strcmp($file_directory_path, substr($file->filepath, 0,$file_directory_path_len))){
+          $store_filepath = $export_folder . '/' . substr($file->filepath, $file_directory_path_len + 1);
+        }else{
+          $store_filepath = $export_folder . '/' . basename($file->filepath);
+        }
+        
+        $info = pathinfo($store_filepath);
+        if(!is_dir($info['dirname'])){
+          mkdir($info['dirname'], 0750, TRUE); 
+        }
+        
+        copy($file->filepath, $store_filepath);
+        $file->stored_filepath = $store_filepath;
+        $items['files'][] = $file;
+        drush_log(dt('!filename exported', array('!filename' => $file->filename)),'notice');
+      }else{
+        drush_log(dt('!filename does not exists', array('!filename' => $file->filename)), 'warning');
+      }
+    }
+  }
+  return $items;
 }
 
 /**
