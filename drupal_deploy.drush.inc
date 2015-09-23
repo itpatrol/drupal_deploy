@@ -406,8 +406,10 @@ function ddi_import_files($files, $filename){
     }else{
       $info = pathinfo($file['filepath']);
       if(!is_dir($info['dirname'])){
+        drush_log(dt('Create dir !dirname.', array('!dirname' => $info['dirname'])));
         mkdir($info['dirname'], 0751, TRUE); 
       }
+      drush_log(dt('Copy !from to !to.', array('!from' => $dir . '/' .$file['stored_filepath'], '!to' => $file['filepath'])));
       copy($dir . '/' .$file['stored_filepath'], $file['filepath']);
       
       drupal_write_record('files', $file);
