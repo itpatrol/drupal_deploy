@@ -205,6 +205,17 @@ function drupal_deploy_export($type = '') {
       include_once(drupal_get_path('module', 'drupal_deploy') .'/includes/drupal_deploy_book.inc');
       drupal_deploy_export_book($filename);
       break;
+    default:
+      if(module_exists($type)) {
+        $fileinc = drupal_get_path('module', $type) .'/' . $type. '.dde.inc';
+        include_once($fileinc);
+        $func_name = $type . '_dde_fetch_data';
+        if(function_exists($func_name)){
+          $items = $func_name();
+          $filename = $type . '.export';
+          drupal_deploy_export_save($items, $filename);
+        }
+      }
   }
 }
 
@@ -282,7 +293,28 @@ function drupal_deploy_import($type = '', $option = '') {
     case 'book':
       include_once(drupal_get_path('module', 'drupal_deploy') .'/includes/drupal_deploy_book.inc');
       drupal_deploy_import_book($filename);
-      break;          
+      break;
+    default:
+      if(module_exists($type)) {
+        $fileinc = drupal_get_path('module', $type) .'/' . $type. '.ddi.inc';
+        include_once($fileinc);
+        $func_name = $type . '_ddi_data';
+        if(function_exists($func_name)){
+          if(empty($filename)){
+            $filename = $type . '.export';
+          }
+          if(!is_file($filename)){
+            drush_log(dt('File !filename does not exists', array('!filename' => $filename)), 'error');
+            return FALSE;
+          }
+          $data = file_get_contents($filename);
+          if(!$data = json_decode($data, TRUE)){
+            drush_log(dt('Json decode error!'), 'error');
+            return FALSE;
+          }
+          $func_name($data);
+        }
+      }
   }
 }
 
