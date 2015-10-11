@@ -1,7 +1,7 @@
 <?php
 /**
  * @file
- * Drupal database deploy module
+ * Drupal database deploy module.
  *
  * Make deployment via git much easier.
  */
