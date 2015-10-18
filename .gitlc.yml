@@ -16,6 +16,12 @@ deploy:
     contexts:
       - gitlc/codestyle/branch
       - gitlc/codestyle/commit
+  7.x:
+    server: "karma.vps-private.net"
+    user: "d7"
+    type:
+      name: "custop"
+    dir: '{home}/github/dd/{branch}'
   test:
     robin: TRUE
     type:
