@@ -1,7 +1,7 @@
 <?php
 /**
  * @file
- * Drupal database deploy module.
+ * Drupal database deploy module
  *
  * Make deployment via git much easier.
  */
@@ -44,9 +44,9 @@ function drupal_deploy_node_revision_delete($node) {
 function drupal_deploy_save_transaction($type, $op, $store) {
   $root_dir = variable_get('drupal_deploy_path_to_transations', 'private://drupal_deploy/');
 
-  $type_dir = $root_dir . '/' . $type;
+  $type_dir = $root_dir . DIRECTORY_SEPARATOR . $type;
 
-  file_check_directory($type_dir, FILE_CREATE_DIRECTORY);
+  file_prepare_directory($type_dir, FILE_CREATE_DIRECTORY);
 
   $transaction_file = $type_dir . DIRECTORY_SEPARATOR . microtime(TRUE) * 10000;
 
@@ -56,6 +56,7 @@ function drupal_deploy_save_transaction($type, $op, $store) {
   );
   file_unmanaged_save_data(serialize($data), $transaction_file);
 }
+
 
 function drupal_deploy_export_pretty_json($json) {
   $result      = '';
