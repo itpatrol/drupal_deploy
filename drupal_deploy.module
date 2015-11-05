@@ -225,12 +225,23 @@ function drupal_deploy_export_save($items, $filename = ''){
  */
 
 function dde_get_user_name($uid){
-  $user = db_fetch_object(db_query("SELECT * FROM {users} WHERE uid=%d", $uid));
+  $user = db_select('users', 'u')
+    ->fields('u')
+    ->condition('u.uid', $uid)
+    ->execute()
+    ->fetchObject();
   return $user->name;
 }
 
 function ddi_get_user_id($name){
-  if($user = db_fetch_object(db_query("SELECT * FROM {users} WHERE name='%s'", $name))){
+  $user = db_select('users', 'u')
+    ->fields('u')
+    ->condition('u.name', $name)
+    ->execute()
+    ->fetchObject();
+    
+  if(!empty($user))
+  {
     return $user->uid;
   }
   return 0;
@@ -238,12 +249,23 @@ function ddi_get_user_id($name){
 
 
 function dde_get_format_name($format){
-  $format = db_fetch_object(db_query("SELECT * FROM {filter_formats} WHERE format=%d", $format));
+  $format = db_select('filter_formats', 'ff')
+    ->fields('ff')
+    ->condition('ff.format', $format)
+    ->execute()
+    ->fetchObject();
+
   return $format->name;
 }
 
 function ddi_get_format_id($format){
-  if($format = db_fetch_object(db_query("SELECT * FROM {filter_formats} WHERE name='%s'", $format))){
+  $format = db_select('filter_formats', 'ff')
+    ->fields('ff')
+    ->condition('ff.name', $format)
+    ->execute()
+    ->fetchObject();
+
+  if(!empty($format)){
     return $format->format;
   }else{
     return FILTER_FORMAT_DEFAULT;
@@ -251,13 +273,23 @@ function ddi_get_format_id($format){
 }
 
 function dde_menu_alias($path){
-  if($alias = db_fetch_object(db_query("SELECT * FROM {url_alias} WHERE src = '%s'", $path))){
+  $alias = db_select('url_alias', 'ua')
+    ->fields('ua')
+    ->condition('ua.src', $path)
+    ->execute()
+    ->fetchObject();
+    
+  if(!empty($alias)){
     return $alias->dst;
   }
   
   $node_link = explode('/', $path);
   if($node_link[0] == 'node' && is_numeric($node_link[1])){
-    $node = db_fetch_object(db_query("SELECT * FROM {node} WHERE nid=%d", $node_link[1]));
+    $node = db_select('node', 'n')
+      ->fields('n')
+      ->condition('n.nid', $node_link[1])
+      ->execute()
+      ->fetchObject();
     return array(
       'title' => $node->title,
       'type' => $node->type,
@@ -269,7 +301,13 @@ function dde_menu_alias($path){
 }
 
 function ddi_menu_alias_origin($path){
-  if($alias = db_fetch_object(db_query("SELECT * FROM {url_alias} WHERE dst = '%s'", $path))){
+  $alias = db_select('url_alias', 'ua')
+    ->fields('ua')
+    ->condition('ua.dst', $path)
+    ->execute()
+    ->fetchObject();
+    
+  if(!empty($alias)){
     return $alias->src;
   }
   return $path;   
@@ -279,7 +317,12 @@ function dde_files_to_export($op, $fid = NULL){
   static $files;
   if($op == 'export' && !empty($fid)){
     if(!isset($files[$fid])){
-      $file = db_fetch_object(db_query("SELECT * FROM {files} WHERE fid=%d", $fid));
+      $file = db_select('files', 'f')
+        ->fields('f')
+        ->condition('f.fid', $fid)
+        ->execute()
+        ->fetchObject();
+        
       $file->username = dde_get_user_name($file->uid);
       unset($file->uid);
       unset($file->fid);      
