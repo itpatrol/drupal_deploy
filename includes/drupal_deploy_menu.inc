@@ -85,12 +85,20 @@ function ddi_menu_link_save(&$item){
 
 function drupal_deploy_export_menu_fetch_data($menu_name = ''){
   $items = array();
-  if(empty($menu_name)){
-    $result = db_query("SELECT * FROM {menu_links} WHERE plid = %d ORDER BY mlid", 0);
-  }else{
-    $result = db_query("SELECT * FROM {menu_links} WHERE menu_name='%s' AND plid = %d ORDER BY mlid", $menu_name, 0);
+  
+  $query = db_select('menu_links', 'm')
+    ->fields('m')
+    ->condition('m.plid', 0);
+    
+  if(!empty($menu_name)){
+    $query->condition('menu_name', $menu_name);
   }
-  while ($db_item = db_fetch_object($result)) {
+  
+  $query->orderBy('m.mlid');
+  
+  $menu_items = $query->execute()->fetchAll();
+  
+  foreach($menu_items as $db_item){
     $item = array(
       'menu_name' => $db_item->menu_name,
       'weight' => $db_item->weight,
@@ -114,8 +122,13 @@ function drupal_deploy_export_menu_fetch_data($menu_name = ''){
 }
 
 function dde_menu_items($plid){
-  $result = db_query("SELECT * FROM {menu_links} WHERE plid = %d ORDER BY mlid", $plid);
-  while ($db_item = db_fetch_object($result)) {
+  $menu_items = db_select('menu_links', 'm')
+    ->fields('m')
+    ->condition('m.plid', $plid)
+    ->orderBy('m.mlid')
+    ->execute()
+    ->fetchAll();
+  foreach($menu_items as $db_item){
     $item = array(
       'menu_name' => $db_item->menu_name,
       'weight' => $db_item->weight,
