@@ -110,6 +110,8 @@ if (!defined("JSON_NUMERIC_CHECK")) {
 
 if (!defined("JSON_UNESCAPED_SLASHES")) {
   define("JSON_UNESCAPED_SLASHES", 64);
+}
+if (!defined("JSON_HEX_TAG")) {
   define("JSON_HEX_TAG", 1);
   define("JSON_HEX_AMP", 2);
   define("JSON_HEX_APOS", 4);
