@@ -275,12 +275,12 @@ function ddi_get_format_id($format){
 function dde_menu_alias($path){
   $alias = db_select('url_alias', 'ua')
     ->fields('ua')
-    ->condition('ua.src', $path)
+    ->condition('ua.source', $path)
     ->execute()
     ->fetchObject();
     
   if(!empty($alias)){
-    return $alias->dst;
+    return $alias->alias;
   }
   
   $node_link = explode('/', $path);
@@ -303,12 +303,12 @@ function dde_menu_alias($path){
 function ddi_menu_alias_origin($path){
   $alias = db_select('url_alias', 'ua')
     ->fields('ua')
-    ->condition('ua.dst', $path)
+    ->condition('ua.alias', $path)
     ->execute()
     ->fetchObject();
     
   if(!empty($alias)){
-    return $alias->src;
+    return $alias->source;
   }
   return $path;   
 }
