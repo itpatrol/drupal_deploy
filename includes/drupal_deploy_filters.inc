@@ -26,8 +26,8 @@ function drupal_deploy_import_filters($filename){
 
 function drupal_deploy_import_filters_items($data)
 {
-  db_query("TRUNCATE {filter_formats}");
-  db_query("TRUNCATE {filters}");
+  db_query("TRUNCATE {filter_format}");
+  db_query("TRUNCATE {filter}");
   $result = db_query('SELECT * FROM {role}');
   $roles = array();
   while($role = db_fetch_object($result)){
@@ -49,7 +49,7 @@ function drupal_deploy_import_filters_items($data)
       'roles' => ',' . implode(",", $item_roles_ids) . ','
     );
     
-    if(drupal_write_record('filter_formats', $format))
+    if(drupal_write_record('filter_format', $format))
     {
       drupal_set_message(t('Filter !title restored.', array('!title' => $format['name'])));
       if(!empty($item['filters']))
@@ -57,7 +57,7 @@ function drupal_deploy_import_filters_items($data)
         foreach($item['filters'] as $filter)
         {
           $filter['format'] = $format['format'];
-          drupal_write_record('filters', $filter);
+          drupal_write_record('filter', $filter);
         }
       }
     }
@@ -67,30 +67,35 @@ function drupal_deploy_import_filters_items($data)
 function drupal_deploy_export_filters_fetch_data()
 {
   $items = array();
-  $result = db_query("SELECT * FROM {filter_formats} ORDER BY format");
-  while ($db_item = db_fetch_object($result)) {
+  $filter_formats = db_select('filter_format', 'ff')
+    ->fields('ff')
+    ->orderBy('ff.format')
+    ->execute()
+    ->fetchAll();
+    
+  foreach($filter_formats as $db_item){
     $item = array(
       'name' => $db_item->name,
+      'status' => $db_item->status,
+      'weight' => $db_item->weight,
+      'cache' => $db_item->cache,
     );
     
-    $roles = explode(",", $db_item->roles);
-    $rids = array();
-    foreach($roles as $role){
-      if(!empty($role)){
-        $rids[] = $role;
-      }
-    }
-    if(!empty($rids)){
-      $roles_result = db_query("SELECT * FROM {role} WHERE rid IN (%s)", implode(",", $rids));
-      while ($role = db_fetch_array($roles_result)) {
-        $item['roles'][] = $role['name'];
-      }
-    }
+    $roles = filter_get_roles_by_format($db_item->format);
+    print_r($roles);
     
-    $filters_result = db_query("SELECT * FROM {filters} WHERE format=%d ORDER BY format", $db_item->format);
-    while ($filter = db_fetch_array($filters_result)) {
-      unset($filter['fid']);
-      unset($filter['format']);      
+    
+    $filters = db_select('filter', 'f')
+    ->fields('f')
+    ->condition('format', $db_item->format)
+    ->orderBy('f.module')
+    ->orderBy('f.name')
+    ->execute()
+    ->fetchAll();
+    
+    foreach($filters as $filter){
+      unset($filter['format']);
+      $filter->settings = unserialize($filter->settings);
       $item['filters'][] = $filter;
     }
 
