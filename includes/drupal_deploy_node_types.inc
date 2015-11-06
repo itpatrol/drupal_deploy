@@ -181,7 +181,8 @@ function drupal_deploy_export_get_variables($type){
   $language->language = 'en';
   $form_id = 'node_type_form';
   $form_state = array();
-  $form = node_type_form($form_state, $type);
+  $form = array();
+  $form = node_type_form($form,$form_state, $type);
   drupal_prepare_form($form_id, $form, $form_state);
   
 
