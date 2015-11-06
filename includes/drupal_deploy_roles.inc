@@ -30,6 +30,8 @@ function drupal_deploy_import_roles_items($data)
     
     $role_permissions = array();
     
+    $item['permissions'] = _ddi_roles_filter_permissions($item['permissions']);
+    
     foreach($item['permissions'] as $perm){
       $role_permissions[$perm] = TRUE; 
     }
@@ -44,8 +46,7 @@ function drupal_deploy_import_roles_items($data)
     if($existing_item)
     {
       user_role_change_permissions($existing_item->rid, $role_permissions);
-      drush_log(dt('Role !role permissions updated.', array('!role' => $item['name'])));
-      
+      drush_log(dt('Role !role permissions updated.', array('!role' => $item['name'])));      
     }
     else
     {
@@ -53,9 +54,6 @@ function drupal_deploy_import_roles_items($data)
       $role->name = $item['name'];
       user_role_save($role);
       
-      drupal_static_reset('user_access');
-      drupal_static_reset('user_role_permissions');
-  
       $existing_item = db_select('role', 'r')
         ->fields('r')
         ->condition('r.name', $item['name'])
@@ -66,6 +64,29 @@ function drupal_deploy_import_roles_items($data)
       drush_log(dt('Role !role permissions created.', array('!role' => $item['name'])));
     }
   }
+}
+
+function _ddi_roles_filter_permissions($permissions){
+  $result_permissions = array();
+  $modules = array();
+  foreach (module_implements('permission') as $module) {
+    $modules[$module] = $module_info[$module]['name'];
+  }
+  foreach ($modules as $module => $display_name) {
+    if ($permissions = module_invoke($module, 'permission')) {
+      $form['permission'][] = array(
+        '#markup' => $module_info[$module]['name'],
+        '#id' => $module,
+      );
+      foreach ($permissions as $perm => $perm_item) {
+        
+        if(in_array($perm, $permissions)){
+          $result_permissions[] = $perm;  
+        }
+      }
+    }
+  }
+  return $result_permissions;
 }
 
 function drupal_deploy_export_roles_fetch_data()
