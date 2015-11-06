@@ -151,30 +151,23 @@ function _replace_values($item, $values_options){
 function drupal_deploy_export_node_types_fetch_data()
 {
   $items = array();
+  
+  $query = db_select('node_type', 'nt')
+    ->fields('nt')
+  
   $type = drush_get_option('type', FALSE);
-  if($type){
-    $result = db_query("SELECT * FROM {node_type} WHERE type='%s' ORDER BY type", $type);
-  }else{
-    $result = db_query("SELECT * FROM {node_type} ORDER BY type");
+  if(!empty($type)){
+    $query->condition('nt.type', $type);
   }
-  while ($db_item = db_fetch_object($result)) {
+  
+  $query->orderBy('nt.type');
+  
+  $node_type_items = $query->execute()->fetchAll();
+  
+  foreach($node_type_items as $db_item){
     
-    $item = array(
-      'type' => $db_item->type,
-      'name' => $db_item->name,
-      'module' => $db_item->module,
-      'has_title' => $db_item->has_title,
-      'title_label' => $db_item->title_label,
-      'has_body' => $db_item->has_body,
-      'body_label' => $db_item->body_label,
-      'description' => $db_item->description,
-      'help' => $db_item->help,
-      'min_word_count' => $db_item->min_word_count,
-      'custom' => $db_item->custom,
-      'modified' => $db_item->modified,
-      'locked' => $db_item->locked,
-    );
-    
+    $item = $db_item;
+        
     $item = array_merge($item, drupal_deploy_export_get_variables($db_item));
     $items[] = $item;
   }
