@@ -169,6 +169,7 @@ function drupal_deploy_export_node_types_fetch_data()
     $item = (array) $db_item;
         
     $item = array_merge($item, drupal_deploy_export_get_variables($db_item));
+    
     $items[] = $item;
   }
   return $items;
@@ -217,6 +218,13 @@ function drupal_deploy_export_get_variables($type){
     }
   }
 
+  $form_id = 'field_ui_field_overview_form';
+  $form_state = array();
+  $form = array();
+  $info = entity_get_info('node');
+  print_r($info);
+  $form = field_ui_field_overview_form($form,$form_state,'node', $type);
+  drupal_prepare_form($form_id, $form, $form_state);
   print_r($form);  
   
   return $return;
