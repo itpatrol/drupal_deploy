@@ -66,7 +66,7 @@ function drupal_deploy_export_roles_fetch_data()
   $role_names = user_roles();
   $role_permissions = user_role_permissions($role_names);
 
-  foreach($role_names as $rid => $role)
+  foreach($role_names as $rid => $role){
     $item = array(
       'name' => $role,
       'permissions' => array_key($role_permissions[$rid]),
