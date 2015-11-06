@@ -41,7 +41,6 @@ function drupal_deploy_import_filters_items($data)
   foreach($data as $format){
     $format_roles = array();
     
-    //convert roles names to rid -> TRUE (GRANTED).
     foreach($format['roles'] as $role){
       $format_roles[$roles[$role]] = TRUE;
     }
@@ -82,6 +81,7 @@ function drupal_deploy_export_filters_fetch_data()
     
   foreach($filter_formats as $db_item){
     $item = array(
+      'format' => $db_item->format,
       'name' => $db_item->name,
       'status' => $db_item->status,
       'weight' => $db_item->weight,
