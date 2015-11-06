@@ -50,6 +50,9 @@ function drupal_deploy_import_filters_items($data)
     
     if(drupal_write_record('filter_format', $format))
     {
+      cache_clear_all($format->format . ':', 'cache_filter', TRUE);
+      filter_formats_reset();
+       
       drush_log(dt('Filter !title restored.', array('!title' => $format->name)));
       if(!empty($item['filters']))
       {
