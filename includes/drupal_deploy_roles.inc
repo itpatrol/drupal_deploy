@@ -32,6 +32,7 @@ function drupal_deploy_import_roles_items($data)
     
     $item['permissions'] = _ddi_roles_filter_permissions($item['permissions']);
     print_r($item['permissions']);
+    exit();
     
     foreach($item['permissions'] as $perm){
       $role_permissions[$perm] = TRUE; 
