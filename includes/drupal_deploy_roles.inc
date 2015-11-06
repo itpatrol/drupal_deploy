@@ -14,12 +14,12 @@ function drupal_deploy_import_roles($filename){
       $filename = 'roles.export';
   }
   if(!is_file($filename)){
-    drupal_set_message(t('File !filename does not exists', array('!filename' => $filename)), 'error');
+    drush_log(dt('File !filename does not exists', array('!filename' => $filename)), 'error');
     return FALSE;
   }
   $data = file_get_contents($filename);
   if(!$data = json_decode($data, TRUE)){
-    drupal_set_message(t('Json decode error!'), 'error');
+    drush_log(dt('Json decode error!'), 'error');
   }
   drupal_deploy_import_roles_items($data);
 }
@@ -27,17 +27,23 @@ function drupal_deploy_import_roles($filename){
 function drupal_deploy_import_roles_items($data)
 {
   foreach($data as $item){
-    $existing_item = db_fetch_object(db_query("SELECT * FROM {role} WHERE name = '%s'", $item['name']));
+    
+    $existing_item = db_select('role', 'r')
+      ->fields('r')
+      ->condition('r.name', $item['name'])
+      ->execute()
+      ->fetchObject();
+    
     if($existing_item)
     {
-      $role_perms = array(
-        'rid' => $existing_item->rid,
-        'perm' => implode(", ", $item['permissions']),
-      );
+      $role_permissions = array();
       
-      if(drupal_write_record('permission', $role_perms, 'rid'))
-      {
-        drupal_set_message(t('Role !role permissions updated.', array('!role' => $item['name'])));
+      foreach($item['permissions'] as $perm){
+        $role_permissions[$perm] = TRUE; 
+      }
+      user_role_change_permissions($existing_item->rid, $role_permissions) {
+      
+      drush_log(dt('Role !role permissions updated.', array('!role' => $item['name'])));
       }
     }
     else
@@ -53,7 +59,7 @@ function drupal_deploy_import_roles_items($data)
         );
         if(drupal_write_record('permission', $role_perms))
         {
-          drupal_set_message(t('Role !role permissions created.', array('!role' => $item['name'])));
+          drush_log(dt('Role !role permissions created.', array('!role' => $item['name'])));
         }
       }
     }
