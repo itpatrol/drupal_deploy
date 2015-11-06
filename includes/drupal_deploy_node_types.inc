@@ -183,7 +183,8 @@ function drupal_deploy_export_get_variables($type){
   $form_state = array();
   $form = node_type_form($form_state, $type);
   drupal_prepare_form($form_id, $form, $form_state);
-
+  
+  print_r($form);
   $return = array();
   
   unset($form['identity']);
