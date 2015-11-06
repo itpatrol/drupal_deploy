@@ -53,6 +53,9 @@ function drupal_deploy_import_roles_items($data)
       $role->name = $item['name'];
       user_role_save($role);
       
+      drupal_static_reset('user_access');
+      drupal_static_reset('user_role_permissions');
+  
       $existing_item = db_select('role', 'r')
         ->fields('r')
         ->condition('r.name', $item['name'])
