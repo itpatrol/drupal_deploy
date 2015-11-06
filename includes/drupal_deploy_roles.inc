@@ -31,18 +31,33 @@ function drupal_deploy_import_roles_items($data)
     $role_permissions = array();
     
     $item['permissions'] = _ddi_roles_filter_permissions($item['permissions']);
+    print_r($item['permissions']);
     
     foreach($item['permissions'] as $perm){
       $role_permissions[$perm] = TRUE; 
     }
 
-
-    $existing_item = db_select('role', 'r')
-      ->fields('r')
-      ->condition('r.name', $item['name'])
-      ->execute()
-      ->fetchObject();
-    
+    $rid = FALSE;
+    if(!empty($item['type'])){
+      switch($item['type']){
+        case 'anonymous user':
+          $rid = DRUPAL_ANONYMOUS_RID;
+          break;
+        case 'authenticated user':
+          $rid = DRUPAL_AUTHENTICATED_RID;
+          break;
+      }
+    }
+    if($rid){
+      $existing_item = new stdClass();
+      $existing_item->rid = $rid;
+    }else{
+      $existing_item = db_select('role', 'r')
+        ->fields('r')
+        ->condition('r.name', $item['name'])
+        ->execute()
+        ->fetchObject();
+    }
     if($existing_item)
     {
       user_role_change_permissions($existing_item->rid, $role_permissions);
