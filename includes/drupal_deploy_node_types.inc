@@ -153,7 +153,7 @@ function drupal_deploy_export_node_types_fetch_data()
   $items = array();
   
   $query = db_select('node_type', 'nt')
-    ->fields('nt')
+    ->fields('nt');
   
   $type = drush_get_option('type', FALSE);
   if(!empty($type)){
