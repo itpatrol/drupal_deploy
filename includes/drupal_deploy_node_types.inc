@@ -223,6 +223,7 @@ function drupal_deploy_export_get_variables($type){
   $form = array();
   $info = entity_get_info('node');
   print_r($info);
+   module_load_include('inc', 'field_ui', 'field_ui.admin');
   $form = field_ui_field_overview_form($form,$form_state,'node', $type);
   drupal_prepare_form($form_id, $form, $form_state);
   print_r($form);  
