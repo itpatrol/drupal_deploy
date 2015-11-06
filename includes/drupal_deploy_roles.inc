@@ -96,6 +96,12 @@ function drupal_deploy_export_roles_fetch_data()
   $role_permissions = user_role_permissions($role_names);
 
   foreach($role_names as $rid => $role){
+    if(DRUPAL_ANONYMOUS_RID == $rid){
+      $role = 'anonymous user';
+    }
+    if(DRUPAL_AUTHENTICATED_RID == $rid){
+      $role = 'authenticated user';
+    }
     $item = array(
       'name' => $role,
       'permissions' => array_keys($role_permissions[$rid]),
