@@ -63,23 +63,13 @@ function drupal_deploy_import_roles_items($data)
 function drupal_deploy_export_roles_fetch_data()
 {
   $items = array();
-   $role_names = user_roles();
-  if (is_numeric($rid)) {
-    $role_names = array($rid => $role_names[$rid]);
-  }
-  // Fetch permissions for all roles or the one selected role.
+  $role_names = user_roles();
   $role_permissions = user_role_permissions($role_names);
-  print_r($role_permissions);
-  print_r($role_names);
-  exit();
-  $result = db_query("SELECT * FROM {role} r INNER JOIN {permission} p ON r.rid = p.rid ORDER BY r.name");
-  while ($db_item = db_fetch_object($result)) {
-    $permission = explode(", ", $db_item->perm);
-    sort($permission, SORT_STRING);
-    
+
+  foreach($role_names as $rid => $role)
     $item = array(
-      'name' => $db_item->name,
-      'permissions' => $permission,
+      'name' => $role,
+      'permissions' => array_key($role_permissions[$rid]),
     );
 
     $items[] = $item;
