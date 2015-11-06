@@ -82,8 +82,10 @@ function drupal_deploy_export_filters_fetch_data()
     );
     
     $roles = filter_get_roles_by_format($db_item);
-    print_r($roles);
-    
+
+    foreach($roles as $role){
+      $item['roles'][] = $role;
+    }    
     
     $filters = db_select('filter', 'f')
     ->fields('f')
