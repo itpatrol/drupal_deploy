@@ -42,7 +42,9 @@ function drupal_deploy_import_filters_items($data)
     $format_roles = array();
     
     foreach($format['roles'] as $role){
-      $format_roles[$roles[$role]] = TRUE;
+      if(isset($roles[$role])){
+        $format_roles[$roles[$role]] = TRUE;
+      }
     }
     $format['roles'] = $format_roles;
     
