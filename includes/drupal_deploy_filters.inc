@@ -28,26 +28,26 @@ function drupal_deploy_import_filters_items($data)
 {
   db_query("TRUNCATE {filter_format}");
   db_query("TRUNCATE {filter}");
-  $result = db_query('SELECT * FROM {role}');
+  $roles_data = db_select('role', 'r')
+    ->fields('r')
+    ->execute()
+    ->fetchAll();
+  
   $roles = array();
-  while($role = db_fetch_object($result)){
+  foreach($roles_data as $role){  
     $roles[$role->name] = $role->rid;
   }
-  foreach($data as $item){
+  
+  foreach($data as $format){
+    $format_roles = array();
     
-    $item_roles_ids = array();
-    if(!empty($item['roles'])){
-      foreach($item['roles'] as $role_name){
-        if(isset($roles[$role_name])){
-          $item_roles_ids[] = $roles[$role_name];
-        }
-      }
+    //convert roles names to rid -> TRUE (GRANTED).
+    foreach($format['roles'] as $role){
+      $format_roles[$roles[$role]] = TRUE;
     }
+    $format['roles'] = $format_roles;
     
-    $format = array(
-      'name' => $item['name'],
-      'roles' => ',' . implode(",", $item_roles_ids) . ','
-    );
+    $format = (object) $format;
     
     if(drupal_write_record('filter_format', $format))
     {
@@ -56,10 +56,17 @@ function drupal_deploy_import_filters_items($data)
       {
         foreach($item['filters'] as $filter)
         {
-          $filter['format'] = $format['format'];
+          $filter['format'] = $format->format;
           drupal_write_record('filter', $filter);
         }
       }
+      // Save user permissions.
+      if ($permission = filter_permission_name($format)) {
+        foreach ($format->roles as $rid => $enabled) {
+          user_role_change_permissions($rid, array($permission => $enabled));
+        }
+      }
+  
     }
   }
 }
