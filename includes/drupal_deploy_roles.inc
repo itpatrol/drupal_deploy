@@ -82,7 +82,7 @@ function drupal_deploy_import_roles_items($data)
   }
 }
 
-function _ddi_roles_filter_permissions($permissions){
+function _ddi_roles_filter_permissions($import_permissions){
   $result_permissions = array();
   $modules = array();
   foreach (module_implements('permission') as $module) {
@@ -94,9 +94,10 @@ function _ddi_roles_filter_permissions($permissions){
         '#markup' => $module_info[$module]['name'],
         '#id' => $module,
       );
+      print_r($permissions);
       foreach ($permissions as $perm => $perm_item) {
         
-        if(in_array($perm, $permissions)){
+        if(in_array($perm, $import_permissions)){
           $result_permissions[] = $perm;  
         }
       }
