@@ -56,7 +56,7 @@ function drupal_deploy_import_filters_items($data)
       filter_formats_reset();
        
       drush_log(dt('Filter !title restored.', array('!title' => $format->name)));
-      if(!empty($item['filters']))
+      if(!empty($format->filters))
       {
         foreach($format->filters as $filter)
         {
