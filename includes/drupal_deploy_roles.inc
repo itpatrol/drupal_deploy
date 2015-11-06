@@ -28,6 +28,13 @@ function drupal_deploy_import_roles_items($data)
 {
   foreach($data as $item){
     
+    $role_permissions = array();
+    
+    foreach($item['permissions'] as $perm){
+      $role_permissions[$perm] = TRUE; 
+    }
+
+
     $existing_item = db_select('role', 'r')
       ->fields('r')
       ->condition('r.name', $item['name'])
@@ -36,32 +43,24 @@ function drupal_deploy_import_roles_items($data)
     
     if($existing_item)
     {
-      $role_permissions = array();
-      
-      foreach($item['permissions'] as $perm){
-        $role_permissions[$perm] = TRUE; 
-      }
-      user_role_change_permissions($existing_item->rid, $role_permissions) {
-      
+      user_role_change_permissions($existing_item->rid, $role_permissions);
       drush_log(dt('Role !role permissions updated.', array('!role' => $item['name'])));
-      }
+      
     }
     else
     {
-      $role = array(
-        'name' => $item['name'],
-      );
-      if(drupal_write_record('role', $role))
-      {
-        $role_perms = array(
-          'rid' => $role['rid'],
-          'perm' => implode(", ", $item['permissions']),
-        );
-        if(drupal_write_record('permission', $role_perms))
-        {
-          drush_log(dt('Role !role permissions created.', array('!role' => $item['name'])));
-        }
-      }
+      $role = new stdClass();
+      $role->name = $item['name'];
+      user_role_save($role);
+      
+      $existing_item = db_select('role', 'r')
+        ->fields('r')
+        ->condition('r.name', $item['name'])
+        ->execute()
+        ->fetchObject();
+      
+      user_role_change_permissions($existing_item->rid, $role_permissions);
+      drush_log(dt('Role !role permissions created.', array('!role' => $item['name'])));
     }
   }
 }
