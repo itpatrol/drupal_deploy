@@ -166,7 +166,7 @@ function drupal_deploy_export_node_types_fetch_data()
   
   foreach($node_type_items as $db_item){
     
-    $item = $db_item;
+    $item = (array) $db_item;
         
     $item = array_merge($item, drupal_deploy_export_get_variables($db_item));
     $items[] = $item;
