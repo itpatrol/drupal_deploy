@@ -18,12 +18,12 @@ function drupal_deploy_import_node_types($filename){
       $filename = 'node_types.export';
   }
   if(!is_file($filename)){
-    drupal_set_message(t('File !filename does not exists', array('!filename' => $filename)), 'error');
+    drush_log(dt('File !filename does not exists', array('!filename' => $filename)), 'error');
     return FALSE;
   }
   $data = file_get_contents($filename);
   if(!$data = json_decode($data, TRUE)){
-    drupal_set_message(t('Json decode error!'), 'error');
+    drush_log(dt('Json decode error!'), 'error');
   }
   drupal_deploy_import_node_types_items($data);
 }
@@ -72,10 +72,10 @@ function drupal_deploy_import_node_types_items($data)
         }
         variable_set($variable, $value);
       }
-      drupal_set_message(t('Node type !title imported.', array('!title' => $item['name'])));
+      drush_log(dt('Node type !title imported.', array('!title' => $item['name'])));
     }
     else{
-      drupal_set_message(t('Node type !title NOT imported.', array('!title' => $item['name'])));
+      drush_log(dt('Node type !title NOT imported.', array('!title' => $item['name'])));
     }
   }
   node_types_rebuild();
