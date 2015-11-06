@@ -81,7 +81,7 @@ function drupal_deploy_export_filters_fetch_data()
       'cache' => $db_item->cache,
     );
     
-    $roles = filter_get_roles_by_format($db_item->format);
+    $roles = filter_get_roles_by_format($db_item);
     print_r($roles);
     
     
