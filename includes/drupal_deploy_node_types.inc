@@ -175,7 +175,7 @@ function drupal_deploy_export_node_types_fetch_data()
 }
 
 function drupal_deploy_export_get_variables($type){
-  
+  print_r($type);
   global $language;
   
   $language->language = 'en';
@@ -184,21 +184,27 @@ function drupal_deploy_export_get_variables($type){
   $form = node_type_form($form_state, $type);
   drupal_prepare_form($form_id, $form, $form_state);
   
-  print_r($form);
+
   $return = array();
+
+  unset($form['name']);
+  unset($form['type']);
+  unset($form['description']);
+  unset($form['additional_settings']);
   
-  unset($form['identity']);
-  unset($form['submission']);
+  unset($form['submission']['title_label']);
+  unset($form['submission']['help']);
   unset($form['old_type']);
   unset($form['orig_type']);
+  unset($form['base']);
+  unset($form['actions']);
   unset($form['module']);
   unset($form['custom']);
   unset($form['modified']);
   unset($form['locked']);
-  unset($form['submit']);
-  unset($form['reset']);  
-  unset($form['delete']);
   unset($form['form_id']);
+  unset($form['form_build_id']);
+  
 
   $tmp_array = array();
   foreach($form as $key => $val){
@@ -209,7 +215,8 @@ function drupal_deploy_export_get_variables($type){
       $return[$key] = _process_form_variable($val);  
     }
   }
-  
+
+  print_r($form);  
   
   return $return;
 }
