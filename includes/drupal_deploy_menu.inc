@@ -64,7 +64,12 @@ function ddi_menu_link_save(&$item){
           
   $item['link_path'] = ddi_menu_alias_origin($item['link_path']);
       
-  $existing_item = db_fetch_object(db_query("SELECT * FROM {menu_links} WHERE link_path = '%s' and menu_name='%s'", $item['link_path'], $item['menu_name']));
+  $existing_item = db_select('menu_links', 'm')
+    ->fields('m')
+    ->condition('m.link_path', $item['link_path'])
+    ->condition('m.menu_name', $item['menu_name'])
+    ->execute()
+    ->fetchObject();
   
   if($existing_item->mlid)
   {
