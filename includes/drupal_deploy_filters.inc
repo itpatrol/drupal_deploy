@@ -94,7 +94,7 @@ function drupal_deploy_export_filters_fetch_data()
     ->fetchAll();
     
     foreach($filters as $filter){
-      unset($filter['format']);
+      unset($filter->format);
       $filter->settings = unserialize($filter->settings);
       $item['filters'][] = $filter;
     }
