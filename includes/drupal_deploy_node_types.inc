@@ -55,9 +55,12 @@ function drupal_deploy_import_node_types_items($data)
     }
     
     $values_options = drupal_deploy_import_get_variables($item);
+    print_r($values_options);
     $item = _replace_values($item, $values_options);
+    print_r($item);
     $item = _prepare_item_values_to_save($item, $values_options);
-        
+    print_r($item);
+            
     $node_type = (object) $item;
     $status = node_type_save($node_type);
     if($status == SAVED_UPDATED || $status == SAVED_NEW)
