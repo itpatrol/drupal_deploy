@@ -146,6 +146,7 @@ function _replace_values($item, $values_options){
         }else{
           if($value_key = array_search($val, $item)){
             $result[] = $value_key;
+
           }
           echo "we are here 2~\n-----\n";
           print_r($item);
@@ -156,6 +157,8 @@ function _replace_values($item, $values_options){
     }
     if($origin_item == $item && !empty($result)){
       // We don't have changes. Let's check if 
+      echo "We return result here?";
+      print_r($result);
       return $result;
     }
     return $item;
