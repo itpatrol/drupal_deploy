@@ -186,7 +186,6 @@ function drupal_deploy_export_get_fields($type){
 }
 
 function drupal_deploy_export_get_variables($type){
-  print_r($type);
   global $language;
   
   $language->language = 'en';
@@ -227,16 +226,6 @@ function drupal_deploy_export_get_variables($type){
       $return[$key] = _process_form_variable($val);  
     }
   }
-
-  $form_id = 'field_ui_field_overview_form';
-  $form_state = array();
-  $form = array();
-  $info = entity_get_info('node');
-  print_r($info);
-   module_load_include('inc', 'field_ui', 'field_ui.admin');
-  $form = field_ui_field_overview_form($form,$form_state,'node', $type);
-  drupal_prepare_form($form_id, $form, $form_state);
-  print_r($form);  
   
   return $return;
 }
