@@ -144,7 +144,7 @@ function _replace_values($item, $values_options){
             return $key;
           }
         }else{
-          if(array_search($val, $item)){
+          if(FALSE !== array_search($val, $item)){
             $result[] = $key;
             "Echo found". $key;
           }else{
