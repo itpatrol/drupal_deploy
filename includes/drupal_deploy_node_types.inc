@@ -144,9 +144,11 @@ function _replace_values($item, $values_options){
             return $key;
           }
         }else{
-          if($value_key = array_search($val, $item)){
-            $result[] = $value_key;
-            "Echo found". $value_key;
+          if(array_search($val, $item)){
+            $result[] = $key;
+            "Echo found". $key;
+          }else{
+            echo "Key: " . $val ." is not in array ". print_r($item);
           }
           echo "we are here 2~\n-----\n";
           print_r($item);
