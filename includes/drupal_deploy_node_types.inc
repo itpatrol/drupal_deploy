@@ -158,6 +158,7 @@ function _replace_values($item, $values_options){
         
         //If empty result, let's check maybe we don't need to assign values
         if(empty($result)){
+          echo "We are in second stage\n";
           foreach($item as $key => $val){
             if(isset($values_options[$key])){
               if(!is_numeric($key)){
