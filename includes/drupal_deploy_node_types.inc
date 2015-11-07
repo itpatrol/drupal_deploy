@@ -129,7 +129,11 @@ function _replace_values($item, $values_options){
       $result = NULL;
       foreach($values_options as $key => $val){
         if(is_array($item)){
+          echo " item" .print_r($item);
+          echo " value " .$val;
+          echo "\n";
           if($val == TRUE){
+            echo "TRUE?";
             $result = FALSE;
             break;
           }
