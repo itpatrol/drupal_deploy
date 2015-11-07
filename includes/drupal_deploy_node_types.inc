@@ -132,7 +132,7 @@ function _replace_values($item, $values_options){
           echo " item" .print_r($item);
           echo " value " .$val;
           echo "\n";
-          if($val == TRUE){
+          if(is_numeric($val) && $val == 1){
             echo "TRUE?";
             $result = FALSE;
             break;
