@@ -129,6 +129,7 @@ function _replace_values($item, $values_options){
       $result = NULL;
       foreach($values_options as $key => $val){
         if(is_array($item)){
+          echo "array\n";
           echo " item" .print_r($item);
           echo " value " .$val;
           echo "\n";
@@ -154,7 +155,8 @@ function _replace_values($item, $values_options){
       }
       if(!$result){
         return $item;
-      }     
+      }
+      print_r($result);     
       return $result;
     }
   }
