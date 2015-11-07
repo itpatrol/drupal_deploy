@@ -136,10 +136,10 @@ function _replace_values($item, $values_options){
       if(is_array($val)){
         $item[$key] = _replace_values($item[$key],$values_options[$key]);
       }else{
-        if($value_key = array_search($item, $values_options)){
-          $item[$key] =  $value_key;
-        }else{
-          $item[$key] = $item[$key];
+        if(!is_array($item)){
+          if($item == $val){
+            return $key;
+          }
         }
       }
     }
