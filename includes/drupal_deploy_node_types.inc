@@ -141,6 +141,8 @@ function _replace_values($item, $values_options){
           if($item == $val){
             return $key;
           }
+        }else{
+          echo "we are here 2~\n";
         }
       }
     }
