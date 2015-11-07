@@ -121,50 +121,49 @@ function _prepare_item_values_to_save($item, $values_options){
 }
 
 function _replace_values($item, $values_options){
+  
   echo "Go deeper\n";
   print_r($item);
   print_r($values_options);
+  // Checking all settings for $item.
   if(is_array($values_options)){
+    //Key switch for reqursion.
     $values_array = FALSE;
     foreach($values_options as $key => $val){
+      // If value is array, we need to go dipper
       if(is_array($val)){
         $values_array = TRUE;
         $item[$key] = _replace_values($item[$key],$values_options[$key]);
       }
     }
+    // Return data imidatelly if it is array values here.
+    if($values_array){
+      return $item;
+    }
+    //Value options contain only possible results to replace
     if($values_array == FALSE){
-      $result = NULL;
-      foreach($values_options as $key => $val){
-        if(is_array($item)){
-          echo "array\n";
-          echo " item" .print_r($item);
-          echo " value " .$val;
-          echo "\n";
-          if(is_numeric($val) && $val == 1){
-            echo "TRUE?";
-            $result = FALSE;
-            break;
-          }
-          foreach($item as $item_val){
-            if($item_val == $val){
-              $result[] = $key;
-            }
-          }
-        }else{
-          echo " item" .$item;
-          echo " value " .$val;
-          echo " key " .$key;          
-          echo "\n";
-          if($item == $val){
-            return $key;
+      
+      // IF variable contain multiple values
+      if(is_array($item)){
+        $result = NULL;
+        //Collecting key values from $values_options
+        foreach($values_options as $key => $val){
+          if(in_array($val, $item)){
+            $result[] = $key;
           }
         }
+        // Return key values for this item
+        return $result;
       }
-      if(!$result){
-        return $item;
+      
+      //If item is not array and value options is array.. we need key for value
+      if(is_array($values_options)){
+        return array_search($item, $values_options);
       }
-      print_r($result);     
-      return $result;
+      //If we get here, debug it!
+      echo "debug!";
+      print_r($item);
+      print_r($values_options);      
     }
   }
   return $item;
