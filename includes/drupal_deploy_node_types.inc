@@ -142,7 +142,10 @@ function _replace_values($item, $values_options){
             return $key;
           }
         }else{
-          echo "we are here 2~\n";
+          echo "we are here 2~\n-----\n";
+          print_r($item);
+          echo $val;
+          echo "---\n";
         }
       }
     }
