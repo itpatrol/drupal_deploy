@@ -141,7 +141,7 @@ function _replace_values($item, $values_options){
           }
           foreach($item as $item_val){
             if($item_val == $val){
-              $result[] = $key;
+              $result[$key] = $key;
             }
           }
         }else{
