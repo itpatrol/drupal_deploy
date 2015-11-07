@@ -58,7 +58,7 @@ function drupal_deploy_import_node_types_items($data)
     unset($item['fields']);
     
     $values_options = drupal_deploy_import_get_variables($item);
-    print_r($values_options)
+    print_r($values_options);
     $item = _replace_values($item, $values_options);
     print_r($item);
     exit();
