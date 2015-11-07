@@ -121,7 +121,9 @@ function _prepare_item_values_to_save($item, $values_options){
 }
 
 function _replace_values($item, $values_options){
-  
+  if(empty($item)){
+    return FALSE;
+  }
   echo "Go deeper\n";
   print_r($item);
   print_r($values_options);
@@ -152,6 +154,19 @@ function _replace_values($item, $values_options){
           if(in_array($val, $item)){
             $result[] = $key;
           }
+        }
+        
+        //If empty result, let's check maybe we don't need to assign values
+        if(empty($result)){
+          foreach($item as $key => $val){
+            if(isset($values_options[$key])){
+              if(!is_numeric($key)){
+                // It's alreaddy properly assigned value here!
+                return $item;
+              }
+            }
+          }
+          
         }
         // Return key values for this item
         return $result;
