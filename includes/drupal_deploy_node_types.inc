@@ -145,6 +145,7 @@ function _replace_values($item, $values_options){
       
       // IF variable contain multiple values
       if(is_array($item)){
+        echo "we are in array mode\n";
         $result = NULL;
         //Collecting key values from $values_options
         foreach($values_options as $key => $val){
@@ -157,6 +158,7 @@ function _replace_values($item, $values_options){
       }
       
       //If item is not array and value options is array.. we need key for value
+      echo "we are NOT in array mode\n";      
       if(is_array($values_options)){
         return array_search($item, $values_options);
       }
