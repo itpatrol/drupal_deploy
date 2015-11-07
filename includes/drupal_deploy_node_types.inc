@@ -131,7 +131,6 @@ function _replace_values($item, $values_options){
   // Checking all settings for $item.
   if(is_array($values_options)){
     //Key switch for reqursion.
-    $values_array = FALSE;
     foreach($values_options as $key => $val){
       // If value is array, we need to go dipper
       if(is_array($val)){
@@ -150,10 +149,6 @@ function _replace_values($item, $values_options){
       }
     }
     return $item;
-    // Return data imidatelly if it is array values here.
-    if($values_array){
-      return $item;
-    }
   }else{
     echo "we are here??";
   }
