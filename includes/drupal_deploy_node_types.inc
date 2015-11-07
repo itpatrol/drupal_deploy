@@ -134,10 +134,12 @@ function _replace_values($item, $values_options){
     foreach($values_options as $key => $val){
       // If value is array, we need to go dipper
       if(is_array($val)){
-        $values_array = TRUE;
         $item[$key] = _replace_values($item[$key],$values_options[$key]);
+      }else{
+        $item[$key] = $item[$key];
       }
     }
+    return $item;
     // Return data imidatelly if it is array values here.
     if($values_array){
       return $item;
