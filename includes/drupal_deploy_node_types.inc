@@ -148,7 +148,7 @@ function _replace_values($item, $values_options){
             $result[] = $key;
             "Echo found". $key;
           }else{
-            echo "Key: " . $val ." is not in array ". print_r($item);
+            echo "Key: " . $val ." is not in array ". print_r($item,true);
           }
           echo "we are here 2~\n-----\n";
           print_r($item);
