@@ -152,6 +152,13 @@ function _replace_values($item, $values_options){
         //Collecting key values from $values_options
         foreach($values_options as $key => $val){
           if(in_array($val, $item)){
+          
+            $item_key = array_search($val, $item);
+            if($item_key == $key && !is_numeric($item_key)){
+              // It's alreaddy properly assigned value here!
+                return $item;
+            }
+            
             $result[] = $key;
           }
         }
