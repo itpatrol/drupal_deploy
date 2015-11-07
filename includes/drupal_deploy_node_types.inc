@@ -121,12 +121,13 @@ function _prepare_item_values_to_save($item, $values_options){
 }
 
 function _replace_values($item, $values_options){
-  if(empty($item)){
-    return FALSE;
-  }
+
   echo "Go deeper\n";
   print_r($item);
   print_r($values_options);
+  if(empty($item)){
+    return FALSE;
+  }
   // Checking all settings for $item.
   if(is_array($values_options)){
     //Key switch for reqursion.
@@ -148,54 +149,8 @@ function _replace_values($item, $values_options){
     if($values_array){
       return $item;
     }
-    //Value options contain only possible results to replace
-    if($values_array == FALSE){
-      
-      // IF variable contain multiple values
-      if(is_array($item)){
-        echo "we are in array mode\n";
-        $result = NULL;
-        //Collecting key values from $values_options
-        foreach($values_options as $key => $val){
-          if(in_array($val, $item)){
-          
-            $item_key = array_search($val, $item);
-            if($item_key == $key && !is_numeric($item_key)){
-              // It's alreaddy properly assigned value here!
-                return $item;
-            }
-            
-            $result[] = $key;
-          }
-        }
-        
-        //If empty result, let's check maybe we don't need to assign values
-        if(empty($result)){
-          echo "We are in second stage\n";
-          foreach($item as $key => $val){
-            if(isset($values_options[$key])){
-              if(!is_numeric($key)){
-                // It's alreaddy properly assigned value here!
-                return $item;
-              }
-            }
-          }
-          
-        }
-        // Return key values for this item
-        return $result;
-      }
-      
-      //If item is not array and value options is array.. we need key for value
-      echo "we are NOT in array mode\n";      
-      if(is_array($values_options)){
-        return array_search($item, $values_options);
-      }
-      //If we get here, debug it!
-      echo "debug!";
-      print_r($item);
-      print_r($values_options);      
-    }
+  }else{
+    echo "we are here??";
   }
   return $item;
 }
