@@ -54,7 +54,7 @@ function drupal_deploy_import_node_types_items($data)
       }
     }
     
-    $values_options = drupal_deploy_export_get_variables_import($item);
+    $values_options = drupal_deploy_import_get_variables($item);
     $item = _replace_values($item, $values_options);
     $item = _prepare_item_values_to_save($item, $values_options);
         
@@ -192,7 +192,7 @@ function drupal_deploy_export_get_variables($type){
   $form_id = 'node_type_form';
   $form_state = array();
   $form = array();
-  $form = node_type_form($form,$form_state, $type);
+  $form = node_type_form($form, $form_state, $type);
   drupal_prepare_form($form_id, $form, $form_state);
   
 
@@ -266,30 +266,36 @@ function _process_form_variable($array)
   }
 }
 
-function drupal_deploy_export_get_variables_import($type){
+function drupal_deploy_import_get_variables($type){
   
   global $language;
   
   $language->language = 'en';
   $form_id = 'node_type_form';
   $form_state = array();
-  $form = node_type_form($form_state, $type);
+  $form = array();
+  $form = node_type_form($form, $form_state, $type);
   drupal_prepare_form($form_id, $form, $form_state);
 
   $return = array();
   
-  unset($form['identity']);
-  unset($form['submission']);
+  unset($form['name']);
+  unset($form['type']);
+  unset($form['description']);
+  unset($form['additional_settings']);
+  
+  unset($form['submission']['title_label']);
+  unset($form['submission']['help']);
   unset($form['old_type']);
   unset($form['orig_type']);
+  unset($form['base']);
+  unset($form['actions']);
   unset($form['module']);
   unset($form['custom']);
   unset($form['modified']);
   unset($form['locked']);
-  unset($form['submit']);
-  unset($form['reset']);  
-  unset($form['delete']);
   unset($form['form_id']);
+  unset($form['form_build_id']);
 
   foreach($form as $key => $val){
     if($key[0] == '#')
