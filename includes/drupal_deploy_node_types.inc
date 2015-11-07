@@ -145,6 +145,7 @@ function _replace_values($item, $values_options){
         }else{
           echo " item" .$item;
           echo " value " .$val;
+          echo " key " .$key;          
           echo "\n";
           if($item == $val){
             return $key;
