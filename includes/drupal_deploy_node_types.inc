@@ -165,18 +165,24 @@ function drupal_deploy_export_node_types_fetch_data()
   $node_type_items = $query->execute()->fetchAll();
   
   foreach($node_type_items as $db_item){
-    $node_type = node_type_get_type($db_item);
-    $fields = field_info_instances('node', $db_item->type);
-    print_r($node_type);
-    print_r($fields);
-/*    
+
     $item = (array) $db_item;
-        
     $item = array_merge($item, drupal_deploy_export_get_variables($db_item));
-    
-    $items[] = $item;*/
+    $item['fields'] = drupal_deploy_export_get_fields($db_item->type);
+    $items[] = $item;
   }
   return $items;
+}
+
+function drupal_deploy_export_get_fields($type){
+  $fields = field_info_instances('node', $type);
+  foreach($fields as $name => $settings){
+    unset($fields[$name]['id']);
+    unset($fields[$name]['field_id']);    
+    unset($fields[$name]['entity_type']);    
+    unset($fields[$name]['bundle']);    
+  }
+  return $fields;
 }
 
 function drupal_deploy_export_get_variables($type){
