@@ -122,12 +122,15 @@ function _prepare_item_values_to_save($item, $values_options){
 
 function _replace_values($item, $values_options){
 
+  $origin_item = $item;
   echo "Go deeper\n";
   print_r($item);
   print_r($values_options);
   if(empty($item)){
     return FALSE;
   }
+  
+  $result = NULL;
   // Checking all settings for $item.
   if(is_array($values_options)){
     //Key switch for reqursion.
@@ -141,12 +144,19 @@ function _replace_values($item, $values_options){
             return $key;
           }
         }else{
+          if($value_key = array_search($val, $item)){
+            $result[] = $value_key;
+          }
           echo "we are here 2~\n-----\n";
           print_r($item);
           echo $val;
           echo "---\n";
         }
       }
+    }
+    if($origin_item == $item && !empty($result)){
+      // We don't have changes. Let's check if 
+      return $result;
     }
     return $item;
   }else{
