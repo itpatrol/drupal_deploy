@@ -38,7 +38,6 @@ function drupal_deploy_export_forum_fetch_data(){
   
   $containers = db_select('taxonomy_term_data', 'td')
     ->condition('td.tid', $terms, 'IN')
-    ->condition('td.vid', $vocabulary_id)
     ->execute()
     ->fetchAll();
     
