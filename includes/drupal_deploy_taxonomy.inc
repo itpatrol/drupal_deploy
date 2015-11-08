@@ -135,7 +135,7 @@ function drupal_deploy_export_taxonomy_fetch_data($vocabulary_name = ''){
     print_r($vocabulary);
     $tree = taxonomy_get_tree($vocabulary->vid);
     print_r($tree);
-    unset($vocabulary['vid']);
+    unset($vocabulary->vid);
     
     exit();
     $terms = array();
