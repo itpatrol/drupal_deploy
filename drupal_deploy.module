@@ -365,6 +365,9 @@ function dde_fields($entity_type, $bundle_name){
 }
 
 function ddi_fields($fields, $entity_type, $bundle_name){
+  if(empty($fields['fields'])){
+    return;
+  }
   foreach ($fields['fields'] as $field_name => $field) {
     if(!module_exists($field['module'])){
       drush_log(dt('!field_name field could not be created because the module !module is disabled or missing.', array('!field_name' => $field_name, '!module' => $field['module'])), 'error');
