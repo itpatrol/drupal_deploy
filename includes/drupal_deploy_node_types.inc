@@ -72,6 +72,9 @@ function drupal_deploy_import_node_types_items($data)
           continue;
         }
         $variable = $key . '_' . $item['type'];
+        if (is_array($value)) {
+          $value = array_keys(array_filter($value));
+        }
         variable_set($variable, $value);
       }
       drush_log(dt('Node type !title imported.', array('!title' => $item['name'])));
