@@ -118,6 +118,8 @@ function ddi_fields($fields, $type){
 
       $exists_instance = field_read_instance('node', $field_name, $type);
       if (!$exists_instance) {
+        $instance['entity_type'] = 'node';
+        $instance['bundle'] = $type;
         field_create_instance($instance);
         drush_log(dt('!field_name instance has been created for !bundle in node.', array('!field_name' => $field_name, '!bundle' => $type)));
       }
