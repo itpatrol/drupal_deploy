@@ -108,14 +108,16 @@ function drupal_deploy_save_term($term, $vid, $parent = 0){
   if(isset($term['path_alias'])){
     $term['pathauto_perform_alias'] = FALSE;
   }
-  print_r($term);
-  $status = taxonomy_term_save((object)$term);
+  $subterms = $term['terms'];
+  unset($term['terms']);
+  $term = (object) $term;
+  $status = taxonomy_term_save($term);
   if($status == SAVED_UPDATED || $status == SAVED_NEW)
   {
-    if(is_array($term['terms']))
-    foreach($term['terms'] as $sub_term)
+    if(is_array($subterms))
+    foreach($subterms as $sub_term)
     {
-      $status = drupal_deploy_save_term($sub_term, $vid, $term['tid']);
+      $status = drupal_deploy_save_term($sub_term, $vid, $term->tid);
       if($status == SAVED_UPDATED || $status == SAVED_NEW){
         drush_log(dt('Term !name imported',array('!name' => $sub_term['name'])), 'ok');
       }
