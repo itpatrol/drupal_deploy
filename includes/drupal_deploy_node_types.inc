@@ -136,7 +136,7 @@ function _replace_values($item, $values_options){
   && 1 == count($item) ){
     $item_key = key($item);
     if(!is_numeric($item_key) 
-    && is_set($values_options[$item_key])){
+    && isset($values_options[$item_key])){
       return $item;
     }
   }
