@@ -131,6 +131,10 @@ function drupal_deploy_export_taxonomy_fetch_data($vocabulary_name = ''){
   foreach($vocabularies as $db_item){
   
     $vocabulary = taxonomy_vocabulary_machine_name_load($db_item->machine_name);
+    $result = dde_fields('taxonomy_vocabulary', $vocabulary->machine_name);
+    
+    $vocabulary->fields = $result['fields'];
+    $vocabulary->instances = $result['instances'];
     
     $tree = taxonomy_get_tree($vocabulary->vid);
     $vocabulary->terms = dde_terms($vocabulary->vid);
@@ -140,6 +144,7 @@ function drupal_deploy_export_taxonomy_fetch_data($vocabulary_name = ''){
   
   return $items;
 }  
+
 function dde_terms($vid){
   $query = db_select('taxonomy_term_data', 'td');
   $query->join('taxonomy_term_hierarchy', 'th', 'th.tid = td.tid');

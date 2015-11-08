@@ -255,26 +255,14 @@ function drupal_deploy_export_node_types_fetch_data()
     $item['menu']['menu_options'] = variable_get('menu_options_' . $db_item->type);
     $item['menu']['menu_parent'] = variable_get('menu_parent_' . $db_item->type);
     
-    drupal_deploy_export_get_fields($item, $db_item->type);
+    $result = dde_fields('node', $db_item->type);
+    $item['fields'] = $result['fields'];
+    $item['instances'] = $result['instances'];
     $items[] = $item;
   }
   return $items;
 }
 
-function drupal_deploy_export_get_fields(&$item, $type){
-  $all_fields = field_info_fields();
-  
-  $field_instances = field_info_instances('node', $type);
-  $item['fields'] = array();
-  foreach($field_instances as $name => $settings){
-    unset($field_instances[$name]['id']);
-    unset($field_instances[$name]['field_id']);    
-    unset($field_instances[$name]['entity_type']);    
-    unset($field_instances[$name]['bundle']);   
-    $item['fields'][$name] =  $all_fields[$name];
-  }
-  $item['instances'] = $field_instances;
-}
 
 function drupal_deploy_export_get_variables($type){
   global $language;
