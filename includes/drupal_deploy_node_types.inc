@@ -135,10 +135,13 @@ function _replace_values($item, $values_options){
   if(is_array($values_options)){
     //Key switch for reqursion.
     if(!is_array($item)){
+      echo "Not in array!\n";
       $value_key = array_search($item, $values_options);
       if(FALSE !== $value_key){
+        echo $value_key ." \n";
         return $value_key;
       }
+        echo $item ." -- origin\n";
       return $item;
     }
 
