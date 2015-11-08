@@ -81,6 +81,9 @@ function drupal_deploy_import_node_types_items($data)
       }
       
       //Fix menu
+      if(empty($origin_item['menu']['menu_options'])){
+        $origin_item['menu']['menu_options'] = array();
+      }
       variable_set('menu_options_' . $item['type'], $origin_item['menu']['menu_options']);
       variable_set('menu_parent_' . $item['type'], $origin_item['menu']['menu_parent']);
       
