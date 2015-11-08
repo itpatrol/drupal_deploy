@@ -131,7 +131,12 @@ function drupal_deploy_export_taxonomy_fetch_data($vocabulary_name = ''){
   foreach($vocabularies as $db_item){
   
     $vocabulary = taxonomy_vocabulary_machine_name_load($db_item->machine_name);
+    
     print_r($vocabulary);
+    $tree = taxonomy_get_tree($vocabulary->vid);
+    print_r($tree);
+    unset($vocabulary['vid']);
+    
     exit();
     $terms = array();
     $terms_result = db_query(db_rewrite_sql('SELECT t.tid, t.*, parent FROM {term_data} t INNER JOIN {term_hierarchy} h ON t.tid = h.tid WHERE t.vid = %d ORDER BY tid', 't', 'tid'), $db_item->vid);
