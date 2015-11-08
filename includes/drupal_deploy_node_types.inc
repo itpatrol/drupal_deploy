@@ -243,6 +243,10 @@ function drupal_deploy_export_node_types_fetch_data()
     $item = (array) $db_item;
     $item = array_merge($item, drupal_deploy_export_get_variables($db_item));
     
+    //Menu fix
+    $item['menu']['menu_options'] = variable_get('menu_options_' . $db_item->type);
+    $item['menu']['menu_parent'] = variable_get('menu_parent_' . $db_item->type);
+    
     drupal_deploy_export_get_fields($item, $db_item->type);
     $items[] = $item;
   }
