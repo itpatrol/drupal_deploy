@@ -37,6 +37,7 @@ function drupal_deploy_export_forum_fetch_data(){
   $items['vocabulary'] = $stored_vocabulary->name;
   
   $containers = db_select('taxonomy_term_data', 'td')
+    ->fields('td')
     ->condition('td.tid', $terms, 'IN')
     ->execute()
     ->fetchAll();
