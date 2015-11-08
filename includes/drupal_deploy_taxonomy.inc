@@ -108,7 +108,7 @@ function drupal_deploy_save_term($term, $vid, $parent = 0){
   if(isset($term['path_alias'])){
     $term['pathauto_perform_alias'] = FALSE;
   }
-  
+  print_r($term);
   $status = taxonomy_term_save((object)$term);
   if($status == SAVED_UPDATED || $status == SAVED_NEW)
   {
