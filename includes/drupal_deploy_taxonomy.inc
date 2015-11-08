@@ -165,6 +165,7 @@ function dde_terms($vid){
         $term->synonyms[] = $term_synonym->name;
       }
       $term->entity = entity_load('taxonomy_term', array($term->tid));
+      print_r($term);
       exit();
       
       $terms[$term->tid] = (array)$term;
