@@ -61,23 +61,25 @@ function drupal_deploy_import_taxonomy_items($data, $vocabulary_name = ''){
       $item['vid'] = $stored_vocabulary->vid;
     }
     
-    $status = taxonomy_vocabulary_save((object)$item);
+    $vocabulary = (object) $item;
+    
+    $status = taxonomy_vocabulary_save($vocabulary);
     if($status == SAVED_UPDATED || $status == SAVED_NEW)
     {
-      drush_log(dt('Vocabulary !name imported',array('!name' => $item['name'])), 'ok');
-      ddi_fields($fields, 'taxonomy_term', $item['machine_name']);
+      drush_log(dt('Vocabulary !name imported',array('!name' => $vocabulary->name)), 'ok');
+      ddi_fields($fields, 'taxonomy_term', $vocabulary->machine_name);
 
       if(is_array($terms)){
         foreach($terms as $term)
         {
-          $term['vid'] = $item['vid'];
-          $status = drupal_deploy_save_term($term, $item['vid']);
+          $term['vid'] = $vocabulary->vid;
+          $status = drupal_deploy_save_term($term, $vocabulary->vid);
           if($status == SAVED_UPDATED || $status == SAVED_NEW){
             drush_log(dt('Term !name imported',array('!name' => $term['name'])), 'ok');
           }
         }
       }else{
-        drush_log(dt('Vocabulary !name does not have terms',array('!name' => $item['name'])), 'warning');
+        drush_log(dt('Vocabulary !name does not have terms',array('!name' => $vocabulary->name)), 'warning');
       }
     }
     
