@@ -133,7 +133,7 @@ function drupal_deploy_drush_help($section) {
  */
 function drupal_deploy_export($type = '') {
   $filename = drush_get_option('file');
-  ini_set('memory_limit', '1G');
+  ini_set('memory_limit', '10G');
   switch($type){
     case 'menu':
       $menu_name = drush_get_option('name');
