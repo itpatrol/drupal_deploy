@@ -33,18 +33,19 @@ function drupal_deploy_import_node_types_items($data)
   $not_save_variable = array(
     'type',
     'name',
-    'module',
-    'has_title',
-    'title_label',
-    'has_body',
-    'body_label',
+    'base',
     'description',
     'help',
-    'min_word_count',
+    'has_title',
+    'title_label',
     'custom',
     'modified',
     'locked',
+    'orig_type',
+    'module',
+    'disabled',
   );
+
   $type = drush_get_option('type', FALSE);
   foreach($data as $item){
     
@@ -71,9 +72,6 @@ function drupal_deploy_import_node_types_items($data)
           continue;
         }
         $variable = $key . '_' . $item['type'];
-        if (is_array($value)) {
-          $value = array_keys(array_filter($value));
-        }
         variable_set($variable, $value);
       }
       drush_log(dt('Node type !title imported.', array('!title' => $item['name'])));
