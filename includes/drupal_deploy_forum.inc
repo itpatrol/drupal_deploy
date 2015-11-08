@@ -32,13 +32,17 @@ function drupal_deploy_export_forum_fetch_data(){
   $terms = variable_get('forum_containers', FALSE);
   $vocabulary_id = variable_get('forum_nav_vocabulary', FALSE);
   
-  $stored_vocabulary = db_fetch_object(db_query("SELECT * FROM {vocabulary} WHERE vid=%d", $vocabulary_id));
+  $stored_vocabulary = taxonomy_vocabulary_load($vocabulary_id);
   
   $items['vocabulary'] = $stored_vocabulary->name;
   
-  $result = db_query("SELECT * FROM {term_data} td WHERE tid IN (%s) and vid=%d", implode(",", $terms), $vocabulary_id);
-
-  while ($db_item = db_fetch_object($result)) {
+  $containers = db_select('taxonomy_term_data', 'td')
+    ->condition('td.tid', $terms, 'IN')
+    ->condition('td.vid', $vocabulary_id)
+    ->execute()
+    ->fetchAll();
+    
+  foreach($containers as $db_item)
     $item = array(
       'name' => $db_item->name,
     );
