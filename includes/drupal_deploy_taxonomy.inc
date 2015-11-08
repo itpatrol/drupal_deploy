@@ -148,9 +148,8 @@ function dde_terms($vid){
     ->fields('th', array('parent'))
     ->orderBy('td.name');
   $terms_result = $query->execute()->fetchAll();
-    
-  $terms_result = db_query(db_rewrite_sql('SELECT t.tid, t.*, parent FROM {term_data} t INNER JOIN {term_hierarchy} h ON t.tid = h.tid WHERE t.vid = %d ORDER BY tid', 't', 'tid'), $db_item->vid);
-  foreach($terms_result as $term){
+
+  foreach($vocabularies as $term){    
     $term_synonym_result = db_select('taxonomy_term_synonym', 'ts')
       ->fields('ts')
       ->condition('ts.tid', $term->tid)
