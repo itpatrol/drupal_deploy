@@ -42,7 +42,7 @@ function drupal_deploy_export_forum_fetch_data(){
     ->execute()
     ->fetchAll();
     
-  foreach($containers as $db_item)
+  foreach($containers as $db_item){
     $item = array(
       'name' => $db_item->name,
     );
