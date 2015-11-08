@@ -55,7 +55,7 @@ function drupal_deploy_import_taxonomy_items($data, $vocabulary_name = ''){
     $terms = $item['terms'];
     unset($item['terms']);
 
-    $stored_vocabulary = taxonomy_vocabulary_machine_name_load($item->machine_name);
+    $stored_vocabulary = taxonomy_vocabulary_machine_name_load($item['machine_name']);
     
     if($stored_vocabulary){
       $item['vid'] = $stored_vocabulary->vid;
