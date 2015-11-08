@@ -159,12 +159,11 @@ function dde_terms($vid){
       foreach($term_synonym_result as $term_synonym){
         $term->synonyms[] = $term_synonym->name;
       }
-      $terms[$term->tid] = $term;
+      $terms[$term->tid] = (array)$term;
       
   }
   $tree = array();
   foreach($terms as $term){
-    $term = (array) $term;
     if($term['parent'] == 0){
       $term['terms'] = _get_term_children($term, $terms);
       $store_term = array(
