@@ -44,25 +44,28 @@ function drupal_deploy_import_taxonomy_items($data, $vocabulary_name = ''){
       }
     }
     
+    $fields = array();
+    if(!empty($item['fields'])){
+      $fields['fields'] = $item['fields'];
+      $fields['instances'] = $item['instances'];
+    }
+    unset($item['fields']);
+    unset($item['instances']);    
+    
     $terms = $item['terms'];
     unset($item['terms']);
 
-    if(is_array($item['node_types'])){
-      foreach($item['node_types'] as $type){
-        $item['nodes'][$type] = TRUE;
-      }
-    }
-    unset($item['node_types']);
-      
-    $stored_vocabulary = db_fetch_object(db_query("SELECT * FROM {vocabulary} WHERE module='%s' AND name='%s'", $item['module'], $item['name']));
+    $stored_vocabulary = taxonomy_vocabulary_machine_name_load($item->machine_name);
     
     if($stored_vocabulary){
       $item['vid'] = $stored_vocabulary->vid;
     }
-    $status = taxonomy_save_vocabulary($item);
+    $status = taxonomy_vocabulary_save($item);
     if($status == SAVED_UPDATED || $status == SAVED_NEW)
     {
       drush_log(dt('Vocabulary !name imported',array('!name' => $item['name'])), 'ok');
+      ddi_fields($fields, 'taxonomy_term', $item['machine_name']);
+
       if(is_array($terms)){
         foreach($terms as $term)
         {
@@ -87,7 +90,16 @@ function drupal_deploy_save_term($term, $vid, $parent = 0){
     $term['synonyms'] = implode("\n", $term['synonyms']);
   }
   
-  $stored_term = db_fetch_object(db_query("SELECT * FROM {term_data} td LEFT JOIN {term_hierarchy} th ON th.tid = td.tid WHERE name='%s' AND vid=%d  AND parent = %d", $term['name'], $vid, $parent));
+  $query = db_select('taxonomy_term_data', 'td');
+  $query->join('taxonomy_term_hierarchy', 'th', 'th.tid = td.tid');
+  $query->condition('td.name', $item['name'])
+    ->condition('td.vid', $vid)
+    ->condition('th.parent', $parent)   
+    ->fields('td')
+    ->fields('th', array('parent'));
+  $stored_term = $query->execute()->fetchObject();
+  
+
   if($stored_term){
     $term['tid'] = $stored_term->tid;
   }
@@ -96,7 +108,7 @@ function drupal_deploy_save_term($term, $vid, $parent = 0){
     $term['pathauto_perform_alias'] = FALSE;
   }
   
-  $status = taxonomy_save_term($term);
+  $status = taxonomy_term_save($term);
   if($status == SAVED_UPDATED || $status == SAVED_NEW)
   {
     if(is_array($term['terms']))
@@ -106,9 +118,6 @@ function drupal_deploy_save_term($term, $vid, $parent = 0){
       if($status == SAVED_UPDATED || $status == SAVED_NEW){
         drush_log(dt('Term !name imported',array('!name' => $sub_term['name'])), 'ok');
       }
-    }
-    if(isset($term['path_alias'])){
-      path_set_alias('taxonomy/term/' . $term['tid'], $term['path_alias']);
     }
   }
   return $status;
