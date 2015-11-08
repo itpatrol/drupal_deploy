@@ -137,6 +137,7 @@ function drupal_deploy_export_taxonomy_fetch_data($vocabulary_name = ''){
     $vocabulary->instances = $result['instances'];
     
     $vocabulary->terms = dde_terms($vocabulary->vid);
+    $vocabulary->entity = entity_load('taxonomy_vocabulary', $vocabulary->vid);
 
     $items[] = $vocabulary;    
   }
@@ -163,8 +164,9 @@ function dde_terms($vid){
       foreach($term_synonym_result as $term_synonym){
         $term->synonyms[] = $term_synonym->name;
       }
-      $terms[$term->tid] = (array)$term;
+      $term->entity = entity_load('taxonomy_term', $term->tid);
       
+      $terms[$term->tid] = (array)$term;
   }
   $tree = array();
   foreach($terms as $term){
@@ -174,6 +176,7 @@ function dde_terms($vid){
         'name' => $term['name'],
         'description' => $term['description'],
         'weight' => $term['weight'],
+        'debug' => $term,
       );
       if ($alias = drupal_lookup_path('alias', 'taxonomy/term/' . $term['tid'], $path_language)) {
         $store_term['path_alias'] = $alias;
