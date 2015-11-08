@@ -137,7 +137,7 @@ function drupal_deploy_export_taxonomy_fetch_data($vocabulary_name = ''){
     $vocabulary->instances = $result['instances'];
     
     $vocabulary->terms = dde_terms($vocabulary->vid);
-    $vocabulary->entity = entity_load('taxonomy_vocabulary', array($vocabulary->vid));
+//    $vocabulary->entity = entity_load('taxonomy_vocabulary', array($vocabulary->vid));
 
     $items[] = $vocabulary;    
   }
