@@ -135,6 +135,10 @@ function _replace_values($item, $values_options){
   if(is_array($values_options)){
     //Key switch for reqursion.
     foreach($values_options as $key => $val){
+      if(empty($val)){
+        //skip!
+        continue;
+      }
       // If value is array, we need to go dipper
       if(is_array($val)){
         $item[$key] = _replace_values($item[$key],$values_options[$key]);
