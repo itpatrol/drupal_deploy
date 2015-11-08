@@ -63,9 +63,11 @@ function drupal_deploy_import_node_types_items($data)
 
     $item = _replace_values($item, $values_options);
     print_r($item);
-    exit();
     
     $item = _prepare_item_values_to_save($item, $values_options);
+    print_r($item);
+    exit();
+
             
     $node_type = (object) $item;
     $status = node_type_save($node_type);
