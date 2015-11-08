@@ -130,6 +130,17 @@ function _replace_values($item, $values_options){
     return FALSE;
   }
   
+  //if we do not need to process value.
+  if(is_array($item) 
+  && is_array($values_options) 
+  && 1 == count($item) ){
+    $item_key = key($item);
+    if(!is_numeric($item_key) 
+    && is_set($values_options[$item_key])){
+      return $item;
+    }
+  }
+  
   $result = NULL;
   // Checking all settings for $item.
   if(is_array($values_options)){
