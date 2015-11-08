@@ -132,50 +132,61 @@ function drupal_deploy_export_taxonomy_fetch_data($vocabulary_name = ''){
   
     $vocabulary = taxonomy_vocabulary_machine_name_load($db_item->machine_name);
     
-    print_r($vocabulary);
     $tree = taxonomy_get_tree($vocabulary->vid);
-    print_r($tree);
-    unset($vocabulary->vid);
-    
-    exit();
-    $terms = array();
-    $terms_result = db_query(db_rewrite_sql('SELECT t.tid, t.*, parent FROM {term_data} t INNER JOIN {term_hierarchy} h ON t.tid = h.tid WHERE t.vid = %d ORDER BY tid', 't', 'tid'), $db_item->vid);
-    while ($term = db_fetch_array($terms_result))
-    {
-      $term_synonym_result = db_query('SELECT * FROM {term_synonym} WHERE tid=%d',$term['tid']);
-      while($term_synonym = db_fetch_object($term_synonym_result)){
-        $term['synonyms'][] = $term_synonym->name;
-      }
-      $terms[$term['tid']] = $term;
-      
-    }
-    $tree = array();
-    foreach($terms as $term){
-      if($term['parent'] == 0){
-        $term['terms'] = _get_term_children($term, $terms);
-        $store_term = array(
-          'name' => $term['name'],
-          'description' => $term['description'],
-          'weight' => $term['weight'],
-        );
-        if($alias = db_fetch_object(db_query("SELECT * FROM {url_alias} WHERE src = '%s'", 'taxonomy/term/' . $term['tid']))){
-          $store_term['path_alias'] = $alias->dst;
-        }
-        if(!empty($term['synonyms'])){
-          $store_term['synonyms'] = $term['synonyms'];
-        }
-        if(!empty($term['terms'])){
-          $store_term['terms'] = $term['terms'];
-        }
-        $tree[] = $store_term;
-      }
-    }
-    $item['terms'] = $tree;
-    $items[] = $item;    
+    $vocabulary->terms = dde_terms($vocabulary->vid);
+
+    $items[] = $vocabulary;    
   }
   
   return $items;
 }  
+function dde_terms($vid){
+  $terms = db_select('taxonomy_term_data', 'td')
+    ->join('taxonomy_term_hierarchy', 'th', 'th.tid = td.tid')
+    ->fields('td')
+    ->fields('th', array('parent'))
+    ->condition('td.vid', $vid)
+    ->orderBy('t.name')
+    ->execute()
+    ->fetchAll();
+    
+  $terms_result = db_query(db_rewrite_sql('SELECT t.tid, t.*, parent FROM {term_data} t INNER JOIN {term_hierarchy} h ON t.tid = h.tid WHERE t.vid = %d ORDER BY tid', 't', 'tid'), $db_item->vid);
+  foreach($terms_result as $term){
+    $term_synonym_result = db_select('taxonomy_term_synonym', 'ts')
+      ->fields('ts')
+      ->condition('ts.tid', $term->tid)
+      ->orderBy('ts.name')
+      ->execute()
+      ->fetchAll();
+      foreach($term_synonym_result as $term_synonym){
+        $term->synonyms[] = $term_synonym->name;
+      }
+      $terms[$term['tid']] = $term;
+      
+  }
+  $tree = array();
+  foreach($terms as $term){
+    $term = (array) $term;
+    if($term['parent'] == 0){
+      $term['terms'] = _get_term_children($term, $terms);
+      $store_term = array(
+        'name' => $term['name'],
+        'description' => $term['description'],
+        'weight' => $term['weight'],
+      );
+      if($alias = db_fetch_object(db_query("SELECT * FROM {url_alias} WHERE src = '%s'", 'taxonomy/term/' . $term['tid']))){
+        $store_term['path_alias'] = $alias->dst;
+      }
+      if(!empty($term['synonyms'])){
+        $store_term['synonyms'] = $term['synonyms'];
+      }
+      if(!empty($term['terms'])){
+        $store_term['terms'] = $term['terms'];
+      }
+      $tree[] = $store_term;
+    }
+  }
+}
 
 function _get_term_children($parent_term, $terms){
   $return = array();
@@ -187,9 +198,9 @@ function _get_term_children($parent_term, $terms){
         'description' => $term['description'],
         'weight' => $term['weight'],
       );
-      if($alias = db_fetch_object(db_query("SELECT * FROM {url_alias} WHERE src = '%s'", 'taxonomy/term/' . $term['tid']))){
+/*      if($alias = db_fetch_object(db_query("SELECT * FROM {url_alias} WHERE src = '%s'", 'taxonomy/term/' . $term['tid']))){
         $store_term['path_alias'] = $alias->dst;
-      }
+      }*/
       
       if(!empty($term['synonyms'])){
           $store_term['synonyms'] = $term['synonyms'];
