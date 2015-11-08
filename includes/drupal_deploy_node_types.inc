@@ -126,6 +126,8 @@ function ddi_fields($fields, $type){
       else {
         $instance['id'] = $exists_instance['id'];
         $instance['field_id'] = $exists_instance['field_id'];
+        $instance['entity_type'] = $exists_instance['entity_type'];
+        $instance['bundle'] = $exists_instance['bundle'];
         field_update_instance($instance);
         drush_log(dt('!field_name instance has been updated for !bundle in node.', array('!field_name' => $field_name, '!bundle' => $type)));
       }
