@@ -201,24 +201,26 @@ function drupal_deploy_export_node_types_fetch_data()
 
     $item = (array) $db_item;
     $item = array_merge($item, drupal_deploy_export_get_variables($db_item));
-    $item['fields'] = drupal_deploy_export_get_fields($db_item->type);
+    
+    drupal_deploy_export_get_fields($item, $db_item->type);
     $items[] = $item;
   }
   return $items;
 }
 
-function drupal_deploy_export_get_fields($type){
-  $f = field_info_fields();
-  print_r($f);
-  $fields = field_info_instances('node', $type);
-    print_r($fields);
-  foreach($fields as $name => $settings){
-    unset($fields[$name]['id']);
-    unset($fields[$name]['field_id']);    
-    unset($fields[$name]['entity_type']);    
-    unset($fields[$name]['bundle']);    
+function drupal_deploy_export_get_fields(&$item, $type){
+  $all_fields = field_info_fields();
+  
+  $field_instances = field_info_instances('node', $type);
+  $item['fields'] = array();
+  foreach($field_instances as $name => $settings){
+    unset($field_instances[$name]['id']);
+    unset($field_instances[$name]['field_id']);    
+    unset($field_instances[$name]['entity_type']);    
+    unset($field_instances[$name]['bundle']);   
+    $item['fields'][$name] =  $all_fields[$name];
   }
-  return $fields;
+  $item['instances'] = $field_instances;
 }
 
 function drupal_deploy_export_get_variables($type){
