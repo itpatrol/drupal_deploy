@@ -141,13 +141,13 @@ function drupal_deploy_export_taxonomy_fetch_data($vocabulary_name = ''){
   return $items;
 }  
 function dde_terms($vid){
-  $query = db_select('taxonomy_term_data', 'td')
-    ->join('taxonomy_term_hierarchy', 'th', 'th.tid = td.tid');
-   $query->fields('td');
-   $query->fields('th', array('parent'));
-   $query->condition('td.vid', $vid);
-   $query->orderBy('t.name');
-   $terms_result = $query->execute()->fetchAll();
+  $query = db_select('taxonomy_term_data', 'td');
+  $query->join('taxonomy_term_hierarchy', 'th', 'th.tid = td.tid');
+  $query->condition('td.vid', $vid)
+    ->fields('td')
+    ->fields('th', array('parent'))
+    ->orderBy('t.name');
+  $terms_result = $query->execute()->fetchAll();
     
   $terms_result = db_query(db_rewrite_sql('SELECT t.tid, t.*, parent FROM {term_data} t INNER JOIN {term_hierarchy} h ON t.tid = h.tid WHERE t.vid = %d ORDER BY tid', 't', 'tid'), $db_item->vid);
   foreach($terms_result as $term){
