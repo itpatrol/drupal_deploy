@@ -116,9 +116,6 @@ function _prepare_item_values_to_save($item, $values_options){
 function _replace_values($item, $values_options){
 
   $origin_item = $item;
-  echo "Go deeper\n";
-  print_r($item);
-  print_r($values_options);
   if(empty($item)){
     return FALSE;
   }
@@ -140,13 +137,10 @@ function _replace_values($item, $values_options){
   if(is_array($values_options)){
     //Key switch for reqursion.
     if(!is_array($item)){
-      echo "Not in array!\n";
       $value_key = array_search($item, $values_options);
       if(FALSE !== $value_key){
-        echo $value_key ." \n";
         return $value_key;
       }
-        echo $item ." -- origin\n";
       return $item;
     }
 
@@ -166,26 +160,13 @@ function _replace_values($item, $values_options){
         }else{
           if(FALSE !== array_search($val, $item)){
             $result[] = $key;
-            echo "Echo found". $key. "\n";
-          }else{
-            echo "Key: " . $val ." is not in array ". print_r($item,true);
           }
-          echo "we are here 2~\n-----\n";
-          print_r($item);
-          echo $val;
-          echo "---\n";
         }
       }
     }
     if($origin_item == $item && !empty($result)){
-      // We don't have changes. Let's check if 
-      echo "We return result here?";
-      print_r($result);
       return $result;
     }
-    return $item;
-  }else{
-    echo "we are here??";
   }
   return $item;
 }
