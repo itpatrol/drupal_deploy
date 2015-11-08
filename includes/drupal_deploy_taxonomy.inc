@@ -116,30 +116,23 @@ function drupal_deploy_save_term($term, $vid, $parent = 0){
 
 function drupal_deploy_export_taxonomy_fetch_data($vocabulary_name = ''){
   $items = array();
-  if(empty($vocabulary_name)){
-    $result = db_query("SELECT * FROM {vocabulary} ORDER BY vid");
-  }else{
-    $result = db_query("SELECT * FROM {vocabulary} WHERE name='%s'",$vocabulary_name);
+  
+  $query = db_select('taxonomy_vocabulary', 'tv')
+    ->fields('tv');
+  
+  if(!empty($vocabulary_name)){
+    $query->condition('tv.machine_name', $vocabulary_name);
   }
 
-  while ($db_item = db_fetch_object($result)) {
-    $item = array(
-      'name' => $db_item->name,
-      'description' => $db_item->description,
-      'help' => $db_item->help,
-      'relations' => $db_item->relations,
-      'hierarchy' => $db_item->hierarchy,
-      'multiple' => $db_item->multiple,
-      'required' => $db_item->required,
-      'weight' => $db_item->weight,
-      'module' => $db_item->module,
-      'tags' => $db_item->tags,
-    );
-    $vocabulary_node_types_result = db_query('SELECT * FROM {vocabulary_node_types} WHERE vid=%d',$db_item->vid);
-    while($vocabulary_node_type = db_fetch_object($vocabulary_node_types_result)){
-      $item['node_types'][] = $vocabulary_node_type->type;
-    }
-
+  $query->orderBy('tv.name');
+  
+  $vocabularies = $query->execute()->fetchAll();
+  
+  foreach($vocabularies as $db_item){
+  
+    $vocabulary = taxonomy_vocabulary_machine_name_load($db_item->machine_name);
+    print_r($vocabulary);
+    exit();
     $terms = array();
     $terms_result = db_query(db_rewrite_sql('SELECT t.tid, t.*, parent FROM {term_data} t INNER JOIN {term_hierarchy} h ON t.tid = h.tid WHERE t.vid = %d ORDER BY tid', 't', 'tid'), $db_item->vid);
     while ($term = db_fetch_array($terms_result))
