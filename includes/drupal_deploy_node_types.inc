@@ -134,6 +134,14 @@ function _replace_values($item, $values_options){
   // Checking all settings for $item.
   if(is_array($values_options)){
     //Key switch for reqursion.
+    if(!is_array($item)){
+      $value_key = array_search($item, $values_options);
+      if(FALSE !== $value_key){
+        return $value_key;
+      }
+      return $item;
+    }
+
     foreach($values_options as $key => $val){
       if(empty($val)){
         //skip!
