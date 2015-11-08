@@ -146,7 +146,7 @@ function dde_terms($vid){
   $query->condition('td.vid', $vid)
     ->fields('td')
     ->fields('th', array('parent'))
-    ->orderBy('th.name');
+    ->orderBy('td.name');
   $terms_result = $query->execute()->fetchAll();
     
   $terms_result = db_query(db_rewrite_sql('SELECT t.tid, t.*, parent FROM {term_data} t INNER JOIN {term_hierarchy} h ON t.tid = h.tid WHERE t.vid = %d ORDER BY tid', 't', 'tid'), $db_item->vid);
