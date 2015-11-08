@@ -55,7 +55,9 @@ function drupal_deploy_import_node_types_items($data)
       }
     }
     
-    $fields = $item['fields'];
+    if(!empty($item['fields'])){
+      $fields = $item['fields'];
+    }
     unset($item['fields']);
 
     $values_options = drupal_deploy_import_get_variables($item);
@@ -74,7 +76,10 @@ function drupal_deploy_import_node_types_items($data)
         $variable = $key . '_' . $item['type'];
         variable_set($variable, $value);
       }
+      
+      ddi_fields($fields);
       drush_log(dt('Node type !title imported.', array('!title' => $item['name'])));
+      
     }
     else{
       drush_log(dt('Node type !title NOT imported.', array('!title' => $item['name'])));
@@ -82,6 +87,11 @@ function drupal_deploy_import_node_types_items($data)
   }
   node_types_rebuild();
   menu_rebuild();
+}
+
+function ddi_fields($fields){
+  foreach ($fields as $field_name => $field) {
+  }
 }
 
 function _prepare_item_values_to_save($item, $values_options){
@@ -198,7 +208,10 @@ function drupal_deploy_export_node_types_fetch_data()
 }
 
 function drupal_deploy_export_get_fields($type){
+  $f = field_info_fields();
+  print_r($f);
   $fields = field_info_instances('node', $type);
+    print_r($fields);
   foreach($fields as $name => $settings){
     unset($fields[$name]['id']);
     unset($fields[$name]['field_id']);    
