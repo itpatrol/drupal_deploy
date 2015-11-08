@@ -87,7 +87,7 @@ function drupal_deploy_import_node_types_items($data)
       variable_set('menu_options_' . $item['type'], $origin_item['menu']['menu_options']);
       variable_set('menu_parent_' . $item['type'], $origin_item['menu']['menu_parent']);
       
-      ddi_fields($fields, $item['type']);
+      ddi_fields($fields, 'node', $item['type']);
       drush_log(dt('Node type !title imported.', array('!title' => $item['name'])));
       
     }
@@ -97,50 +97,6 @@ function drupal_deploy_import_node_types_items($data)
   }
   node_types_rebuild();
   menu_rebuild();
-}
-
-function ddi_fields($fields, $type){
-  foreach ($fields['fields'] as $field_name => $field) {
-    if(!module_exists($field['module'])){
-      drush_log(dt('!field_name field could not be created because the module !module is disabled or missing.', array('!field_name' => $field_name, '!module' => $field['module'])), 'error');
-      continue;
-    }
-    if (isset($fields['instances'][$field_name])) {
-      // Create or update field.
-      $exists_field = field_read_field($field_name, array('include_inactive' => TRUE));
-      if (!$exists_field) {
-        field_create_field($field);
-        drush_log(dt('!field_name field has been created.', array('!field_name' => $field_name)));
-      }
-      else {
-        $field['id'] = $exists_field['id'];
-        field_update_field($field);
-        drush_log(dt('!field_name field has been updated.', array('!field_name' => $field_name)));
-      }
-      
-      $instance = $fields['instances'][$field_name];
-      // Make sure the needed key exists.
-      if (!isset($instance['field_name'])) {
-        continue;
-      }
-
-      $exists_instance = field_read_instance('node', $field_name, $type);
-      if (!$exists_instance) {
-        $instance['entity_type'] = 'node';
-        $instance['bundle'] = $type;
-        field_create_instance($instance);
-        drush_log(dt('!field_name instance has been created for !bundle in node.', array('!field_name' => $field_name, '!bundle' => $type)));
-      }
-      else {
-        $instance['id'] = $exists_instance['id'];
-        $instance['field_id'] = $exists_instance['field_id'];
-        $instance['entity_type'] = $exists_instance['entity_type'];
-        $instance['bundle'] = $exists_instance['bundle'];
-        field_update_instance($instance);
-        drush_log(dt('!field_name instance has been updated for !bundle in node.', array('!field_name' => $field_name, '!bundle' => $type)));
-      }
-    }
-  }
 }
 
 function _prepare_item_values_to_save($item, $values_options){
