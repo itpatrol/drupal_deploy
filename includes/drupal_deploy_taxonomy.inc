@@ -60,7 +60,8 @@ function drupal_deploy_import_taxonomy_items($data, $vocabulary_name = ''){
     if($stored_vocabulary){
       $item['vid'] = $stored_vocabulary->vid;
     }
-    $status = taxonomy_vocabulary_save($item);
+    
+    $status = taxonomy_vocabulary_save((object)$item);
     if($status == SAVED_UPDATED || $status == SAVED_NEW)
     {
       drush_log(dt('Vocabulary !name imported',array('!name' => $item['name'])), 'ok');
@@ -108,7 +109,7 @@ function drupal_deploy_save_term($term, $vid, $parent = 0){
     $term['pathauto_perform_alias'] = FALSE;
   }
   
-  $status = taxonomy_term_save($term);
+  $status = taxonomy_term_save((object)$term);
   if($status == SAVED_UPDATED || $status == SAVED_NEW)
   {
     if(is_array($term['terms']))
