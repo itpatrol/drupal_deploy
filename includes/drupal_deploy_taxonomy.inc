@@ -183,7 +183,6 @@ function dde_terms($vid){
         'name' => $term['name'],
         'description' => $term['description'],
         'weight' => $term['weight'],
-        'debug' => $term,
       );
       if ($alias = drupal_lookup_path('alias', 'taxonomy/term/' . $term['tid'], $path_language)) {
         $store_term['path_alias'] = $alias;
