@@ -149,7 +149,7 @@ function dde_terms($vid){
     ->orderBy('td.name');
   $terms_result = $query->execute()->fetchAll();
 
-  foreach($vocabularies as $term){    
+  foreach($terms_result as $term){    
     $term_synonym_result = db_select('taxonomy_term_synonym', 'ts')
       ->fields('ts')
       ->condition('ts.tid', $term->tid)
