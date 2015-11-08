@@ -56,11 +56,21 @@ function drupal_deploy_export_forum_fetch_data(){
 function drupal_deploy_import_forum_items($data){
   $forum_containers = array();
   $vocabulary = $data['vocabulary'];
-  $stored_vocabulary = db_fetch_object(db_query("SELECT * FROM {vocabulary} WHERE  name='%s'", $data['vocabulary']));
+  
+  $stored_vocabulary = db_select('taxonomy_vocabulary', 'tv')
+    ->fields('tv')
+    ->condition('tv.name', $data['vocabulary'])
+    ->execute()
+    ->fetchObject();
+    
   if($stored_vocabulary){
     foreach($data['terms'] as $item){
-      $stored_term = db_fetch_object(db_query("SELECT * FROM {term_data} WHERE name='%s' AND vid=%d", $item['name'], $stored_vocabulary->vid));
-        
+      $stored_term = db_select('taxonomy_term_data', 'td')
+        ->fields('td')
+        ->condition('td.name', $item['name'])
+        ->condition('td.vid', $stored_vocabulary->vid)
+        ->execute()
+        ->fetchObject();
       if($stored_term){
         $forum_containers[] = $stored_term->tid;
         drupal_set_message(t('Container !name imported',array('!name' => $stored_term->name)));
