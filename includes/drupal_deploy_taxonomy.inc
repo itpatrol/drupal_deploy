@@ -181,11 +181,8 @@ function dde_terms($vid){
       foreach($term_synonym_result as $term_synonym){
         $term->synonyms[] = $term_synonym->name;
       }
-      $stored_term = taxonomy_term_load($term->tid);
-      foreach($stored_term as $name => $value){
-        if(0 == strncmp($name, "field_", 6)){
-          $term->fields[$name] =  $value;
-        }
+      if($fields_data = dde_get_fields_data($term['tid'])){
+        $term->fields = $fields_data;
       }
       $terms[$term->tid] = (array)$term;
   }
@@ -217,6 +214,17 @@ function dde_terms($vid){
   return $tree;
 }
 
+function dde_get_fields_data($tid){
+  $fields_data = array();
+  $stored_term = taxonomy_term_load($tid);
+  foreach($stored_term as $name => $value){
+    if(0 == strncmp($name, "field_", 6)){
+      $fields_data[$name] =  $value;
+    }
+  }
+  return $fields_data;
+}
+
 function _get_term_children($parent_term, $terms){
   $return = array();
   foreach($terms as $term){
@@ -228,11 +236,8 @@ function _get_term_children($parent_term, $terms){
         'weight' => $term['weight'],
       );
       
-      $stored_term = taxonomy_term_load($term->tid);
-      foreach($stored_term as $name => $value){
-        if(0 == strncmp($name, "field_", 6)){
-          $term['fields'][$name] =  $value;
-        }
+      if($fields_data = dde_get_fields_data($term['tid'])){
+        $store_term['fields'] = $fields_data;
       }
       
       if ($alias = drupal_lookup_path('alias', 'taxonomy/term/' . $term['tid'], $path_language)) {
