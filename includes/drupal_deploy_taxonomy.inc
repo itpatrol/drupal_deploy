@@ -180,7 +180,7 @@ function dde_terms($vid){
       $stored_term = taxonomy_term_load($term->tid);
       foreach($stored_term as $name => $value){
         if(0 ==strncmp($name, "field_", 6)){
-          $term['name'] =  $value;
+          $term->$name =  $value;
         }
       }
       $terms[$term->tid] = (array)$term;
