@@ -99,14 +99,15 @@ function drupal_deploy_save_term($term, $vid, $parent = 0){
   
   $query = db_select('taxonomy_term_data', 'td');
   $query->join('taxonomy_term_hierarchy', 'th', 'th.tid = td.tid');
-  $query->condition('td.name', $item['name'])
+  $query->condition('td.name', $term['name'])
     ->condition('td.vid', $vid)
     ->condition('th.parent', $parent)   
     ->fields('td')
     ->fields('th', array('parent'));
   $stored_term = $query->execute()->fetchObject();
   
-
+  print_r($stored_term);
+  
   if($stored_term){
     $term['tid'] = $stored_term->tid;
   }
