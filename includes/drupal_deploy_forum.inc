@@ -46,10 +46,42 @@ function drupal_deploy_export_forum_fetch_data(){
     $item = array(
       'name' => $db_item->name,
     );
+    if ($alias = drupal_lookup_path('alias', 'forum/' . $db_item->tid, $path_language)) {
+      $item['path_alias'] = $alias;
+    }
+    if($sub_terms = dde_forum_terms($db_item->tid)){
+      $item['terms'] = $sub_terms;
+    }
 
     $items['terms'][] = $item;    
   }
   
+  return $items;
+}
+
+function dde_forum_terms($parent_id){
+  $items = array();
+  $query = db_select('taxonomy_term_data', 'td');
+  $query->join('taxonomy_term_hierarchy', 'th', 'th.tid = td.tid');
+  $query->condition('td.tid', $terms, 'IN')
+    ->fields('td')
+    ->condition('th.parent', $parent_id);
+    
+  $terms_result = $query->execute()->fetchAll();
+
+  foreach($terms_result as $db_item){
+    $item = array(
+      'name' => $db_item->name,
+    );
+    if ($alias = drupal_lookup_path('alias', 'forum/' . $db_item->tid, $path_language)) {
+      $item['path_alias'] = $alias;
+    }
+    if($sub_terms = dde_forum_terms($db_item->tid)){
+      $item['terms'] = $sub_terms;
+    }
+
+    $items[] = $item;    
+  }
   return $items;
 }
 
