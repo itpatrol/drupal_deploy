@@ -92,6 +92,10 @@ function drupal_deploy_save_term($term, $vid, $parent = 0){
   if(is_array($term['synonyms'])){
     $term['synonyms'] = implode("\n", $term['synonyms']);
   }
+  foreach($term['fields'] as $name => $value){
+    $term[$name] = $value;
+  }
+  unset($term['fields']);
   
   $query = db_select('taxonomy_term_data', 'td');
   $query->join('taxonomy_term_hierarchy', 'th', 'th.tid = td.tid');
