@@ -72,8 +72,8 @@ function dde_forum_terms($parent_id){
     $item = array(
       'name' => $db_item->name,
     );
-    if ($alias = drupal_lookup_path('alias', 'forum/' . $db_item->tid, $path_language)) {
-      $item['path_alias'] = $alias;
+    if ($alias = path_load('forum/' . $db_item->tid)) {
+      $item['path_alias'] = $alias['alias'];
     }
     if($sub_terms = dde_forum_terms($db_item->tid)){
       $item['terms'] = $sub_terms;
@@ -105,6 +105,19 @@ function drupal_deploy_import_forum_items($data){
       if($stored_term){
         $forum_containers[] = $stored_term->tid;
         drupal_set_message(t('Container !name imported',array('!name' => $stored_term->name)));
+        if(isset($item['path_alias'])){
+          
+          $path = array(
+            'alias' => $item['path_alias'],
+            'source' => 'forum/' . $stored_term->tid,
+            'language' => LANGUAGE_NONE
+          );
+          if ($alias = path_load('forum/' . $stored_term->tid)) {
+            $path['pid'] = $alias['pid'];
+            $path['origin'] = $alias['alias'];
+          }
+          path_save($path);
+        }
       }
     }
     variable_set('forum_containers', $forum_containers);
