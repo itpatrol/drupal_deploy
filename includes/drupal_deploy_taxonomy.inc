@@ -181,7 +181,7 @@ function dde_terms($vid){
       foreach($term_synonym_result as $term_synonym){
         $term->synonyms[] = $term_synonym->name;
       }
-      if($fields_data = dde_get_fields_data($term['tid'])){
+      if($fields_data = dde_get_fields_data($term->tid)){
         $term->fields = $fields_data;
       }
       $terms[$term->tid] = (array)$term;
