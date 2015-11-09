@@ -227,6 +227,14 @@ function _get_term_children($parent_term, $terms){
         'description' => $term['description'],
         'weight' => $term['weight'],
       );
+      
+      $stored_term = taxonomy_term_load($term->tid);
+      foreach($stored_term as $name => $value){
+        if(0 == strncmp($name, "field_", 6)){
+          $term['fields'][$name] =  $value;
+        }
+      }
+      
       if ($alias = drupal_lookup_path('alias', 'taxonomy/term/' . $term['tid'], $path_language)) {
         $store_term['path_alias'] = $alias;
       }
