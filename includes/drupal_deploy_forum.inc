@@ -63,9 +63,8 @@ function dde_forum_terms($parent_id){
   $items = array();
   $query = db_select('taxonomy_term_data', 'td');
   $query->join('taxonomy_term_hierarchy', 'th', 'th.tid = td.tid');
-  $query->condition('td.tid', $terms, 'IN')
-    ->fields('td')
-    ->condition('th.parent', $parent_id);
+  $query->->condition('th.parent', $parent_id)
+    ->fields('td');
     
   $terms_result = $query->execute()->fetchAll();
 
