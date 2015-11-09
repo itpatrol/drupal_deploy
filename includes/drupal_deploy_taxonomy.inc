@@ -181,8 +181,7 @@ function dde_terms($vid){
       foreach($stored_term as $name => $value){
         if(0 == strncmp($name, "field_", 5)){
           $term->{$name} =  $value;
-        }else{
-          echo $name."\n";
+          echo "$name $value";
         }
       }
       $terms[$term->tid] = (array)$term;
