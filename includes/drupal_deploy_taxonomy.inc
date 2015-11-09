@@ -106,8 +106,6 @@ function drupal_deploy_save_term($term, $vid, $parent = 0){
     ->fields('th', array('parent'));
   $stored_term = $query->execute()->fetchObject();
   
-  print_r($stored_term);
-  
   if($stored_term){
     $term['tid'] = $stored_term->tid;
   }
