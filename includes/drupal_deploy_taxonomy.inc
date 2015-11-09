@@ -177,10 +177,13 @@ function dde_terms($vid){
       foreach($term_synonym_result as $term_synonym){
         $term->synonyms[] = $term_synonym->name;
       }
-      $terms[$term->tid] = (array)$term;
-//      field_attach_load('taxonomy_term', $term);
       $stored_term = taxonomy_term_load($term->tid);
-      print_r($stored_term);
+      foreach($stored_term as $name => $value){
+        if(0 ==strncmp($name, "field_", 6)){
+          $term['name'] =  $value;
+        }
+      }
+      $terms[$term->tid] = (array)$term;
   }
   $tree = array();
   foreach($terms as $term){
