@@ -179,9 +179,8 @@ function dde_terms($vid){
       }
       $stored_term = taxonomy_term_load($term->tid);
       foreach($stored_term as $name => $value){
-        if(0 == strncmp($name, "field_", 5)){
-          $term->{$name} =  $value;
-          echo "$name $value";
+        if(0 == strncmp($name, "field_", 6)){
+          $term->fields[$name] =  $value;
         }
       }
       $terms[$term->tid] = (array)$term;
@@ -195,6 +194,10 @@ function dde_terms($vid){
         'description' => $term['description'],
         'weight' => $term['weight'],
       );
+      
+      if(!empty($term['fields'])){
+        $store_term['fields'] = $term['fields'];
+      }
       if ($alias = drupal_lookup_path('alias', 'taxonomy/term/' . $term['tid'], $path_language)) {
         $store_term['path_alias'] = $alias;
       }
