@@ -118,9 +118,41 @@ function drupal_deploy_import_forum_items($data){
           }
           path_save($path);
         }
+        if($item['terms']){
+          ddi_forum_terms($item['terms'], $stored_term->tid);
+        }
       }
     }
     variable_set('forum_containers', $forum_containers);
     variable_set('forum_nav_vocabulary', $stored_vocabulary->vid);
+  }
+}
+
+function ddi_forum_terms($terms, $parent_id){
+  foreach($terms as $item){
+    $query = db_select('taxonomy_term_data', 'td');
+    $query->join('taxonomy_term_hierarchy', 'th', 'th.tid = td.tid');
+    $query->condition('th.parent', $parent_id)
+      ->condition('td.name', $item['name'])
+      ->fields('td');
+      
+    $stored_term = $query->execute()->fetchObject();
+    if($stored_term){
+      if(isset($item['path_alias'])){
+        $path = array(
+          'alias' => $item['path_alias'],
+          'source' => 'forum/' . $stored_term->tid,
+          'language' => LANGUAGE_NONE
+        );
+        if ($alias = path_load('forum/' . $stored_term->tid)) {
+          $path['pid'] = $alias['pid'];
+          $path['origin'] = $alias['alias'];
+        }
+        path_save($path);
+      }
+      if($item['terms']){
+        ddi_forum_terms($item['terms'], $stored_term->tid);
+      }
+    }
   }
 }
