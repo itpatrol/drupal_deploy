@@ -58,7 +58,7 @@ function drupal_deploy_export_variables_fetch_data($name = FALSE){
   $query->orderBy('v.name');
   $variables = $query->execute()->fetchAll();
 
-
+  echo $name;
   
   foreach($variables as $db_item){
 
