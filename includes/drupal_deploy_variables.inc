@@ -48,24 +48,20 @@ function drupal_deploy_import_variables($filename = ''){
 function drupal_deploy_export_variables_fetch_data($name = FALSE){
   $items = array();
   
-  if(empty($name)){
-    $result = db_query("SELECT * FROM {variable} ORDER BY name");  
-  }
+  $query = db_select('variable', 'v')
+    ->fields('v');
+  
   if(is_string($name)){
-    $result = db_query("SELECT * FROM {variable} WHERE name like '%s' ORDER BY name", $name);
+    $query->condition('v.name', $name, 'LIKE');
   }
-  if(is_array($name)){
-    $sql = '';
-    foreach($name as $var){
-      if(empty($sql)){
-        $sql .= " name like '".$var."' ";
-      }else{
-        $sql .= " OR name like '".$var."' ";
-      }
-    }
-    $result = db_query("SELECT * FROM {variable} WHERE ".$sql." ORDER BY name");
-  }
-  while ($db_item = db_fetch_object($result)) {
+  
+  $query->orderBy('v.name');
+  $variables = $query->execute()->fetchAll();
+
+
+  
+  foreach($variables as $db_item){
+
     $db_item->value = unserialize($db_item->value);
     $items[] = $db_item;
   }
