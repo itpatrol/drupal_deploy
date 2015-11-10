@@ -52,6 +52,7 @@ function drupal_deploy_export_variables_fetch_data($name = FALSE){
     ->fields('v');
   
   if(is_string($name)){
+    echo "name:" . $name ."\n";
     $query->condition('v.name', $name, 'LIKE');
   }
   
