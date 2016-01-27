@@ -155,7 +155,7 @@ function drupal_deploy_export_blocks_fetch_data($theme_name = ''){
   
   $roles_result = db_select('role', 'rr')
     ->fields('rr')
-    ->orderBy('rr.format')
+    ->orderBy('rr.rid')
     ->execute()
     ->fetchAll();
     
