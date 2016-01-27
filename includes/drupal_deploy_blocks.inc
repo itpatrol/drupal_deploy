@@ -129,26 +129,41 @@ function  drupal_deploy_import_blocks_items($data, $theme_name = ''){
 
 function drupal_deploy_export_blocks_fetch_data($theme_name = ''){
   $items = array();
-  if(empty($theme_name)){
-    $result = db_query("SELECT * FROM {blocks} ORDER BY bid");
-  }else{
-    $result = db_query("SELECT * FROM {blocks} WHERE theme='%s' ORDER BY bid", $theme_name);
+  
+  $query = db_select('block', 'b')
+    ->fields('b');
+
+  if(is_string($theme_name)){
+    $query->condition('b.theme', $theme_name);
   }
 
-  $roles_result = db_query('SELECT * FROM {role}');
-  $roles_names = array();
-  while($role = db_fetch_object($roles_result)){
-    $roles_names[$role->rid] = $role->name;
-  }  
-
-  $formats_result = db_query('SELECT * FROM {filter_formats}');
+  $query->orderBy('b.bid');
+  $blocks = $query->execute()->fetchAll();
+  
   $format_names = array();
-  while($format = db_fetch_object($formats_result)){
-    $format_names[$format->format] = $format->name;
+  $filter_formats = db_select('filter_format', 'ff')
+    ->fields('ff')
+    ->orderBy('ff.format')
+    ->execute()
+    ->fetchAll();
+    
+  foreach($filter_formats as $db_item){
+    $format_names[$db_item->format] = $db_item->name;
+  }
+  
+  $roles_names = array();
+  
+  $roles_result = db_select('role', 'rr')
+    ->fields('rr')
+    ->orderBy('rr.format')
+    ->execute()
+    ->fetchAll();
+    
+  foreach($roles_result as $db_item){
+    $roles_names[$db_item->rid] = $db_item->name;
   }
 
-
-  while ($db_item = db_fetch_object($result)) {
+  foreach ($blocks as $db_item) {
     $item = array(
       'module' => $db_item->module,
       'delta' => $db_item->delta,
@@ -157,30 +172,39 @@ function drupal_deploy_export_blocks_fetch_data($theme_name = ''){
       'weight' => $db_item->weight,
       'region' => $db_item->region,
       'custom' => $db_item->custom,
-      'throttle' => $db_item->throttle,
       'visibility' => $db_item->visibility,
       'pages' => $db_item->pages,
       'title' => $db_item->title,
+      'cache' => $db_item->cache,
     );
     
     if($db_item->module == 'block')
     {
-      $boxes = db_fetch_object(db_query("SELECT * FROM {boxes} WHERE bid=%d", $db_item->delta));  
-      if($boxes)
+      $custom = db_select('block_custom', 'bc')
+        ->fields('bc')
+        ->condition('bc.bid', $db_item->bid)
+        ->execute()
+        ->fetchObject();
+      
+      if($custom)
       {
-        $item['body'] = $boxes->body;
-        $item['info'] = $boxes->info;
-        if(isset($format_names[$boxes->format]))
+        $item['body'] = $custom->body;
+        $item['info'] = $custom->info;
+        if(isset($format_names[$custom->format]))
         {
-          $item['format'] = $format_names[$boxes->format];
+          $item['format'] = $format_names[$custom->format];
         }                
       }
     }
-
-    $result_roles = db_query("SELECT * FROM {blocks_roles} WHERE module='%s' AND delta='%s'", $db_item->module, $db_item->delta);
+    
+    $block_roles = db_select('block_role', 'br')
+      ->fields('br')
+      ->execute()
+      ->fetchAll();
+    
     $roles = array();
 
-    while($db_role = db_fetch_object($result_roles)){
+    foreach ($block_roles as $db_role) {
       if(isset($roles_names[$db_role->rid])){
         $roles[] = $roles_names[$db_role->rid];
       }
