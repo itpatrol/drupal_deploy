@@ -47,6 +47,7 @@ function drupal_deploy_drush_command() {
       'uid' => 'User id or ids',
       'rid' => 'Role id or ids',
       'group' => 'Translation group name',
+      'status' => 'Status value'
     ),
   );
 

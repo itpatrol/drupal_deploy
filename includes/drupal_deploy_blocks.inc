@@ -136,6 +136,10 @@ function drupal_deploy_export_blocks_fetch_data($theme_name = ''){
   if(is_string($theme_name)){
     $query->condition('b.theme', $theme_name);
   }
+  
+  if($status = drush_get_option('status', FALSE)){
+    $query->condition('b.status', $status);
+  }
 
   $query->orderBy('b.bid');
   $blocks = $query->execute()->fetchAll();
