@@ -182,7 +182,7 @@ function drupal_deploy_export_blocks_fetch_data($theme_name = ''){
     {
       $custom = db_select('block_custom', 'bc')
         ->fields('bc')
-        ->condition('bc.bid', $db_item->bid)
+        ->condition('bc.bid', $db_item->delta)
         ->execute()
         ->fetchObject();
       
