@@ -199,6 +199,8 @@ function drupal_deploy_export_blocks_fetch_data($theme_name = ''){
     
     $block_roles = db_select('block_role', 'br')
       ->fields('br')
+      ->condition('br.module', $db_item->module)
+      ->condition('br.delta', $db_item->delta)
       ->execute()
       ->fetchAll();
     
