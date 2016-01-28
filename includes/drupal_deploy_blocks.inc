@@ -112,8 +112,6 @@ function  drupal_deploy_import_blocks_items($data, $theme_name = ''){
           }
           $query->execute();
         }
-        
-        module_invoke($item['module'], 'block_save', $item['delta'], $item);
       }
       drupal_set_message(t('Block module=!module delta=!delta  updated.', array(
           '!module' => $item['module'], 
@@ -160,7 +158,6 @@ function  drupal_deploy_import_blocks_items($data, $theme_name = ''){
           }
           $query->execute();
         }
-        module_invoke($item['module'], 'block_save', $item['delta'], $item);
       }
       drupal_set_message(t('Block module=!module delta=!delta  added.', array(
           '!module' => $item['module'], 
