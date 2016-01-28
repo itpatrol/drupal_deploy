@@ -32,28 +32,46 @@ function drupal_deploy_import_blocks($filename = '', $theme_name = ''){
 
 function  drupal_deploy_import_blocks_items($data, $theme_name = ''){
 
-  $result = db_query('SELECT * FROM {role}');
-  $roles = array();
-  while($role = db_fetch_object($result)){
-    $roles[$role->name] = $role->rid;
+  $format_names = array();
+  $filter_formats = db_select('filter_format', 'ff')
+    ->fields('ff')
+    ->orderBy('ff.format')
+    ->execute()
+    ->fetchAll();
+    
+  foreach($filter_formats as $db_item){
+    $format_names[$db_item->name] = $db_item->format;
   }
   
-  $formats_result = db_query('SELECT * FROM {filter_formats}');
-  $format_names = array();
-  while($format = db_fetch_object($formats_result)){
-    $format_names[$format->name] = $format->format;
+  $roles_names = array();
+  
+  $roles_result = db_select('role', 'rr')
+    ->fields('rr')
+    ->orderBy('rr.rid')
+    ->execute()
+    ->fetchAll();
+    
+  foreach($roles_result as $db_item){
+    $roles_names[$db_item->name] = $db_item->rid;
   }
 
   foreach($data as $item){
-    if(!empty($menu_name))
+    if(!empty($theme_name))
     {
       if($item['theme'] != $theme_name)
       {
         continue;
       }
     }
-
-    $existing_item = db_fetch_array(db_query("SELECT * FROM {blocks} WHERE module = '%s' and theme='%s' AND delta='%s'", $item['module'], $item['theme'], $item['delta']));
+    
+    $existing_item = db_select('block', 'b')
+        ->fields('b')
+        ->condition('b.module', $item['module'])
+        ->condition('b.theme', $item['theme'])
+        ->condition('b.delta', $item['delta'])
+        ->execute()
+        ->fetchObject();
+        
     if($existing_item)
     {
       // Update existing block.
@@ -69,26 +87,39 @@ function  drupal_deploy_import_blocks_items($data, $theme_name = ''){
           'info' => $item['info'],
           'format' => $format,
         );
-        drupal_write_record('boxes', $box, 'bid');
+        drupal_write_record('block_custom', $box, 'bid');
       }
       $item['bid'] = $existing_item['bid'];
-      if(drupal_write_record('blocks', $item, 'bid')){
+      if(drupal_write_record('block', $item, 'bid')){
         if(isset($item['roles']))
         {
-          db_query("DELETE FROM {blocks_roles} WHERE module = '%s' AND delta = '%s'", $item['module'], $item['delta']);
+          db_delete('block_role')
+            ->condition('module', $item['module'])
+            ->condition('delta', $item['delta'])
+            ->execute();
+        
+          $query = db_insert('block_role')->fields(array('rid', 'module', 'delta'));
           foreach($item['roles'] as $role_name)
           {
             if(isset($roles[$role_name]))
             {
-              db_query("INSERT INTO {blocks_roles} (rid, module, delta) VALUES (%d, '%s', '%s')", $roles[$role_name], $item['module'], $item['delta']);
+              $query->values(array(
+                'rid' => $roles[$role_name],
+                'module' => $item['module'],
+                'delta' => $item['delta'],
+              ));
             }
           }
+          $query->execute();
         }
-      
-        $block_list = module_invoke($item['module'], 'block', 'list');
-        $block_title = $block_list[$item['delta']]['info'];
-        drupal_set_message(t('Block !title updated.', array('!title' => $block_title)));
+        
+        module_invoke($item['module'], 'block_save', $item['delta'], $item);
       }
+      drupal_set_message(t('Block module=!module delta=!delta  updated.', array(
+          '!module' => $item['module'], 
+          '!delta' => $item['delta'])
+        )
+      );
     }
     else
     {
@@ -103,46 +134,47 @@ function  drupal_deploy_import_blocks_items($data, $theme_name = ''){
           'info' => $item['info'],
           'format' => $format,
         );
-        drupal_write_record('boxes', $box);
+        drupal_write_record('block_custom', $box);
         $item['delta'] = $box['bid'];
       }
-      if(drupal_write_record('blocks', $item))
+      if(drupal_write_record('block', $item))
       {
         if(isset($item['roles']))
         {
-          db_query("DELETE FROM {blocks_roles} WHERE module = '%s' AND delta = '%s'", $item['module'], $item['delta']);
+          db_delete('block_role')
+            ->condition('module', $item['module'])
+            ->condition('delta', $item['delta'])
+            ->execute();
+        
+          $query = db_insert('block_role')->fields(array('rid', 'module', 'delta'));
           foreach($item['roles'] as $role_name)
           {
             if(isset($roles[$role_name]))
             {
-              db_query("INSERT INTO {blocks_roles} (rid, module, delta) VALUES (%d, '%s', '%s')", $roles[$role_name], $item['module'], $item['delta']);
+              $query->values(array(
+                'rid' => $roles[$role_name],
+                'module' => $item['module'],
+                'delta' => $item['delta'],
+              ));
             }
           }
+          $query->execute();
         }
-        $block_list = module_invoke($item['module'], 'block', 'list');
-        $block_title = $block_list[$item['delta']]['info'];
-        drupal_set_message(t('Block !title updated.', array('!title' => $block_title)));
+        module_invoke($item['module'], 'block_save', $item['delta'], $item);
       }
+      drupal_set_message(t('Block module=!module delta=!delta  added.', array(
+          '!module' => $item['module'], 
+          '!delta' => $item['delta'])
+        )
+      );
     }
+    
+
   }
 }
 
 function drupal_deploy_export_blocks_fetch_data($theme_name = ''){
   $items = array();
-  
-  $query = db_select('block', 'b')
-    ->fields('b');
-
-  if(is_string($theme_name)){
-    $query->condition('b.theme', $theme_name);
-  }
-  
-  if($status = drush_get_option('status', FALSE)){
-    $query->condition('b.status', $status);
-  }
-
-  $query->orderBy('b.bid');
-  $blocks = $query->execute()->fetchAll();
   
   $format_names = array();
   $filter_formats = db_select('filter_format', 'ff')
@@ -166,6 +198,20 @@ function drupal_deploy_export_blocks_fetch_data($theme_name = ''){
   foreach($roles_result as $db_item){
     $roles_names[$db_item->rid] = $db_item->name;
   }
+  
+  $query = db_select('block', 'b')
+    ->fields('b');
+
+  if(is_string($theme_name)){
+    $query->condition('b.theme', $theme_name);
+  }
+  
+  if($status = drush_get_option('status', FALSE)){
+    $query->condition('b.status', $status);
+  }
+
+  $query->orderBy('b.bid');
+  $blocks = $query->execute()->fetchAll();
 
   foreach ($blocks as $db_item) {
     $item = array(
