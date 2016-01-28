@@ -89,7 +89,7 @@ function  drupal_deploy_import_blocks_items($data, $theme_name = ''){
         );
         drupal_write_record('block_custom', $box, 'bid');
       }
-      $item['bid'] = $existing_item['bid'];
+      $item['bid'] = $existing_item->bid;
       if(drupal_write_record('block', $item, 'bid')){
         if(isset($item['roles']))
         {
