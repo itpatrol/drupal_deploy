@@ -3,6 +3,7 @@ code_style:
     - codespell
     - drupal
     - drupalpractice
+    - drupalsecure
 deploy:
   master:
     robin: TRUE
