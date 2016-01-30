@@ -13,9 +13,6 @@ deploy:
         account-mail: "gor.martsen@gmail.com"
         site-name: "Drupal DB Deploy"
         site-mail: "noreply@{domainname}"
-    contexts:
-      - gitlc/codestyle/branch
-      - gitlc/codestyle/commit
   test:
     robin: TRUE
     type:
