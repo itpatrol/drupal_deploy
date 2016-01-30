@@ -40,3 +40,4 @@ deploy:
     contexts:
       - gitlc/codestyle/pr
       - gitlc/codestyle/commit
+
