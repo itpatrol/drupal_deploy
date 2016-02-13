@@ -63,14 +63,30 @@ function  drupal_deploy_import_blocks_items($data, $theme_name = ''){
         continue;
       }
     }
-    
-    $existing_item = db_select('block', 'b')
+    if($item['module'] == 'block'){
+      $exists_custom = db_select('block_custom', 'bc')
+        ->fields('bc')
+        ->condition('b.info', $item['info'])
+        ->execute()
+        ->fetchObject();
+      if($exists_custom){
+        $existing_item = db_select('block', 'b')
+          ->fields('b')
+          ->condition('b.module', $item['module'])
+          ->condition('b.theme', $item['theme'])
+          ->condition('b.delta', $exists_custom->bid)
+          ->execute()
+          ->fetchObject();
+      }
+    }else{
+      $existing_item = db_select('block', 'b')
         ->fields('b')
         ->condition('b.module', $item['module'])
         ->condition('b.theme', $item['theme'])
         ->condition('b.delta', $item['delta'])
         ->execute()
         ->fetchObject();
+    }
         
     if($existing_item)
     {
