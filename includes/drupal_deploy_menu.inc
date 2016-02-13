@@ -68,6 +68,7 @@ function ddi_menu_link_save(&$item){
     ->fields('m')
     ->condition('m.link_path', $item['link_path'])
     ->condition('m.menu_name', $item['menu_name'])
+    ->condition('m.module', $item['module'])
     ->execute()
     ->fetchObject();
   
