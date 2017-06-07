@@ -42,6 +42,8 @@ function drupal_deploy_node_revision_delete($node) {
  *
  */
 function drupal_deploy_save_transaction($type, $op, $store) {
+  // feature is not working yet.
+  return;
   $root_dir = variable_get('drupal_deploy_path_to_transations', 'private://drupal_deploy/');
 
   $type_dir = $root_dir . DIRECTORY_SEPARATOR . $type;
